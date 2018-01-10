@@ -1,7 +1,7 @@
 # EFB Facebook Messenger Slave (EFMS)
 <!-- badges -->
 
-**Channel ID**: `ehforwarderbot.channels.slave.blueset.fbmessenger.FBMessengerChannel`
+**Channel ID**: ` blueset.fbmessenger`
 
 EFMS is a channel that connects to Facebook Messenger for 
 EH Forwarder Bot, based on simulation of Facebook Messenger Web,
@@ -91,3 +91,11 @@ break, or disappear at any time. Use at your own risk.
   approval.
 * `show_archived_threads` _(bool)_ [Default: `false`]  
   When showing the threads list, include archived threads.
+  
+# Vendor-specifics
+EFMS's chats provides the following vendor specific
+options:
+* `'chat_type'` _(str)_: Type of the thread: `'User'`, 
+  `'Page'`, or `'Group'`.
+* `'profile_picture_url'` _(str)_: URL to the thread's
+  profile picture.
