@@ -5,10 +5,10 @@ if sys.version_info < (3, 5):
     raise Exception("Python 3.5 or higher is required. Your version is %s." % sys.version)
 
 __version__ = ""
-exec(open('ehforwarderbot/channel/master/blueset/telegram/__version__.py').read())
+exec(open('ehforwarderbot/channels/slave/blueset/fbmessenger/__version__.py').read())
 
 setup(
-    name='ehforwarderbot-slave-fbmessenger',
+    name='efb-fbmessenger-slave',
     namespace_package=['ehforwarderbot'],
     version=__version__,
     description='Facebook Messenger Slave Channel for EH Forwarder Bot, based on ``fbchat``.',
@@ -34,6 +34,7 @@ setup(
         "ehforwarderbot",
         "fbchat",
         "PyYaml",
-        'requests'
+        'requests',
+        'emoji'
     ]
 )

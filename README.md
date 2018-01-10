@@ -16,14 +16,33 @@ change at any time.
 * EH Forwarder Bot >= 2.0.0
 <!-- Other requirements go here -->
 
-## Optional Configuration File
+## Getting started
+
+1. Install required binary dependencies
+1. Install
+
+    ```shell
+    pip3 install efb-fb-messenger-slave
+    ```
+2. Enable the channel in the profile's `config.yaml`.
+   
+    The path to the current profile may vary depends on
+    your configuration.
+
+    __(In EFB 2.0.0a1, the default profile path is `~/.ehforwarderbot/profiles/defualt`)__
+    
+3. Sign in
+
+    ```shell
+    python3 -m ehforwarderbot.channels.slave.blueset.fbmessenger
+    ```
+    
+    And follow the instructions.
+
+## Optional configuration file
 EFMS allows user to enable or disable experimental 
 features with the configuration file. It is located at
 `<Path to current profile>/ehforwarderbot.channels.slave.blueset.wechat/config.yaml`. 
-The path to the current profile may vary depends on
-your configuration.
-
-__(In EFB 2.0.0a1, the default profile path is `~/.ehforwarderbot/profiles/defualt`)__
 
 ### Example
 
@@ -38,6 +57,20 @@ flags:
     option_three: "foobar"
 ```
 
+## Tips and tricks
+* To react to a message, reply (target) to the message with
+  one of the following commands:
+    * <code>r\`LOVE</code> for 😍
+    * <code>r\`SMILE</code> for 😆
+    * <code>r\`WOW</code> for 😮
+    * <code>r\`SAD</code> for 😢
+    * <code>r\`ANGRY</code> for 😠
+    * <code>r\`YES</code> for 👍
+    * <code>r\`NO</code> for 👎
+* To send large emoji, send the emoji as text following by
+  `S`, `M`, or `L` as small, medium and large emoji
+  accordingly.
+
 ## Experimental flags
 The following flags are experimental features, may change, 
 break, or disappear at any time. Use at your own risk.
@@ -51,5 +84,10 @@ break, or disappear at any time. Use at your own risk.
   attach the title and description besides the link when
   the option is enabled. _Note: Regardless of this option,
   link messages are sent as text, and Facebook Messenger
-  may or may not attach its own link preview based on
+  may or may not attach its own link preview per
   its system configuration._
+* `show_pending_threads` _(bool)_ [Default: `false`]  
+  When showing the threads list, include threads pending 
+  approval.
+* `show_archived_threads` _(bool)_ [Default: `false`]  
+  When showing the threads list, include archived threads.

@@ -1,11 +1,12 @@
 import copy
 import os
 import urllib.parse
-from typing import TYPE_CHECKING, Optional, Any, Dict
+import logging
+from typing import TYPE_CHECKING, Optional, Any, Dict, Tuple
 from tempfile import NamedTemporaryFile
 
 import requests
-from fbchat import Client, ThreadType, FBchatException, logging
+from fbchat import Client, ThreadType, FBchatException, logging, ThreadLocation, GraphQL
 from fbchat.models import Message, EmojiSize
 from fbchat.utils import check_request, get_jsmods_require, ReqUrl
 from ehforwarderbot import EFBMsg, MsgType, coordinator
@@ -22,9 +23,13 @@ if TYPE_CHECKING:
 class EFMSClient(Client):
     channel: "FBMessengerChannel" = None
 
+    """Set of messages IDs sent by EFMS, popped when message is received again."""
+    sent_messages = set()
+
     # Overrides for patches
 
     def __init__(self, *args, **kwargs):
+        kwargs['logging_level'] = logging.root.level
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger(__name__)
 
@@ -78,15 +83,36 @@ class EFMSClient(Client):
 
     # Original methods
 
-    def get_my_id(self) -> Optional[str]:
-        """Get the ID of current user"""
-        try:
-            session = self.getSession()
-            if not session:
-                return None
-            return session.get('c_user', None)
-        except AttributeError:
-            return None
+    def get_thread_list(self, limit: int=50, before: int=None,
+                        location: Tuple[ThreadLocation, ...]=(ThreadLocation.INBOX,)):
+        location = list(i.name for i in location)
+
+        j = self.graphql_request(GraphQL(doc_id='1349387578499440', params={
+            'limit': limit,
+            'tags': location,
+            'includeDeliveryReceipts': True,
+            'includeSeqID': False,
+            'before': before
+        }))
+
+        if j.get('viewer') is None:
+            raise FBchatException('Could not fetch thread list: {}'.format(j))
+
+        return j['viewer']['message_threads']['nodes']
+
+    def get_thread_info(self, id: str):
+        j = self.graphql_request(GraphQL(doc_id='1508526735892416', params={
+            'id': id,
+            'message_limit': 0,
+            'load_message': 0,
+            'load_read_receipt': False,
+            'before': None,
+        }))
+
+        if j.get('message_thread') is None:
+            raise FBchatException('Could not fetch thread list: {}'.format(j))
+
+        return j['message_thread']
 
     def process_url(self, url: str) -> str:
         """Unwrap Facebook-proxied URL if necessary."""
@@ -207,7 +233,7 @@ class EFMSClient(Client):
             #   'width': 240}}}],
             msg.type = MsgType.Sticker
             url = attachment['mercury']['sticker_attachment']['url']
-            msg.text += attachment['mercury']['sticker_attachment'].get('label', '')
+            msg.text = attachment['mercury']['sticker_attachment'].get('label', '')
             msg.filename = os.path.split(urllib.parse.urlparse(url).path)[1]
             ext = os.path.splitext(msg.filename)[1]
             response = requests.get(url)
@@ -295,14 +321,26 @@ class EFMSClient(Client):
             metadata: Extra metadata about the message
             msg: A full set of the data received
         """
+
+        # Ignore messages sent by EFMS
+        if mid in self.sent_messages:
+            self.sent_messages.remove(mid)
+            return
+
         efb_msg = EFBMsg()
         efb_msg.uid = mid
         efb_msg.text = message_object.text
         efb_msg.type = MsgType.Text
+        efb_msg.deliver_to = coordinator.master
 
         # Authors
         efb_msg.author = EFMSChat(self.channel, uid=author_id)
         efb_msg.chat = EFMSChat(self.channel, uid=thread_id)
+
+        if message_object.mentions:
+            mentions = dict()
+            for i in message_object.mentions:
+                mentions[(i.offset, i.offset + i.length)] = EFMSChat(self.channel, uid=i.thread_id)
 
         if message_object.emoji_size:
             efb_msg.text += " (%s)" % message_object.emoji_size.__name__[0]
@@ -318,7 +356,8 @@ class EFMSClient(Client):
                 coordinator.send_message(efb_msg)
             return
 
-        self.attach_media(efb_msg, attachments[0])
+        if attachments:
+            self.attach_media(efb_msg, attachments[0])
 
         coordinator.send_message(efb_msg)
 

@@ -14,7 +14,7 @@ from .__version__ import __version__
 from . import FBMessengerChannel
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", "--profile", "Choose a profile to start with. ", default="default")
+parser.add_argument("-p", "--profile", help="Choose a profile to start with. ", default="default")
 
 args = parser.parse_args()
 profile = args.profile
@@ -32,7 +32,7 @@ print()
 print("You usually need to do this when you want to log into")
 print("a new account, or when the previous session is expired.")
 print()
-print("This session is written to EFB profile \"%s\",")
+print("This session is written to EFB profile \"%s\"," % profile)
 print("which has its EFMS data located at")
 print(path)
 print()

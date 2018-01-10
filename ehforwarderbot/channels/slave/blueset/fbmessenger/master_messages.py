@@ -1,10 +1,11 @@
 import time
 import threading
+import emoji
 from typing import TYPE_CHECKING, Set
 
-from fbchat.models import Thread, Message, TypingStatus, ThreadType
+from fbchat.models import Thread, Message, TypingStatus, ThreadType, Mention, EmojiSize, MessageReaction
 from ehforwarderbot import EFBMsg, MsgType
-from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgStatusAttribute
+from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgStatusAttribute, ChatType
 from ehforwarderbot.exceptions import EFBMessageTypeNotSupported
 
 from .utils import get_value
@@ -24,25 +25,57 @@ class MasterMessageManager:
 
     def send_message(self, msg: EFBMsg) -> EFBMsg:
         try:
+            target_msg_offset = 0
+            prefix = ""
+
+            mentions = []
+
+            # Send message reaction
+            if msg.target and msg.text.startswith('r`') and getattr(MessageReaction, msg.text[2:], None):
+                return self.client.reactToMessage(msg.target.uid, getattr(MessageReaction, msg.text[2:]))
+
+            # Target message
+            if msg.target:
+                if msg.target.chat.chat_type == ChatType.Group:
+                    target_msg_name = msg.target.author.chat_alias or msg.target.author.chat_name
+                    prefix = '@%s "%s"\n' % (target_msg_name, msg.target.text or msg.target.type)
+                    mentions.append(Mention(msg.target.author.chat_uid, 1, len(target_msg_name)))
+                else:
+                    prefix = '"%s"\n' % msg.target.text or msg.target.type
+                target_msg_offset = len(prefix)
+
+            # Message substitutions
+            if msg.substitutions:
+                for i in msg.substitutions:
+                    mentions.append(Mention(msg.substitutions[i].chat_uid,
+                                            target_msg_offset + i[0], i[1] - i[0]))
+
+            fb_msg = Message(text=prefix + msg.text, mentions=mentions)
             thread: Thread = self.client.fetchThreadInfo(msg.chat.chat_uid)[str(msg.chat.chat_uid)]
+
             if msg.type in (MsgType.Text, MsgType.Unsupported):
-                # TODO: send emoji with size option using formatted text
-                msg.uid = self.client.send(Message(text=msg.text), thread_id=thread.uid, thread_type=thread.type)
-                return msg.uid
+                if fb_msg.text[:-1] in emoji.UNICODE_EMOJI and msg.text[-1] in 'SML':
+                    if msg.text[-1] == 'S':
+                        fb_msg.emoji_size = EmojiSize.SMALL
+                    elif msg.text[-1] == 'M':
+                        fb_msg.emoji_size = EmojiSize.MEDIUM
+                    elif msg.text[-1] == 'L':
+                        fb_msg.emoji_size = EmojiSize.LARGE
+                msg.uid = self.client.send(fb_msg, thread_id=thread.uid, thread_type=thread.type)
             elif msg.type in (MsgType.Image, MsgType.Sticker):
-                msg.uid = self.client.send_image_file(msg.path, msg.mime, message=Message(text=msg.text),
+                msg.uid = self.client.send_image_file(msg.path, msg.mime, message=fb_msg,
                                                       thread_id=thread.uid, thread_type=thread.type)
             elif msg.type == MsgType.Audio:
                 file_id = self.upload_file(msg)
-                msg.uid = self.client.send_audio(file_id=file_id, message=Message(text=msg.text),
+                msg.uid = self.client.send_audio(file_id=file_id, message=fb_msg,
                                                  thread_id=thread.uid, thread_type=thread.type)
             elif msg.type == MsgType.File:
                 file_id = self.upload_file(msg)
-                msg.uid = self.client.send_file(file_id=file_id, message=Message(text=msg.text),
+                msg.uid = self.client.send_file(file_id=file_id, message=fb_msg,
                                                 thread_id=thread.uid, thread_type=thread.type)
             elif msg.type == MsgType.Video:
                 file_id = self.upload_file(msg)
-                msg.uid = self.client.send_video(file_id=file_id, message=Message(text=msg.text),
+                msg.uid = self.client.send_video(file_id=file_id, message=fb_msg,
                                                  thread_id=thread.uid, thread_type=thread.type)
             elif msg.type == MsgType.Status:
                 attribute: EFBMsgStatusAttribute = msg.attributes
@@ -63,12 +96,21 @@ class MasterMessageManager:
                     text = "\n".join(info)
                 else:
                     text = attribute.url
-                if msg.text:
-                    text = msg.text + "\n" + text
-                msg.uid = self.client.send(Message(text=text), thread_id=thread.uid, thread_type=thread.type)
+                if fb_msg.text:
+                    text = fb_msg.text + "\n" + text
+                fb_msg.text = text
+                msg.uid = self.client.send(fb_msg, thread_id=thread.uid, thread_type=thread.type)
             else:
                 raise EFBMessageTypeNotSupported()
+
+            # Mark message sent by EFMS
+            if msg.uid.startswith('mid.$'):
+                self.client.sent_messages.add(msg.uid)
+
+            return msg
         finally:
+            if not msg.file.closed:
+                msg.file.close()
             self.client.markAsSeen()
             self.client.markAsRead(msg.chat.chat_uid)
 
