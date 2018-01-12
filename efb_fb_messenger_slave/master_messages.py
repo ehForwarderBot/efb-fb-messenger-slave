@@ -1,8 +1,10 @@
+import logging
 import time
 import threading
 import emoji
 from typing import TYPE_CHECKING, Set
 
+import re
 from fbchat.models import Thread, Message, TypingStatus, ThreadType, Mention, EmojiSize, MessageReaction
 from ehforwarderbot import EFBMsg, MsgType
 from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgStatusAttribute, ChatType
@@ -15,6 +17,9 @@ if TYPE_CHECKING:
 
 
 class MasterMessageManager:
+
+    logger = logging.getLogger("MasterMessageManager")
+
     def __init__(self, channel: 'FBMessengerChannel'):
         self.channel = channel
         channel.supported_message_types: Set[MsgType] = {MsgType.Text, MsgType.Image, MsgType.Sticker,
@@ -24,6 +29,8 @@ class MasterMessageManager:
         self.flag = channel.flag
 
     def send_message(self, msg: EFBMsg) -> EFBMsg:
+        self.logger.debug("Received message from master: %s", msg)
+
         try:
             target_msg_offset = 0
             prefix = ""
@@ -31,11 +38,17 @@ class MasterMessageManager:
             mentions = []
 
             # Send message reaction
-            if msg.target and msg.text.startswith('r`') and getattr(MessageReaction, msg.text[2:], None):
-                return self.client.reactToMessage(msg.target.uid, getattr(MessageReaction, msg.text[2:]))
+            if msg.target and msg.text.startswith('r`') and getattr(MessageReaction, msg.text[2:], None)\
+                    and msg.uid.startswith("mid.$"):
+                self.logger.debug("[%s] Message is a reaction to another message: %s", msg.uid, msg.text)
+                msg_id = ".".join(msg.target.uid.split(".", 2)[:2])
+                self.client.reactToMessage(msg_id, getattr(MessageReaction, msg.text[2:]))
+                msg.uid = "__reaction__"
+                return msg
 
             # Target message
             if msg.target:
+                self.logger.debug("[%s] Message replying to another message: %s", msg.uid, msg.target)
                 if msg.target.chat.chat_type == ChatType.Group:
                     target_msg_name = msg.target.author.chat_alias or msg.target.author.chat_name
                     prefix = '@%s "%s"\n' % (target_msg_name, msg.target.text or msg.target.type)
@@ -43,18 +56,22 @@ class MasterMessageManager:
                 else:
                     prefix = '"%s"\n' % msg.target.text or msg.target.type
                 target_msg_offset = len(prefix)
+                self.logger.debug("[%s] Converted to prefix: %s", msg.uid, prefix)
 
             # Message substitutions
             if msg.substitutions:
+                self.logger.debug("[%s] Message has substitutions: %s", msg.uid, msg.substitutions)
                 for i in msg.substitutions:
                     mentions.append(Mention(msg.substitutions[i].chat_uid,
                                             target_msg_offset + i[0], i[1] - i[0]))
+                self.logger.debug("[%s] Translated to mentions: %s", msg.uid, mentions)
 
             fb_msg = Message(text=prefix + msg.text, mentions=mentions)
             thread: Thread = self.client.fetchThreadInfo(msg.chat.chat_uid)[str(msg.chat.chat_uid)]
 
             if msg.type in (MsgType.Text, MsgType.Unsupported):
                 if msg.text[:-1] in emoji.UNICODE_EMOJI and msg.text[-1] in 'SML':
+                    self.logger.debug("[%s] Message is an Emoji message: %s", msg.uid, msg.text)
                     if msg.text[-1] == 'S':
                         fb_msg.emoji_size = EmojiSize.SMALL
                     elif msg.text[-1] == 'M':
@@ -103,7 +120,6 @@ class MasterMessageManager:
                 msg.uid = self.client.send(fb_msg, thread_id=thread.uid, thread_type=thread.type)
             else:
                 raise EFBMessageTypeNotSupported()
-
             return msg
         finally:
             if msg.file and not msg.file.closed:

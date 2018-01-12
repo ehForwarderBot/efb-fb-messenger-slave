@@ -5,7 +5,7 @@ from typing import Optional, List, IO, Set, Dict, Any
 
 import requests
 import yaml
-from fbchat import FBchatUserError, ThreadLocation
+from fbchat import FBchatUserError, ThreadLocation, logging
 from fbchat.models import Thread
 from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType, MsgType
 from ehforwarderbot import utils as efb_utils
@@ -32,6 +32,8 @@ class FBMessengerChannel(EFBChannel):
     client: EFMSClient = None
     config: Dict[str, Any] = None
 
+    logger = logging.getLogger(channel_id)
+
     def __init__(self):
         session_path = os.path.join(efb_utils.get_data_path(FBMessengerChannel.channel_id), "session.pickle")
         try:
@@ -42,13 +44,11 @@ class FBMessengerChannel(EFBChannel):
                                                        self.client.fetchThreadInfo(self.client.uid)[self.client.uid])
         except FileNotFoundError:
             raise EFBException("Session not found, please authorize your account.\n"
-                               "To do so, run:\n"
-                               "     python3 -m " + self.__module__)
+                               "To do so, run: efms-auth")
         except FBchatUserError as e:
             message = str(e) + "\n" + \
                       "You may need to re-authorize your account.\n" + \
-                      "To do so, run:\n" + \
-                      "     python3 -m " + self.__module__
+                      "To do so, run: efms-auth"
             raise EFBException(message)
 
         self.load_config()
@@ -117,14 +117,18 @@ class FBMessengerChannel(EFBChannel):
         self.client.listening = False
 
     def get_chat_picture(self, chat: EFBChat) -> IO[bytes]:
+        self.logger.debug("Getting picture of chat %s", chat)
         photo_url = EFMSChat.cache[chat.chat_uid] and \
                     EFMSChat.cache[chat.chat_uid].vendor_specific.get('profile_picture_url')
+        self.logger.debug("[%s] has photo_url from cache: %s", chat.chat_uid, photo_url)
         if not photo_url:
             thread = self.client.get_thread_info(chat.chat_uid)
             photo_url = efms_utils.get_value(thread, ('messaging_actor', 'big_image_src', 'uri'))
+        self.logger.debug("[%s] has photo_url from GraphQL: %s", chat.chat_uid, photo_url)
         if not photo_url:
             thread = self.client.fetchThreadInfo(chat.chat_uid)[chat.chat_uid]
             photo_url = getattr(thread, 'photo', None)
+        self.logger.debug("[%s] has photo_url from legacy API: %s", chat.chat_uid, photo_url)
         if not photo_url:
             raise EFBOperationNotSupported('This chat has no picture.')
         photo = BytesIO(requests.get(photo_url).content)

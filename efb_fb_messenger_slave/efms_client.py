@@ -23,6 +23,8 @@ if TYPE_CHECKING:
 class EFMSClient(Client):
     channel: "FBMessengerChannel" = None
 
+    logger = logging.getLogger("EFMSClient")
+
     """Set of messages IDs sent by EFMS, popped when message is received again."""
     sent_messages = set()
 
@@ -35,7 +37,7 @@ class EFMSClient(Client):
 
     def fetchImageUrl(self, image_id):
         """Fetches the url to the original image from an image attachment ID
-        Overrides original method.
+        Overrides original method with a bug fix.
 
         Args:
             image_id (str): The image you want to fetch
@@ -139,6 +141,8 @@ class EFMSClient(Client):
                 Dict of information of the attachment
                 ``fbchat`` entity is not used as it is not completed.
         """
+        self.logger.debug("[%s] Trying to attach media: %s", msg.uid, attachment)
+
         blob_attachment: Dict[str, Any] = attachment.get('mercury', {}).get('blob_attachment', {})
         attachment_type: str = blob_attachment.get("__typename", None)
         if 'sticker_attachment' in attachment.get('mercury', {}):
@@ -148,6 +152,9 @@ class EFMSClient(Client):
             if get_value(attachment, ('mercury', 'extensible_attachment',
                                       'story_attachment', 'target', '__typename')) == 'MessageLocation':
                 attachment_type = 'MessageLocation'
+
+        self.logger.debug("[%s] The attachment has type %s", msg.uid, attachment_type)
+
         msg.filename = attachment.get('filename', None)
         msg.mime = attachment.get('mimeType', None)
         if attachment_type == "MessageAudio":
@@ -204,33 +211,14 @@ class EFMSClient(Client):
             msg.path = msg.file.name
         elif attachment_type == '__Sticker':
             if get_value(attachment, ('mercury', 'sticker_attachment', 'pack', 'id')) == "227877430692340":
+                self.logger.debug("[%s] Sticker received is a \"Like\" sticker. Converting message to text.", msg.uid)
+
                 sticker_id = get_value(attachment, ('mercury', 'sticker_attachment', 'id'))
                 for i in EmojiSize:
                     if sticker_id == i.value:
                         msg.type = MsgType.Text
                         msg.text = "👍 (%s)" % i.__name__[0]
                         return
-
-            # TODO: Support animated sticker
-            # 'msg': {'delta': {'attachments': [{'mercury': {'sticker_attachment': {
-            #   'frame_count': 12,
-            #   'frame_rate': 83,
-            #   'frames_per_column': 3,
-            #   'frames_per_row': 4,
-            #   'height': 240,
-            #   'id': '885398414828848',
-            #   'label': '',
-            #   'pack': {'id': '883825964986093'},
-            #   'padded_sprite_image': {
-            #       'uri': 'https://scontent-ams3-1.xx.fbcdn.net/v/t39.1997-6/s600x600/11891369_902338736468149_1431458554_n.png?_nc_ad=z-m&_nc_cid=0&oh=b7a78c140872691e9cd477aa62f8ed46&oe=5AF849A0'},
-            #   'padded_sprite_image_2x': {
-            #       'uri': 'https://scontent-ams3-1.xx.fbcdn.net/v/t39.1997-6/11891369_902338736468149_1431458554_n.png?_nc_ad=z-m&_nc_cid=0&oh=0223792dd23700d2b0f63308541aff0f&oe=5AB576DC'},
-            #   'sprite_image': {
-            #       'uri': 'https://scontent-ams3-1.xx.fbcdn.net/v/t39.1997-6/s480x480/11891363_902338733134816_126871890_n.png?_nc_ad=z-m&_nc_cid=0&oh=8af8f9ec52454f7a7ffd51ffae5c2f97&oe=5AF5EACD'},
-            #   'sprite_image_2x': {
-            #       'uri': 'https://scontent-ams3-1.xx.fbcdn.net/v/t39.1997-6/11891363_902338733134816_126871890_n.png?_nc_ad=z-m&_nc_cid=0&oh=f5f3844d37267c78fb9b68d91ef6e461&oe=5AF08F70'},
-            #   'url': 'https://scontent-ams3-1.xx.fbcdn.net/v/t39.1997-6/11891357_902338729801483_2099101493_n.png?_nc_ad=z-m&_nc_cid=0&oh=b1c58300b9f87b8a1687ed8406b776a4&oe=5AB66910',
-            #   'width': 240}}}],
             msg.type = MsgType.Sticker
             url = attachment['mercury']['sticker_attachment']['url']
             msg.text = attachment['mercury']['sticker_attachment'].get('label', '')
@@ -342,6 +330,8 @@ class EFMSClient(Client):
             self.sent_messages.remove(mid)
             return
 
+        self.logger.debug("[%s] Received message from Messenger: %s", mid, message_object)
+
         efb_msg = EFBMsg()
         efb_msg.uid = mid
         efb_msg.text = message_object.text
@@ -364,6 +354,8 @@ class EFMSClient(Client):
         attachments = msg.get('delta', {}).get('attachments', [])
 
         if len(attachments) > 1:
+            self.logger.debug("[%s] Multiple attachments detected. Splitting into %s messages.",
+                              msg.uid, len(attachments))
             for idx, i in enumerate(attachments):
                 sub_msg = copy.copy(efb_msg)
                 sub_msg.uid += ".%d" % idx

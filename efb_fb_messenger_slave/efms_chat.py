@@ -1,4 +1,5 @@
 import copy
+import logging
 from typing import TYPE_CHECKING, Dict, Any
 from ehforwarderbot import EFBChat, ChatType
 from fbchat.models import Thread, User, Page, Group, Room
@@ -11,6 +12,8 @@ if TYPE_CHECKING:
 
 
 class EFMSChat(EFBChat):
+
+    logger = logging.getLogger("EFMSChat")
 
     cache = dict()
 
@@ -34,6 +37,8 @@ class EFMSChat(EFBChat):
         self.client: EFMSClient = channel.client
         self.loaded = False
         self.graph_ql_thread = graph_ql_thread
+
+        # Mark shelf
         if self.chat_uid == self.client.uid:
             self.self()
             return
@@ -44,11 +49,6 @@ class EFMSChat(EFBChat):
         self.loaded = True
 
         thread: Thread = self.thread
-
-        if self.chat_uid == self.client.uid:
-            self.self()
-            EFMSChat.cache[self.chat_uid] = self
-            return
 
         if self.is_self:
             return
@@ -63,9 +63,16 @@ class EFMSChat(EFBChat):
             thread = self.client.fetchThreadInfo(self.chat_uid)[str(self.chat_uid)]
             self.thread = thread
 
+        self.logger.debug("Parsing fbchat thread object: %s", thread)
+
         self.chat_uid = thread.uid
         self.chat_name = thread.name
         self.vendor_specific['chat_type'] = thread.type.name.capitalize()
+
+        if self.chat_uid == self.client.uid:
+            self.self()
+            EFMSChat.cache[self.chat_uid] = self
+            return
 
         if isinstance(thread, User):
             self.chat_type = ChatType.User
@@ -90,19 +97,25 @@ class EFMSChat(EFBChat):
                         names.append(member.chat_alias or member.chat_name)
                     member.is_chat = False
                     self.members.append(member)
+
             if not lazy_load:
                 if names:
                     names.sort()
                     self.chat_name = ", ".join(names[:3])
                     if len(names) > 3:
                         self.chat_name += ", and %d more" % (len(names) - 3)
+                else:
+                    self.chat_name = "Group %s" % self.chat_uid
         else:
             self.chat_type = ChatType.System
         EFMSChat.cache[self.chat_uid] = self
 
     def load_graph_ql_thread(self, recursive=True):
+        self.logger.debug('Parsing chat as GraphQL dict: %s', self.graph_ql_thread)
+
         if 'thread_key' in self.graph_ql_thread:
             # Data of a thread
+            self.logger.debug('GraphQL information provided is a thread.')
             self.chat_name = self.graph_ql_thread['name']
             if self.graph_ql_thread['thread_type'] == 'ONE_TO_ONE':
                 self.chat_type = ChatType.User
@@ -112,6 +125,7 @@ class EFMSChat(EFBChat):
                     if i['messaging_actor']['id'] == self.chat_uid:
                         item = i['messaging_actor']
                         break
+                self.logger.debug("[%s] One to one member info: %s", self.chat_uid, item)
                 if item:
                     self.chat_name = self.chat_name or item['name']
                     self.vendor_specific['profile_picture_url'] = item['big_image_src']['uri']
@@ -134,15 +148,18 @@ class EFMSChat(EFBChat):
                     if len(names) > 3:
                         self.chat_name += ", and %s more" % (len(names) - 3)
         elif 'messaging_actor' in self.graph_ql_thread:
+            self.logger.debug('GraphQL information provided is a thread member.')
             # data of a group member
             self.chat_uid = self.graph_ql_thread['messaging_actor']['id']
             if 'name' in self.graph_ql_thread['messaging_actor']:
+                self.logger.debug('[%s] Thread member information is complete.', self.chat_uid)
                 self.chat_name = self.graph_ql_thread['messaging_actor']['name']
                 self.chat_type = ChatType.User
                 self.vendor_specific['chat_type'] = self.graph_ql_thread['messaging_actor'].get('__typename')
                 self.vendor_specific['profile_picture_url'] = \
                     get_value(self.graph_ql_thread, ('messaging_actor', 'big_image_src', 'uri'))
             elif recursive:
+                self.logger.debug('[%s] Thread member information is incomplete.', self.chat_uid)
                 self.graph_ql_thread = self.client.get_thread_info(self.chcat_uid)
                 return self.load_graph_ql_thread(recursive=False)
 
