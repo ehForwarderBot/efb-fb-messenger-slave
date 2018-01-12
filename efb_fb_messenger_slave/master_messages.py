@@ -54,13 +54,14 @@ class MasterMessageManager:
             thread: Thread = self.client.fetchThreadInfo(msg.chat.chat_uid)[str(msg.chat.chat_uid)]
 
             if msg.type in (MsgType.Text, MsgType.Unsupported):
-                if fb_msg.text[:-1] in emoji.UNICODE_EMOJI and msg.text[-1] in 'SML':
+                if msg.text[:-1] in emoji.UNICODE_EMOJI and msg.text[-1] in 'SML':
                     if msg.text[-1] == 'S':
                         fb_msg.emoji_size = EmojiSize.SMALL
                     elif msg.text[-1] == 'M':
                         fb_msg.emoji_size = EmojiSize.MEDIUM
                     elif msg.text[-1] == 'L':
                         fb_msg.emoji_size = EmojiSize.LARGE
+                    fb_msg.text = msg.text[:-1]
                 msg.uid = self.client.send(fb_msg, thread_id=thread.uid, thread_type=thread.type)
             elif msg.type in (MsgType.Image, MsgType.Sticker):
                 msg.uid = self.client.send_image_file(msg.path, msg.mime, message=fb_msg,
@@ -103,13 +104,9 @@ class MasterMessageManager:
             else:
                 raise EFBMessageTypeNotSupported()
 
-            # Mark message sent by EFMS
-            if msg.uid.startswith('mid.$'):
-                self.client.sent_messages.add(msg.uid)
-
             return msg
         finally:
-            if not msg.file.closed:
+            if msg.file and not msg.file.closed:
                 msg.file.close()
             self.client.markAsSeen()
             self.client.markAsRead(msg.chat.chat_uid)

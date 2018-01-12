@@ -273,6 +273,12 @@ class EFMSClient(Client):
             msg.type = MsgType.Unsupported
             msg.text = "Message type unsupported.\n%s" % msg.text
 
+    def send(self, *args, **kwargs):
+        result = super().send(*args, **kwargs)
+        if result.startswith('mid.$'):
+            self.sent_messages.add(result)
+        return result
+
     def send_audio(self, file_id, message=None, thread_id=None, thread_type=ThreadType.USER):
         thread_id, thread_type = self._getThread(thread_id, thread_type)
         data = self._getSendData(message=message, thread_id=thread_id, thread_type=thread_type)
@@ -281,7 +287,10 @@ class EFMSClient(Client):
         data['has_attachment'] = True
         data['audio_ids[0]'] = file_id
 
-        return self._doSendRequest(data)
+        result = self._doSendRequest(data)
+        if result.startswith('mid.$'):
+            self.sent_messages.add(result)
+        return result
 
     def send_file(self, file_id, message=None, thread_id=None, thread_type=ThreadType.USER):
         thread_id, thread_type = self._getThread(thread_id, thread_type)
@@ -291,7 +300,10 @@ class EFMSClient(Client):
         data['has_attachment'] = True
         data['file_ids[0]'] = file_id
 
-        return self._doSendRequest(data)
+        result = self._doSendRequest(data)
+        if result.startswith('mid.$'):
+            self.sent_messages.add(result)
+        return result
 
     def send_video(self, file_id, message=None, thread_id=None, thread_type=ThreadType.USER):
         thread_id, thread_type = self._getThread(thread_id, thread_type)
@@ -301,7 +313,10 @@ class EFMSClient(Client):
         data['has_attachment'] = True
         data['video_ids[0]'] = file_id
 
-        return self._doSendRequest(data)
+        result = self._doSendRequest(data)
+        if result.startswith('mid.$'):
+            self.sent_messages.add(result)
+        return result
 
     # Triggers
 
@@ -343,7 +358,7 @@ class EFMSClient(Client):
                 mentions[(i.offset, i.offset + i.length)] = EFMSChat(self.channel, uid=i.thread_id)
 
         if message_object.emoji_size:
-            efb_msg.text += " (%s)" % message_object.emoji_size.__name__[0]
+            efb_msg.text += " (%s)" % message_object.emoji_size.name[0]
             # " (S)", " (M)", " (L)"
 
         attachments = msg.get('delta', {}).get('attachments', [])

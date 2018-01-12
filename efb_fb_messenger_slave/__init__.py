@@ -23,7 +23,7 @@ from .utils import ExperimentalFlagsManager
 
 
 class FBMessengerChannel(EFBChannel):
-    channel_name: str = "EFB Facebook Messenger Slave"
+    channel_name: str = "Facebook Messenger Slave"
     channel_emoji: str = "⚡️"
     channel_id = "blueset.fbmessenger"
     channel_type: ChannelType = ChannelType.Slave

@@ -43,17 +43,18 @@ class EFMSChat(EFBChat):
     def load_chat(self):
         self.loaded = True
 
-        if self.graph_ql_thread:
-            return self.load_graph_ql_thread()
-
         thread: Thread = self.thread
 
         if self.chat_uid == self.client.uid:
             self.self()
+            EFMSChat.cache[self.chat_uid] = self
             return
 
         if self.is_self:
             return
+
+        if self.graph_ql_thread:
+            return self.load_graph_ql_thread()
 
         if not thread:
             if self.chat_uid in EFMSChat.cache:
@@ -138,12 +139,15 @@ class EFMSChat(EFBChat):
             if 'name' in self.graph_ql_thread['messaging_actor']:
                 self.chat_name = self.graph_ql_thread['messaging_actor']['name']
                 self.chat_type = ChatType.User
-                self.vendor_specific['chat_type'] = self.graph_ql.thread['messaging_actor'].get('__typename')
+                self.vendor_specific['chat_type'] = self.graph_ql_thread['messaging_actor'].get('__typename')
                 self.vendor_specific['profile_picture_url'] = \
                     get_value(self.graph_ql_thread, ('messaging_actor', 'big_image_src', 'uri'))
             elif recursive:
                 self.graph_ql_thread = self.client.get_thread_info(self.chcat_uid)
                 return self.load_graph_ql_thread(recursive=False)
+
+        if self.chat_uid == self.client.uid:
+            self.self()
 
         EFMSChat.cache[self.chat_uid] = self
 

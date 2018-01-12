@@ -43,7 +43,7 @@ class ExtraFunctionsManager:
         users = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForUsers(args, limit=10)))
         msg = "Found %s user(s).\n" % len(users)
         for i in users:
-            msg += "\n{chat.chat_uid}: {chat.chat_name}'".format(chat=i)
+            msg += "\n{chat.chat_uid}: {chat.chat_name}".format(chat=i)
         return msg
 
     @catch_exceptions
@@ -51,7 +51,7 @@ class ExtraFunctionsManager:
         groups = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForGroups(args, limit=10)))
         msg = "Found %s group(s).\n" % len(groups)
         for i in groups:
-            msg += "\n{chat.chat_uid}: {chat.chat_name}'".format(chat=i)
+            msg += "\n{chat.chat_uid}: {chat.chat_name}".format(chat=i)
         return msg
 
     @catch_exceptions
@@ -59,7 +59,7 @@ class ExtraFunctionsManager:
         pages = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForPages(args, limit=10)))
         msg = "Found %s page(s).\n" % len(pages)
         for i in pages:
-            msg += "\n{chat.chat_uid}: {chat.chat_name}'".format(chat=i)
+            msg += "\n{chat.chat_uid}: {chat.chat_name}".format(chat=i)
         return msg
 
     @catch_exceptions
