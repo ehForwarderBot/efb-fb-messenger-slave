@@ -37,7 +37,7 @@ Getting started
    configuration.
 
    **(In EFB 2.0.0a1, the default profile path is**
-   ``~/.ehforwarderbot/profiles/defualt`` **)**
+   ``~/.ehforwarderbot/profiles/default`` **)**
 
 4. Sign in
 
@@ -52,7 +52,7 @@ Optional configuration file
 
 EFMS allows user to enable or disable experimental features with the
 configuration file. It is located at
-``<Path to current profile>/ehforwarderbot.channels.slave.blueset.wechat/config.yaml``.
+``<Path to current profile>/blueset.fbmessenger/config.yaml``.
 
 Example
 ~~~~~~~
