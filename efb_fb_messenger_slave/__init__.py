@@ -56,6 +56,9 @@ class FBMessengerChannel(EFBChannel):
         self.master_message: MasterMessageManager = MasterMessageManager(self)
         self.extra_functions: ExtraFunctionsManager = ExtraFunctionsManager(self)
 
+        # Initialize list of chat from server
+        self.get_chats()
+
         # Monkey patching
         Thread.__eq__ = lambda a, b: a.uid == b.uid
 

@@ -31,7 +31,7 @@ class EFMSClient(Client):
     # Overrides for patches
 
     def __init__(self, *args, **kwargs):
-        kwargs['logging_level'] = logging.root.level
+        kwargs['logging_level'] = logging.NOTSET
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger(__name__)
 
