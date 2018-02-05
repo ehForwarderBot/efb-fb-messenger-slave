@@ -13,6 +13,7 @@ from ehforwarderbot import coordinator, utils
 from .__version__ import __version__
 from . import FBMessengerChannel
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--profile", help="Choose a profile to start with. ", default="default")
@@ -58,6 +59,7 @@ def main():
     print(session_path)
     print("Your session cookies is as valuable as your account credential.")
     print("Please keep them with equal care.")
+
 
 if __name__ == '__main__':
     main()
