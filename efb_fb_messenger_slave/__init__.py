@@ -147,29 +147,71 @@ class FBMessengerChannel(EFBChannel):
         return self.extra_functions.threads_list(args)
 
     @extra(name="Search for users",
-           desc="Show the first 10 results."
+           desc="Show the first 10 results.\n"
                 "Usage:\n"
                 "    {function_name} keyword")
     def search_users(self, args: str) -> str:
         return self.extra_functions.search_users(args)
 
     @extra(name="Search for groups",
-           desc="Show the first 10 results."
+           desc="Show the first 10 results.\n"
                 "Usage:\n"
                 "    {function_name} keyword")
     def search_groups(self, args: str) -> str:
         return self.extra_functions.search_groups(args)
 
     @extra(name="Search for pages",
-           desc="Show the first 10 results."
+           desc="Show the first 10 results.\n"
                 "Usage:\n"
                 "    {function_name} keyword")
     def search_pages(self, args: str) -> str:
         return self.extra_functions.search_pages(args)
 
     @extra(name="Search for threads",
-           desc="Show the first 10 results."
+           desc="Show the first 10 results.\n"
                 "Usage:\n"
                 "    {function_name} keyword")
     def search_threads(self, args: str) -> str:
         return self.extra_functions.search_threads(args)
+
+    @extra(name="Add to group",
+           desc="Add members to a group.\n"
+                "Usage:\n"
+                "    {function_name} GroupID UserID [UserID ...]")
+    def add_to_group(self, args: str) -> str:
+        return self.extra_functions.add_to_group(args)
+
+    @extra(name="Remove from group",
+           desc="Remove members from a group.\n"
+                "Usage:\n"
+                "    {function_name} GroupID UserID [UserID ...]")
+    def remove_from_group(self, args: str) -> str:
+        return self.extra_functions.remove_from_group(args)
+
+    @extra(name="Change nickname",
+           desc="Change nickname of a user.\n"
+                "Usage:\n"
+                "    {function_name} UserID nickname")
+    def set_nickname(self, args: str) -> str:
+        return self.extra_functions.set_nickname(args)
+
+    @extra(name="Change group title",
+           desc="Change the title of a group.\n"
+                "Usage:\n"
+                "    {function_name} GroupID title")
+    def set_group_title(self, args: str) -> str:
+        return self.extra_functions.set_group_title(args)
+
+    @extra(name="Change chat emoji",
+           desc="Change the emoji of a chat.\n"
+                "Usage:\n"
+                "    {function_name} ChatID emoji")
+    def set_chat_emoji(self, args: str) -> str:
+        return self.extra_functions.set_chat_emoji(args)
+
+    @extra(name="Change member nickname",
+           desc="Change the nickname of a group member.\n"
+                "Usage:\n"
+                "    {function_name} GroupID MemberID nickname")
+    def set_member_nickname(self, args: str) -> str:
+        return self.extra_functions.set_member_nickname(args)
