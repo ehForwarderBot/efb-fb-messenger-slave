@@ -4,6 +4,7 @@ import logging
 import copy
 import os
 import urllib.parse
+import threading
 from typing import TYPE_CHECKING, Any, Dict, Tuple
 from tempfile import NamedTemporaryFile
 
@@ -310,8 +311,12 @@ class EFMSClient(Client):
 
     # Triggers
 
-    def onMessage(self, mid: str=None, author_id: str=None, message: str=None, message_object: Message=None,
-                  thread_id: str=None, thread_type: str=ThreadType.USER, ts: str=None, metadata=None, msg=None):
+    def onMessage(self, *args, **kwargs):
+        """Migrate message precessing to another thread to prevent blocking."""
+        threading.Thread(target=self.on_message, args=args, kwargs=kwargs).run()
+
+    def on_message(self, mid: str=None, author_id: str=None, message: str=None, message_object: Message=None,
+                   thread_id: str=None, thread_type: str=ThreadType.USER, ts: str=None, metadata=None, msg=None):
         """
         Called when the client is listening, and somebody sends a message
 
