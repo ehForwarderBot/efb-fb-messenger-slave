@@ -1,12 +1,14 @@
+# coding=utf-8
+
+import logging
 import copy
 import os
 import urllib.parse
-import logging
-from typing import TYPE_CHECKING, Optional, Any, Dict, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Tuple
 from tempfile import NamedTemporaryFile
 
 import requests
-from fbchat import Client, ThreadType, FBchatException, logging, ThreadLocation, GraphQL
+from fbchat import Client, ThreadType, FBchatException, ThreadLocation, GraphQL
 from fbchat.models import Message, EmojiSize
 from fbchat.utils import check_request, get_jsmods_require, ReqUrl
 from ehforwarderbot import EFBMsg, MsgType, coordinator

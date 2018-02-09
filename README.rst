@@ -1,7 +1,12 @@
 EFB Facebook Messenger Slave (EFMS)
 ===================================
 
-.. badges
+.. image:: https://img.shields.io/pypi/v/efb-fb-messenger-slave.svg
+   :alt: PyPI release
+   :target: https://pypi.org/project/efb-fb-messenger-slave/
+.. image:: https://img.shields.io/badge/Translate-Crowdin-orange.svg
+   :alt: Translate this project
+   :target: https://crowdin.com/project/ehforwarderbot/
 
 **Channel ID**: ``blueset.fbmessenger``
 

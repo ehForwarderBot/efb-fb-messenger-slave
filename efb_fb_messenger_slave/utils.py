@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from typing import TYPE_CHECKING, Dict, Any, Hashable, Tuple, Union, Iterable
 
 if TYPE_CHECKING:

@@ -1,10 +1,11 @@
+# coding=utf-8
+
 import logging
 import time
 import threading
 import emoji
 from typing import TYPE_CHECKING, Set
 
-import re
 from fbchat.models import Thread, Message, TypingStatus, ThreadType, Mention, EmojiSize, MessageReaction
 from ehforwarderbot import EFBMsg, MsgType
 from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgStatusAttribute, ChatType

@@ -1,7 +1,11 @@
+# coding=utf-8
+
 import os
 import pickle
 from io import BytesIO
-from typing import Optional, List, IO, Set, Dict, Any
+from pkg_resources import resource_filename
+from gettext import translation
+from typing import Optional, List, IO, Dict, Any
 
 import requests
 import yaml
@@ -34,6 +38,14 @@ class FBMessengerChannel(EFBChannel):
 
     logger = logging.getLogger(channel_id)
 
+    # Translator
+    translator = translation("efb_fb_messenger_slave",
+                             resource_filename("efb_fb_messenger_slave", 'locale'),
+                             fallback=True)
+
+    _ = translator.gettext
+    ngettext = translator.ngettext
+
     def __init__(self):
         session_path = os.path.join(efb_utils.get_data_path(FBMessengerChannel.channel_id), "session.pickle")
         try:
@@ -43,12 +55,12 @@ class FBMessengerChannel(EFBChannel):
             EFMSChat.cache[EFBChat.SELF_ID] = EFMSChat(self,
                                                        self.client.fetchThreadInfo(self.client.uid)[self.client.uid])
         except FileNotFoundError:
-            raise EFBException("Session not found, please authorize your account.\n"
-                               "To do so, run: efms-auth")
+            raise EFBException(self._("Session not found, please authorize your account.\n"
+                                      "To do so, run: efms-auth"))
         except FBchatUserError as e:
             message = str(e) + "\n" + \
-                      "You may need to re-authorize your account.\n" + \
-                      "To do so, run: efms-auth"
+                      self._("You may need to re-authorize your account.\n" +
+                             "To do so, run: efms-auth")
             raise EFBException(message)
 
         self.load_config()
@@ -109,7 +121,7 @@ class FBMessengerChannel(EFBChannel):
 
     def send_status(self, status: EFBStatus):
         if isinstance(status, EFBMessageRemoval):
-            raise EFBOperationNotSupported("Messages cannot be removed in Facebook Messenger.")
+            raise EFBOperationNotSupported(self._("Messages cannot be removed in Facebook Messenger."))
         # Other status types go here
         raise EFBOperationNotSupported()
 
@@ -140,78 +152,78 @@ class FBMessengerChannel(EFBChannel):
 
     # Extra functions
 
-    @extra(name="Show threads list",
-           desc="Usage:\n"
-                "    {function_name}")
+    @extra(name=_("Show threads list"),
+           desc=_("Usage:\n"
+                  "    {function_name}"))
     def threads_list(self, args: str) -> str:
         return self.extra_functions.threads_list(args)
 
-    @extra(name="Search for users",
-           desc="Show the first 10 results.\n"
-                "Usage:\n"
-                "    {function_name} keyword")
+    @extra(name=_("Search for users"),
+           desc=_("Show the first 10 results.\n"
+                  "Usage:\n"
+                  "    {function_name} keyword"))
     def search_users(self, args: str) -> str:
         return self.extra_functions.search_users(args)
 
-    @extra(name="Search for groups",
-           desc="Show the first 10 results.\n"
-                "Usage:\n"
-                "    {function_name} keyword")
+    @extra(name=_("Search for groups"),
+           desc=_("Show the first 10 results.\n"
+                  "Usage:\n"
+                  "    {function_name} keyword"))
     def search_groups(self, args: str) -> str:
         return self.extra_functions.search_groups(args)
 
-    @extra(name="Search for pages",
-           desc="Show the first 10 results.\n"
-                "Usage:\n"
-                "    {function_name} keyword")
+    @extra(name=_("Search for pages"),
+           desc=_("Show the first 10 results.\n"
+                  "Usage:\n"
+                  "    {function_name} keyword"))
     def search_pages(self, args: str) -> str:
         return self.extra_functions.search_pages(args)
 
-    @extra(name="Search for threads",
-           desc="Show the first 10 results.\n"
-                "Usage:\n"
-                "    {function_name} keyword")
+    @extra(name=_("Search for threads"),
+           desc=_("Show the first 10 results.\n"
+                  "Usage:\n"
+                  "    {function_name} keyword"))
     def search_threads(self, args: str) -> str:
         return self.extra_functions.search_threads(args)
 
-    @extra(name="Add to group",
-           desc="Add members to a group.\n"
-                "Usage:\n"
-                "    {function_name} GroupID UserID [UserID ...]")
+    @extra(name=_("Add to group"),
+           desc=_("Add members to a group.\n"
+                  "Usage:\n"
+                  "    {function_name} GroupID UserID [UserID ...]"))
     def add_to_group(self, args: str) -> str:
         return self.extra_functions.add_to_group(args)
 
-    @extra(name="Remove from group",
-           desc="Remove members from a group.\n"
-                "Usage:\n"
-                "    {function_name} GroupID UserID [UserID ...]")
+    @extra(name=_("Remove from group"),
+           desc=_("Remove members from a group.\n"
+                  "Usage:\n"
+                  "    {function_name} GroupID UserID [UserID ...]"))
     def remove_from_group(self, args: str) -> str:
         return self.extra_functions.remove_from_group(args)
 
-    @extra(name="Change nickname",
-           desc="Change nickname of a user.\n"
-                "Usage:\n"
-                "    {function_name} UserID nickname")
+    @extra(name=_("Change nickname"),
+           desc=_("Change nickname of a user.\n"
+                  "Usage:\n"
+                  "    {function_name} UserID nickname"))
     def set_nickname(self, args: str) -> str:
         return self.extra_functions.set_nickname(args)
 
-    @extra(name="Change group title",
-           desc="Change the title of a group.\n"
-                "Usage:\n"
-                "    {function_name} GroupID title")
+    @extra(name=_("Change group title"),
+           desc=_("Change the title of a group.\n"
+                  "Usage:\n"
+                  "    {function_name} GroupID title"))
     def set_group_title(self, args: str) -> str:
         return self.extra_functions.set_group_title(args)
 
-    @extra(name="Change chat emoji",
-           desc="Change the emoji of a chat.\n"
-                "Usage:\n"
-                "    {function_name} ChatID emoji")
+    @extra(name=_("Change chat emoji"),
+           desc=_("Change the emoji of a chat.\n"
+                  "Usage:\n"
+                  "    {function_name} ChatID emoji"))
     def set_chat_emoji(self, args: str) -> str:
         return self.extra_functions.set_chat_emoji(args)
 
-    @extra(name="Change member nickname",
-           desc="Change the nickname of a group member.\n"
-                "Usage:\n"
-                "    {function_name} GroupID MemberID nickname")
+    @extra(name=_("Change member nickname"),
+           desc=_("Change the nickname of a group member.\n"
+                  "Usage:\n"
+                  "    {function_name} GroupID MemberID nickname"))
     def set_member_nickname(self, args: str) -> str:
         return self.extra_functions.set_member_nickname(args)

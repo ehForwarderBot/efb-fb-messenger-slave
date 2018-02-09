@@ -19,6 +19,7 @@ setup(
     author_email='ilove@1a23.com',
     url='https://github.com/blueset/efb-fb-messenger-slave',
     license='GPL v3',
+    include_package_data=True,
     python_requires='>=3.6',
     keywords=['ehforwarderbot', 'EH Forwarder Bot', 'EH Forwarder Bot Master Channel',
               'facebook messenger', 'messenger', 'chatbot'],

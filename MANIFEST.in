@@ -1,0 +1,1 @@
+recursive-include efb_fb_messenger_slave/locale *.mo *.po

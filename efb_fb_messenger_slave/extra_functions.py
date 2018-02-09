@@ -2,8 +2,6 @@ from typing import TYPE_CHECKING
 
 from fbchat import ThreadType
 
-from ehforwarderbot.utils import extra
-
 from .efms_chat import EFMSChat
 
 if TYPE_CHECKING:
@@ -27,11 +25,15 @@ class ExtraFunctionsManager:
     def __init__(self, channel: 'FBMessengerChannel'):
         self.channel = channel
         self.client = channel.client
+        self._ = self.channel._
+        self.ngettext = self.channel.ngettext
 
     @catch_exceptions
     def threads_list(self, args: str) -> str:
         chats = self.channel.get_chats()
-        msg = "You have %s thread(s) in your thread list.\n" % len(chats)
+        msg = self.ngettext("You have {0} thread in your thread list.",
+                            "You have {0} threads in your thread list.",
+                            len(chats)).format(len(chats)) + "\n"
         for i in chats:
             msg += "\n{chat.chat_uid}: {chat.chat_name} [{type}]" \
                 .format(chat=i,
@@ -41,7 +43,9 @@ class ExtraFunctionsManager:
     @catch_exceptions
     def search_users(self, args: str) -> str:
         users = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForUsers(args, limit=10)))
-        msg = "Found %s user(s).\n" % len(users)
+        msg = self.ngettext("Found {} user.",
+                            "Found {} users.",
+                            len(users)).format(len(users)) + "\n"
         for i in users:
             msg += "\n{chat.chat_uid}: {chat.chat_name}".format(chat=i)
         return msg
@@ -49,7 +53,9 @@ class ExtraFunctionsManager:
     @catch_exceptions
     def search_groups(self, args: str) -> str:
         groups = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForGroups(args, limit=10)))
-        msg = "Found %s group(s).\n" % len(groups)
+        msg = self.ngettext("Found {} group.",
+                            "Found {} groups.",
+                            len(groups)).format(len(groups)) + "\n"
         for i in groups:
             msg += "\n{chat.chat_uid}: {chat.chat_name}".format(chat=i)
         return msg
@@ -57,7 +63,9 @@ class ExtraFunctionsManager:
     @catch_exceptions
     def search_pages(self, args: str) -> str:
         pages = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForPages(args, limit=10)))
-        msg = "Found %s page(s).\n" % len(pages)
+        msg = self.ngettext("Found {} page.",
+                            "Found {} pages.",
+                            len(pages)).format(len(pages)) + "\n"
         for i in pages:
             msg += "\n{chat.chat_uid}: {chat.chat_name}".format(chat=i)
         return msg
@@ -65,7 +73,9 @@ class ExtraFunctionsManager:
     @catch_exceptions
     def search_threads(self, args: str) -> str:
         threads = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForThreads(args, limit=10)))
-        msg = "Found %s thread(s).\n" % len(threads)
+        msg = self.ngettext("Found {} thread.",
+                            "Found {} threads.",
+                            len(threads)).format(len(threads)) + "\n"
         for i in threads:
             msg += "\n{chat.chat_uid}: {chat.chat_name} [{type}]" \
                 .format(chat=i,
@@ -77,51 +87,53 @@ class ExtraFunctionsManager:
         """GroupID UserID [UserID ...]"""
         args = args.split(' ')
         if len(args) < 2:
-            return "Group ID and user IDs are required"
+            return self._("Group ID and user IDs are required")
         self.client.addUsersToGroup(args[1:], args[0])
-        return "Users %s are successfully added to group %s." % (args[1:], args[0])
+        return self.ngettext("User {0} are successfully added to group {1}.",
+                             "Users {0} are successfully added to group {1}.",
+                             len(args) - 1).format(args[1:], args[0])
 
     @catch_exceptions
     def remove_from_group(self, args: str) -> str:
         """GroupID UserID"""
         args = args.split(' ')
         if len(args) != 2:
-            return "Group ID and user ID are required"
+            return self._("Group ID and user ID are required.")
         self.client.removeUserFromGroup(args[1], args[0])
-        return "User %s is successfully removed from group %s." % (args[1], args[0])
+        return self._("User {0} is successfully removed from group {1}.").format(args[1], args[0])
 
     @catch_exceptions
     def set_nickname(self, args: str) -> str:
         """UserID nickname"""
         args = args.split(' ', 1)
         if len(args) < 2:
-            return "User ID and nickname are required."
+            return self._("User ID and nickname are required.")
         self.client.changeNickname(args[1], args[0], args[0])
-        return "Nickname of %s is set to %s." % args
+        return self._("Nickname of {0} is set to {1}.").format(*args)
 
     @catch_exceptions
     def set_group_title(self, args: str) -> str:
         """GroupID title"""
         args = args.split(' ', 1)
         if len(args) < 2:
-            return "User ID and title are required."
+            return self._("User ID and title are required.")
         self.client.changeThreadTitle(args[1], args[0], thread_type=ThreadType.GROUP)
-        return "Title of group %s is set to %s." % args
+        return self._("Title of group {0} is set to {1}.").format(*args)
 
     @catch_exceptions
     def set_chat_emoji(self, args: str) -> str:
         """ChatID emoji"""
         args = args.split(' ', 1)
         if len(args) < 2:
-            return "User ID and emoji are required."
+            return self._("User ID and emoji are required.")
         self.client.changeThreadEmoji(args[1], args[0])
-        return "Emoji of group %s is set to %s." % args
+        return self._("Emoji of group {0} is set to {1}.").format(*args)
 
     @catch_exceptions
     def set_member_nickname(self, args: str) -> str:
         """GroupID MemberID nickname"""
         args = args.split(' ', 2)
         if len(args) < 3:
-            return "Group ID, member ID and are nickname required."
+            return self._("Group ID, member ID and are nickname required.")
         self.client.changeNickname(args[2], args[1], args[0])
-        return "Nickname of %s -> %s is set as %s." % args
+        return self._("Nickname of {1} in {0} is set as {2}.").format(*args)

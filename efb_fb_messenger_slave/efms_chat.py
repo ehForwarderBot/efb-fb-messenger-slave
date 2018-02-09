@@ -1,4 +1,5 @@
-import copy
+# coding=utf-8
+
 import logging
 from typing import TYPE_CHECKING, Dict, Any
 from ehforwarderbot import EFBChat, ChatType
