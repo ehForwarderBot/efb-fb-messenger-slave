@@ -121,7 +121,7 @@ disappear at any time. Use at your own risk.
    When showing the threads list, include archived threads.
 
 Vendor-specifics
-================
+----------------
 
 EFMS’s chats provides the following vendor specific options:
 
@@ -129,3 +129,15 @@ EFMS’s chats provides the following vendor specific options:
   ``'Group'``.
 * ``'profile_picture_url'`` *(str)*: URL to the thread’s
   profile picture.
+
+Experimental localization support
+---------------------------------
+
+EFMS supports localized user interface prompts experimentally,
+by setting the locale environmental variable (``LANGUAGE``,
+``LC_ALL``, ``LC_MESSAGES`` or ``LANG``) to one of our
+`supported languages`_. Meanwhile, you can help to translate
+this project into your languages on `our Crowdin page`_.
+
+.. _supported languages: https://crowdin.com/project/ehforwarderbot/
+.. _our Crowdin page: https://crowdin.com/project/ehforwarderbot/
