@@ -1,0 +1,8 @@
+"preserve_hierarchy": true
+
+files: [
+  {
+    "source" : "/EFBChannels/efb-fb-messenger-slave/efb_fb_messenger_slave/locale/*.pot",
+    "translation" : "/EFBChannels/efb-fb-messenger-slave/efb_fb_messenger_slave/locale/%locale_with_underscore%/LC_MESSAGES/%file_name%.po",
+  },
+]
