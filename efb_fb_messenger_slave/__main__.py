@@ -31,7 +31,7 @@ def main():
     coordinator.profile = profile
     path = utils.get_data_path(FBMessengerChannel.channel_id)
 
-    print(_("EFB Facebook Messenger Slave Session Updater"
+    print(_("EFB Facebook Messenger Slave Session Updater\n"
             "============================================"))
     print()
     print(_("You are running EFMS {0}.").format(__version__))
@@ -39,7 +39,7 @@ def main():
     print(_("This will update and overwrite your EFMS token by\n"
             "log into your account again manually."))
     print()
-    print(_("You usually need to do this when you want to log into"
+    print(_("You usually need to do this when you want to log into\n"
             "a new account, or when the previous session is expired."))
     print()
     print(_("This session is written to EFB profile \"{0}\",\n"
