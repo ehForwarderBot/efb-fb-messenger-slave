@@ -5,15 +5,15 @@ msgstr ""
 "POT-Creation-Date: 2018-02-17 14:32+0800\n"
 "PO-Revision-Date: 2018-02-18 02:35-0500\n"
 "Last-Translator: blueset <ilove@1a23.com>\n"
-"Language-Team: Chinese Traditional\n"
-"Language: zh_TW\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: ehforwarderbot\n"
-"X-Crowdin-Language: zh-TW\n"
+"X-Crowdin-Language: id\n"
 "X-Crowdin-File: /EFBChannels/efb-fb-messenger-slave/efb_fb_messenger_slave/locale/efb_fb_messenger_slave.pot\n"
 
 #: efb_fb_messenger_slave/__init__.py:58
@@ -28,7 +28,7 @@ msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:124
 msgid "Messages cannot be removed in Facebook Messenger."
-msgstr "Facebook Messenger不支持撤回訊息"
+msgstr "Pesan tidak bisa dihapus di Messenger Facebook."
 
 #: efb_fb_messenger_slave/__init__.py:155
 msgid "Show threads list"
@@ -42,7 +42,7 @@ msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:161
 msgid "Search for users"
-msgstr "搜尋使用者"
+msgstr "Pencarian untuk pengguna"
 
 #: efb_fb_messenger_slave/__init__.py:162
 #: efb_fb_messenger_slave/__init__.py:169
@@ -56,11 +56,11 @@ msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:168
 msgid "Search for groups"
-msgstr "搜尋群組"
+msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:175
 msgid "Search for pages"
-msgstr "搜尋頁面"
+msgstr "Pencarian untuk halaman"
 
 #: efb_fb_messenger_slave/__init__.py:182
 msgid "Search for threads"
@@ -68,29 +68,33 @@ msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:189
 msgid "Add to group"
-msgstr "新增到群組"
+msgstr "Menambahkan ke grup"
 
 #: efb_fb_messenger_slave/__init__.py:190
 #, python-brace-format
 msgid "Add members to a group.\n"
 "Usage:\n"
 "    {function_name} GroupID UserID [UserID ...]"
-msgstr ""
+msgstr "Tambahkan anggota ke grup.\n"
+"Gunakan:\n"
+"    {function_name} GroupID UserID [UserID ...]"
 
 #: efb_fb_messenger_slave/__init__.py:196
 msgid "Remove from group"
-msgstr "從群組中移除"
+msgstr "Menghapus dari grup"
 
 #: efb_fb_messenger_slave/__init__.py:197
 #, python-brace-format
 msgid "Remove members from a group.\n"
 "Usage:\n"
 "    {function_name} GroupID UserID [UserID ...]"
-msgstr ""
+msgstr "Menghapus anggota dari grup.\n"
+"Gunakan:\n"
+"    {function_name} GroupID UserID [UserID ...]"
 
 #: efb_fb_messenger_slave/__init__.py:203
 msgid "Change nickname"
-msgstr "改變暱稱"
+msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:204
 #, python-brace-format
@@ -101,7 +105,7 @@ msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:210
 msgid "Change group title"
-msgstr "改變群名"
+msgstr "Mengubah judul grup"
 
 #: efb_fb_messenger_slave/__init__.py:211
 #, python-brace-format
@@ -112,7 +116,7 @@ msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:217
 msgid "Change chat emoji"
-msgstr ""
+msgstr "Ganti emoji obrolan"
 
 #: efb_fb_messenger_slave/__init__.py:218
 #, python-brace-format
@@ -123,7 +127,7 @@ msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:224
 msgid "Change member nickname"
-msgstr "改變成員暱稱"
+msgstr ""
 
 #: efb_fb_messenger_slave/__init__.py:225
 #, python-brace-format
@@ -141,17 +145,17 @@ msgstr[0] ""
 #: efb_fb_messenger_slave/extra_functions.py:46
 msgid "Found {} user."
 msgid_plural "Found {} users."
-msgstr[0] ""
+msgstr[0] "Ditemukan {} pengguna."
 
 #: efb_fb_messenger_slave/extra_functions.py:56
 msgid "Found {} group."
 msgid_plural "Found {} groups."
-msgstr[0] ""
+msgstr[0] "Ditemukan {} kelompok."
 
 #: efb_fb_messenger_slave/extra_functions.py:66
 msgid "Found {} page."
 msgid_plural "Found {} pages."
-msgstr[0] ""
+msgstr[0] "Ditemukan {} halaman."
 
 #: efb_fb_messenger_slave/extra_functions.py:76
 msgid "Found {} thread."
@@ -170,16 +174,16 @@ msgstr[0] ""
 
 #: efb_fb_messenger_slave/extra_functions.py:101
 msgid "Group ID and user ID are required."
-msgstr "缺少群組ID和使用者ID"
+msgstr "ID grup dan ID pengguna dibutuhkan."
 
 #: efb_fb_messenger_slave/extra_functions.py:103
 #, python-brace-format
 msgid "User {0} is successfully removed from group {1}."
-msgstr ""
+msgstr "Pengguna {0} telah berhasil dihapus dari grup {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:110
 msgid "User ID and nickname are required."
-msgstr ""
+msgstr "ID pengguna dan nama panggilan dibutuhkan."
 
 #: efb_fb_messenger_slave/extra_functions.py:112
 #, python-brace-format
@@ -188,30 +192,30 @@ msgstr ""
 
 #: efb_fb_messenger_slave/extra_functions.py:119
 msgid "User ID and title are required."
-msgstr ""
+msgstr "ID pengguna dan judul dibutuhkan."
 
 #: efb_fb_messenger_slave/extra_functions.py:121
 #, python-brace-format
 msgid "Title of group {0} is set to {1}."
-msgstr ""
+msgstr "Judul dari grup {0} diatur ke {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:128
 msgid "User ID and emoji are required."
-msgstr ""
+msgstr "ID pengguna dan emoji dibutuhkan."
 
 #: efb_fb_messenger_slave/extra_functions.py:130
 #, python-brace-format
 msgid "Emoji of group {0} is set to {1}."
-msgstr ""
+msgstr "Emoji dari grup {0} diatur ke {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:137
 msgid "Group ID, member ID and are nickname required."
-msgstr ""
+msgstr "ID grup, ID anggota dan nama panggilan yang diperlukan."
 
 #: efb_fb_messenger_slave/extra_functions.py:139
 #, python-brace-format
 msgid "Nickname of {1} in {0} is set as {2}."
-msgstr ""
+msgstr "Nama panggilan dari {1} di {0} diatur sebagai {2}."
 
 #: efb_fb_messenger_slave/__main__.py:34
 msgid "EFB Facebook Messenger Slave Session Updater\n"
@@ -221,7 +225,7 @@ msgstr ""
 #: efb_fb_messenger_slave/__main__.py:37
 #, python-brace-format
 msgid "You are running EFMS {0}."
-msgstr ""
+msgstr "Kamu sedang menjalankan EFMS {0}."
 
 #: efb_fb_messenger_slave/__main__.py:39
 msgid "This will update and overwrite your EFMS token by\n"
@@ -231,14 +235,17 @@ msgstr ""
 #: efb_fb_messenger_slave/__main__.py:42
 msgid "You usually need to do this when you want to log into\n"
 "a new account, or when the previous session is expired."
-msgstr ""
+msgstr "Biasanya anda perlu melakukan ini saat anda ingin masuk ke\n"
+"akun baru, atau saat sesi sebelumnya habis masa berlakunya."
 
 #: efb_fb_messenger_slave/__main__.py:45
 #, python-brace-format
 msgid "This session is written to EFB profile \"{0}\",\n"
 "which has its EFMS data located at\n"
 "{1}"
-msgstr ""
+msgstr "Sesi ini ditulis ke profil EFB \"{0}\",\n"
+"yang memiliki data EFMS yang berada di \n"
+"{1}"
 
 #: efb_fb_messenger_slave/__main__.py:49
 msgid "To continue, press Enter/Return."
@@ -246,21 +253,22 @@ msgstr ""
 
 #: efb_fb_messenger_slave/__main__.py:53
 msgid "Email: "
-msgstr "電郵: "
+msgstr ""
 
 #: efb_fb_messenger_slave/__main__.py:54
 msgid "Password: "
-msgstr "密碼: "
+msgstr "Kata sandi: "
 
 #: efb_fb_messenger_slave/__main__.py:58
 msgid "Log in failed. Please check the information above and try again."
-msgstr ""
+msgstr "Masuk gagal. Harap memeriksa informasi di atas dan coba lagi."
 
 #: efb_fb_messenger_slave/__main__.py:66
 #, python-brace-format
 msgid "Your session has been successfully updated. It's stored at\n"
 "{0}"
-msgstr ""
+msgstr "Sesi anda telah berhasil diperbarui. Ini disimpan di\n"
+"{0}"
 
 #: efb_fb_messenger_slave/__main__.py:68
 msgid "Your session cookies is as valuable as your account credential.\n"

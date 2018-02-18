@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-09 22:46+0800\n"
-"PO-Revision-Date: 2018-02-11 03:48-0500\n"
+"POT-Creation-Date: 2018-02-17 14:32+0800\n"
+"PO-Revision-Date: 2018-02-18 02:35-0500\n"
 "Last-Translator: blueset <ilove@1a23.com>\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -220,7 +220,8 @@ msgid "Nickname of {1} in {0} is set as {2}."
 msgstr ""
 
 #: efb_fb_messenger_slave/__main__.py:34
-msgid "EFB Facebook Messenger Slave Session Updater============================================"
+msgid "EFB Facebook Messenger Slave Session Updater\n"
+"============================================"
 msgstr ""
 
 #: efb_fb_messenger_slave/__main__.py:37
@@ -234,7 +235,8 @@ msgid "This will update and overwrite your EFMS token by\n"
 msgstr ""
 
 #: efb_fb_messenger_slave/__main__.py:42
-msgid "You usually need to do this when you want to log intoa new account, or when the previous session is expired."
+msgid "You usually need to do this when you want to log into\n"
+"a new account, or when the previous session is expired."
 msgstr ""
 
 #: efb_fb_messenger_slave/__main__.py:45
