@@ -150,7 +150,7 @@ class FBMessengerChannel(EFBChannel):
         photo.seek(0)
         return photo
 
-    # Extra functions
+    # Additional features
 
     @extra(name=_("Show threads list"),
            desc=_("Usage:\n"

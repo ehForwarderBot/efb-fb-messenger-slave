@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 def catch_exceptions(func):
     """
-    Decorator to wrap extra functions.
+    Decorator to wrap additional features.
     Return the exception string when caught.
     """
     def catch_exceptions_wrap(*args, **kwargs):
