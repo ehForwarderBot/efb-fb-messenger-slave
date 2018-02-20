@@ -46,7 +46,8 @@ class FBMessengerChannel(EFBChannel):
     _ = translator.gettext
     ngettext = translator.ngettext
 
-    def __init__(self):
+    def __init__(self, instance_id: str = None):
+        super().__init__(instance_id)
         session_path = os.path.join(efb_utils.get_data_path(FBMessengerChannel.channel_id), "session.pickle")
         try:
             data = pickle.load(open(session_path, 'rb'))
