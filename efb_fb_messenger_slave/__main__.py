@@ -24,12 +24,16 @@ def main():
                 fallback=True).install()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--profile", help="Choose a profile to start with. ", default="default")
+    parser.add_argument("-p", "--profile", help=_("Target profile."), default="default")
+    parser.add_argument("-i", "--instance", help=_("Target instance ID."), default=None)
 
     args = parser.parse_args()
     profile = args.profile
     coordinator.profile = profile
-    path = utils.get_data_path(FBMessengerChannel.channel_id)
+    channel_id = FBMessengerChannel.channel_id
+    if args.instance:
+        channel_id += f"#{args.instance}"
+    path = utils.get_data_path(channel_id)
 
     print(_("EFB Facebook Messenger Slave Session Updater\n"
             "============================================"))
@@ -42,9 +46,8 @@ def main():
     print(_("You usually need to do this when you want to log into\n"
             "a new account, or when the previous session is expired."))
     print()
-    print(_("This session is written to EFB profile \"{0}\",\n"
-            "which has its EFMS data located at\n"
-            "{1}").format(profile, path))
+    print(_("This session is written to"
+            "{0}").format(path))
     print()
     print(_("To continue, press Enter/Return."))
 
