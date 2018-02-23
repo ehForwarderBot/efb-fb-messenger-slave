@@ -5,6 +5,7 @@ import copy
 import os
 import urllib.parse
 import threading
+import time
 from typing import TYPE_CHECKING, Any, Dict, Tuple
 from tempfile import NamedTemporaryFile
 
@@ -220,7 +221,7 @@ class EFMSClient(Client):
                 for i in EmojiSize:
                     if sticker_id == i.value:
                         msg.type = MsgType.Text
-                        msg.text = "👍 (%s)" % i.__name__[0]
+                        msg.text = "👍 (%s)" % i.name[0]
                         return
             msg.type = MsgType.Sticker
             url = attachment['mercury']['sticker_attachment']['url']
@@ -333,6 +334,8 @@ class EFMSClient(Client):
         """
 
         # Ignore messages sent by EFMS
+        time.sleep(0.25)
+
         if mid in self.sent_messages:
             self.sent_messages.remove(mid)
             return
@@ -362,12 +365,12 @@ class EFMSClient(Client):
 
         if len(attachments) > 1:
             self.logger.debug("[%s] Multiple attachments detected. Splitting into %s messages.",
-                              msg.uid, len(attachments))
+                              mid, len(attachments))
             for idx, i in enumerate(attachments):
                 sub_msg = copy.copy(efb_msg)
                 sub_msg.uid += ".%d" % idx
                 self.attach_media(sub_msg, i)
-                coordinator.send_message(efb_msg)
+                coordinator.send_message(sub_msg)
             return
 
         if attachments:
