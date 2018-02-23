@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-17 14:32+0800\n"
-"PO-Revision-Date: 2018-02-18 08:04-0500\n"
+"POT-Creation-Date: 2018-02-22 10:05+1100\n"
+"PO-Revision-Date: 2018-02-23 05:45-0500\n"
 "Last-Translator: blueset <ilove@1a23.com>\n"
 "Language-Team: Spanish, Venezuela\n"
 "Language: es_VE\n"
@@ -16,260 +16,299 @@ msgstr ""
 "X-Crowdin-Language: es-VE\n"
 "X-Crowdin-File: /EFBChannels/efb-fb-messenger-slave/efb_fb_messenger_slave/locale/efb_fb_messenger_slave.pot\n"
 
-#: efb_fb_messenger_slave/__init__.py:58
+#: efb_fb_messenger_slave/__init__.py:59
 msgid "Session not found, please authorize your account.\n"
 "To do so, run: efms-auth"
-msgstr ""
+msgstr "No se encontró la sesión, por favor autorizar su cuenta.\n"
+"Para hacerlo, ejecute: efms-auth"
 
-#: efb_fb_messenger_slave/__init__.py:62
+#: efb_fb_messenger_slave/__init__.py:63
 msgid "You may need to re-authorize your account.\n"
 "To do so, run: efms-auth"
-msgstr ""
+msgstr "Sible que necesite volver a autorizar su cuenta.\n"
+"Para ello, ejecute: efms-auth"
 
-#: efb_fb_messenger_slave/__init__.py:124
+#: efb_fb_messenger_slave/__init__.py:125
 msgid "Messages cannot be removed in Facebook Messenger."
-msgstr ""
-
-#: efb_fb_messenger_slave/__init__.py:155
-msgid "Show threads list"
-msgstr ""
+msgstr "Los mensajes no se pueden eliminar en Facebook Messenger."
 
 #: efb_fb_messenger_slave/__init__.py:156
+msgid "Show threads list"
+msgstr "Mostrar lista de hilos"
+
+#: efb_fb_messenger_slave/__init__.py:157
 #, python-brace-format
 msgid "Usage:\n"
 "    {function_name}"
-msgstr ""
-
-#: efb_fb_messenger_slave/__init__.py:161
-msgid "Search for users"
-msgstr ""
+msgstr "Uso:\n"
+" {function_name}"
 
 #: efb_fb_messenger_slave/__init__.py:162
-#: efb_fb_messenger_slave/__init__.py:169
-#: efb_fb_messenger_slave/__init__.py:176
-#: efb_fb_messenger_slave/__init__.py:183
+msgid "Search for users"
+msgstr "Búsqueda de usuarios"
+
+#: efb_fb_messenger_slave/__init__.py:163
+#: efb_fb_messenger_slave/__init__.py:170
+#: efb_fb_messenger_slave/__init__.py:177
+#: efb_fb_messenger_slave/__init__.py:184
 #, python-brace-format
 msgid "Show the first 10 results.\n"
 "Usage:\n"
 "    {function_name} keyword"
-msgstr ""
+msgstr "Mostrar los primeros 10 resultados.\n"
+"Uso:\n"
+"    {function_name} Palabra clave"
 
-#: efb_fb_messenger_slave/__init__.py:168
+#: efb_fb_messenger_slave/__init__.py:169
 msgid "Search for groups"
-msgstr ""
+msgstr "Búsqueda de grupos"
 
-#: efb_fb_messenger_slave/__init__.py:175
+#: efb_fb_messenger_slave/__init__.py:176
 msgid "Search for pages"
-msgstr ""
+msgstr "Búsqueda por páginas"
 
-#: efb_fb_messenger_slave/__init__.py:182
+#: efb_fb_messenger_slave/__init__.py:183
 msgid "Search for threads"
-msgstr ""
-
-#: efb_fb_messenger_slave/__init__.py:189
-msgid "Add to group"
-msgstr ""
+msgstr "Búsqueda por temas"
 
 #: efb_fb_messenger_slave/__init__.py:190
+msgid "Add to group"
+msgstr "Agregar a un grupo"
+
+#: efb_fb_messenger_slave/__init__.py:191
 #, python-brace-format
 msgid "Add members to a group.\n"
 "Usage:\n"
 "    {function_name} GroupID UserID [UserID ...]"
-msgstr ""
-
-#: efb_fb_messenger_slave/__init__.py:196
-msgid "Remove from group"
-msgstr ""
+msgstr "Añadir miembros a un grupo.\n"
+"Uso:\n"
+"   {function_name} Id de usuario de GroupID [UserID ...]"
 
 #: efb_fb_messenger_slave/__init__.py:197
+msgid "Remove from group"
+msgstr "Eliminar del grupo"
+
+#: efb_fb_messenger_slave/__init__.py:198
 #, python-brace-format
 msgid "Remove members from a group.\n"
 "Usage:\n"
 "    {function_name} GroupID UserID [UserID ...]"
-msgstr ""
-
-#: efb_fb_messenger_slave/__init__.py:203
-msgid "Change nickname"
-msgstr ""
+msgstr "Eliminar miembros de un grupo.\n"
+"Uso:\n"
+"{function_name} Id de usuario de GroupID [UserID ...]"
 
 #: efb_fb_messenger_slave/__init__.py:204
+msgid "Change nickname"
+msgstr "Cambiar nickname"
+
+#: efb_fb_messenger_slave/__init__.py:205
 #, python-brace-format
 msgid "Change nickname of a user.\n"
 "Usage:\n"
 "    {function_name} UserID nickname"
-msgstr ""
-
-#: efb_fb_messenger_slave/__init__.py:210
-msgid "Change group title"
-msgstr ""
+msgstr "Cambiar nickname de un usuario.\n"
+"Uso:\n"
+"    {function_name} UserID nickname"
 
 #: efb_fb_messenger_slave/__init__.py:211
+msgid "Change group title"
+msgstr "Cambiar el título de grupo"
+
+#: efb_fb_messenger_slave/__init__.py:212
 #, python-brace-format
 msgid "Change the title of a group.\n"
 "Usage:\n"
 "    {function_name} GroupID title"
-msgstr ""
-
-#: efb_fb_messenger_slave/__init__.py:217
-msgid "Change chat emoji"
-msgstr ""
+msgstr "Cambiar el título de un grupo.\n"
+"Uso:\n"
+"    {function_name} Título del GroupID"
 
 #: efb_fb_messenger_slave/__init__.py:218
+msgid "Change chat emoji"
+msgstr "Cambiar chat emoji"
+
+#: efb_fb_messenger_slave/__init__.py:219
 #, python-brace-format
 msgid "Change the emoji of a chat.\n"
 "Usage:\n"
 "    {function_name} ChatID emoji"
-msgstr ""
-
-#: efb_fb_messenger_slave/__init__.py:224
-msgid "Change member nickname"
-msgstr ""
+msgstr "Change el emoji del chat.\n"
+"Use:\n"
+"    {function_name} ChatID emoji"
 
 #: efb_fb_messenger_slave/__init__.py:225
+msgid "Change member nickname"
+msgstr "Cambiar miembro nickname"
+
+#: efb_fb_messenger_slave/__init__.py:226
 #, python-brace-format
 msgid "Change the nickname of a group member.\n"
 "Usage:\n"
 "    {function_name} GroupID MemberID nickname"
-msgstr ""
+msgstr "Cambia el nickname de un miembro del grupo.\n"
+"Use:\n"
+"    {function_name} GroupID MemberID nickname"
 
 #: efb_fb_messenger_slave/extra_functions.py:34
 #, python-brace-format
 msgid "You have {0} thread in your thread list."
 msgid_plural "You have {0} threads in your thread list."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Tienes {0} hilo en tu lista de temas\n"
+"Tienes {0} hilo en tu lista de temas."
+msgstr[1] "Tienes {0} hilo en tu lista de temas\n"
+"Tienes {0} hilo en tu lista de temas."
 
 #: efb_fb_messenger_slave/extra_functions.py:46
 msgid "Found {} user."
 msgid_plural "Found {} users."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Usuario encontrado {}.\n"
+"Usuario encontrado {}."
+msgstr[1] "Usuario encontrado {}.\n"
+"Usuario encontrado {}."
 
 #: efb_fb_messenger_slave/extra_functions.py:56
 msgid "Found {} group."
 msgid_plural "Found {} groups."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Usuario encontrado {}.\n"
+"Usuario encontrado {}."
+msgstr[1] "Usuario encontrado {}.\n"
+"Usuario encontrado {}."
 
 #: efb_fb_messenger_slave/extra_functions.py:66
 msgid "Found {} page."
 msgid_plural "Found {} pages."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Paginas encontradas {}.\n"
+"Paginas encontradas {}."
+msgstr[1] "Paginas encontradas {}.\n"
+"Paginas encontradas {}."
 
 #: efb_fb_messenger_slave/extra_functions.py:76
 msgid "Found {} thread."
 msgid_plural "Found {} threads."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Temas encontrados {} \n"
+"Temas encontrados {}."
+msgstr[1] "Temas encontrados {} \n"
+"Temas encontrados {}."
 
 #: efb_fb_messenger_slave/extra_functions.py:90
 msgid "Group ID and user IDs are required"
-msgstr ""
+msgstr "Se requiere ID de grupo en el ID de usuario"
 
 #: efb_fb_messenger_slave/extra_functions.py:92
 #, python-brace-format
 msgid "User {0} are successfully added to group {1}."
 msgid_plural "Users {0} are successfully added to group {1}."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "El usuario {0} se agrego con éxito al grupo {1}.\n"
+"El usuario {0} se agrego con éxito al grupo {1}."
+msgstr[1] "El usuario {0} se agrego con éxito al grupo {1}.\n"
+"El usuario {0} se agrego con éxito al grupo {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:101
 msgid "Group ID and user ID are required."
-msgstr ""
+msgstr "Se requiere ID de grupo en el ID de usuario."
 
 #: efb_fb_messenger_slave/extra_functions.py:103
 #, python-brace-format
 msgid "User {0} is successfully removed from group {1}."
-msgstr ""
+msgstr "El usuario {0} se elimino con éxito del grupo {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:110
 msgid "User ID and nickname are required."
-msgstr ""
+msgstr "Se requiere nickname de usuario."
 
 #: efb_fb_messenger_slave/extra_functions.py:112
 #, python-brace-format
 msgid "Nickname of {0} is set to {1}."
-msgstr ""
+msgstr "Nickname de {0} es {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:119
 msgid "User ID and title are required."
-msgstr ""
+msgstr "Se requiere ID de usuario y nombre."
 
 #: efb_fb_messenger_slave/extra_functions.py:121
 #, python-brace-format
 msgid "Title of group {0} is set to {1}."
-msgstr ""
+msgstr "El título del grupo {0} es {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:128
 msgid "User ID and emoji are required."
-msgstr ""
+msgstr "Se requieren ID de usuario y emoji."
 
 #: efb_fb_messenger_slave/extra_functions.py:130
 #, python-brace-format
 msgid "Emoji of group {0} is set to {1}."
-msgstr ""
+msgstr "Emoji del grupo {0} es {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:137
 msgid "Group ID, member ID and are nickname required."
-msgstr ""
+msgstr "Group ID, ID de miembro y nickname son necesarios."
 
 #: efb_fb_messenger_slave/extra_functions.py:139
 #, python-brace-format
 msgid "Nickname of {1} in {0} is set as {2}."
+msgstr "Nickname de {1} en {0} se establece como {2}."
+
+#: efb_fb_messenger_slave/__main__.py:27
+msgid "Target profile."
 msgstr ""
 
-#: efb_fb_messenger_slave/__main__.py:34
+#: efb_fb_messenger_slave/__main__.py:28
+msgid "Target instance ID."
+msgstr ""
+
+#: efb_fb_messenger_slave/__main__.py:38
 msgid "EFB Facebook Messenger Slave Session Updater\n"
 "============================================"
-msgstr ""
+msgstr "Actualización de la sesión de mensajería de EFB en Facebook"
 
-#: efb_fb_messenger_slave/__main__.py:37
+#: efb_fb_messenger_slave/__main__.py:41
 #, python-brace-format
 msgid "You are running EFMS {0}."
-msgstr ""
+msgstr "Se está ejecutando EFMS {0}."
 
-#: efb_fb_messenger_slave/__main__.py:39
+#: efb_fb_messenger_slave/__main__.py:43
 msgid "This will update and overwrite your EFMS token by\n"
 "log into your account again manually."
-msgstr ""
+msgstr "Esto actualizará y sobreescribirá su token EFMS mediante\n"
+"inicie sesión de nuevo en su cuenta manualmente."
 
-#: efb_fb_messenger_slave/__main__.py:42
+#: efb_fb_messenger_slave/__main__.py:46
 msgid "You usually need to do this when you want to log into\n"
 "a new account, or when the previous session is expired."
-msgstr ""
-
-#: efb_fb_messenger_slave/__main__.py:45
-#, python-brace-format
-msgid "This session is written to EFB profile \"{0}\",\n"
-"which has its EFMS data located at\n"
-"{1}"
-msgstr ""
+msgstr "Por lo general es necesario hacer esto cuando desea iniciar sesión en\n"
+"una cuenta nueva, o cuando la sesión anterior haya caducado."
 
 #: efb_fb_messenger_slave/__main__.py:49
+#, python-brace-format
+msgid "This session is written to{0}"
+msgstr ""
+
+#: efb_fb_messenger_slave/__main__.py:52
 msgid "To continue, press Enter/Return."
-msgstr ""
+msgstr "Para continuar presione Enter/Return."
 
-#: efb_fb_messenger_slave/__main__.py:53
+#: efb_fb_messenger_slave/__main__.py:56
 msgid "Email: "
-msgstr ""
+msgstr "Email: "
 
-#: efb_fb_messenger_slave/__main__.py:54
+#: efb_fb_messenger_slave/__main__.py:57
 msgid "Password: "
-msgstr ""
+msgstr "Password: "
 
-#: efb_fb_messenger_slave/__main__.py:58
+#: efb_fb_messenger_slave/__main__.py:61
 msgid "Log in failed. Please check the information above and try again."
-msgstr ""
+msgstr "Log in no funciona. Por favor, compruebe la información anterior y vuelva a intentarlo."
 
-#: efb_fb_messenger_slave/__main__.py:66
+#: efb_fb_messenger_slave/__main__.py:69
 #, python-brace-format
 msgid "Your session has been successfully updated. It's stored at\n"
 "{0}"
-msgstr ""
+msgstr "Su sesión se ha actualizado con éxito. Se guarda en\n"
+"{0}"
 
-#: efb_fb_messenger_slave/__main__.py:68
+#: efb_fb_messenger_slave/__main__.py:71
 msgid "Your session cookies is as valuable as your account credential.\n"
 "Please keep them with equal care."
-msgstr ""
+msgstr "Las cookies de sesión son tan importantes como la identificación de su cuenta.\n"
+"Por favor, guárdelos con igual cuidado."
 

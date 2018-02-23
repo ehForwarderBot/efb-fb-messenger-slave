@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-17 14:32+0800\n"
-"PO-Revision-Date: 2018-02-18 08:04-0500\n"
+"POT-Creation-Date: 2018-02-22 10:05+1100\n"
+"PO-Revision-Date: 2018-02-23 05:35-0500\n"
 "Last-Translator: blueset <ilove@1a23.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -16,41 +16,41 @@ msgstr ""
 "X-Crowdin-Language: ja\n"
 "X-Crowdin-File: /EFBChannels/efb-fb-messenger-slave/efb_fb_messenger_slave/locale/efb_fb_messenger_slave.pot\n"
 
-#: efb_fb_messenger_slave/__init__.py:58
+#: efb_fb_messenger_slave/__init__.py:59
 msgid "Session not found, please authorize your account.\n"
 "To do so, run: efms-auth"
 msgstr "アカウントはまだ認証されません。\n"
 "アカウントを認証するには、 efms-auth を実行してください。"
 
-#: efb_fb_messenger_slave/__init__.py:62
+#: efb_fb_messenger_slave/__init__.py:63
 msgid "You may need to re-authorize your account.\n"
 "To do so, run: efms-auth"
 msgstr "アカウントを再任用する必要があるかもしれません。\n"
 "アカウントを認証するには、 efms-auth を実行してください。"
 
-#: efb_fb_messenger_slave/__init__.py:124
+#: efb_fb_messenger_slave/__init__.py:125
 msgid "Messages cannot be removed in Facebook Messenger."
 msgstr "Facebook Messenger でメッセージの取り消しはできません。"
 
-#: efb_fb_messenger_slave/__init__.py:155
+#: efb_fb_messenger_slave/__init__.py:156
 msgid "Show threads list"
 msgstr "全てのスレッドを表示する"
 
-#: efb_fb_messenger_slave/__init__.py:156
+#: efb_fb_messenger_slave/__init__.py:157
 #, python-brace-format
 msgid "Usage:\n"
 "    {function_name}"
 msgstr "用法：\n"
 "    {function_name}"
 
-#: efb_fb_messenger_slave/__init__.py:161
+#: efb_fb_messenger_slave/__init__.py:162
 msgid "Search for users"
 msgstr "ユーザーの検索"
 
-#: efb_fb_messenger_slave/__init__.py:162
-#: efb_fb_messenger_slave/__init__.py:169
-#: efb_fb_messenger_slave/__init__.py:176
-#: efb_fb_messenger_slave/__init__.py:183
+#: efb_fb_messenger_slave/__init__.py:163
+#: efb_fb_messenger_slave/__init__.py:170
+#: efb_fb_messenger_slave/__init__.py:177
+#: efb_fb_messenger_slave/__init__.py:184
 #, python-brace-format
 msgid "Show the first 10 results.\n"
 "Usage:\n"
@@ -59,23 +59,23 @@ msgstr "最初の 10 件のみを表示する。\n"
 "用法: \n"
 "    {function_name} キーワード"
 
-#: efb_fb_messenger_slave/__init__.py:168
+#: efb_fb_messenger_slave/__init__.py:169
 msgid "Search for groups"
 msgstr "グループを検索"
 
-#: efb_fb_messenger_slave/__init__.py:175
+#: efb_fb_messenger_slave/__init__.py:176
 msgid "Search for pages"
 msgstr "ページを検索"
 
-#: efb_fb_messenger_slave/__init__.py:182
+#: efb_fb_messenger_slave/__init__.py:183
 msgid "Search for threads"
 msgstr "スレッドを検索"
 
-#: efb_fb_messenger_slave/__init__.py:189
+#: efb_fb_messenger_slave/__init__.py:190
 msgid "Add to group"
 msgstr "グループに追加"
 
-#: efb_fb_messenger_slave/__init__.py:190
+#: efb_fb_messenger_slave/__init__.py:191
 #, python-brace-format
 msgid "Add members to a group.\n"
 "Usage:\n"
@@ -84,11 +84,11 @@ msgstr "メンバーをグループに追加する。\n"
 "用法: \n"
 "    {function_name} グループID ユーザーID [ユーザーID...]"
 
-#: efb_fb_messenger_slave/__init__.py:196
+#: efb_fb_messenger_slave/__init__.py:197
 msgid "Remove from group"
 msgstr "グループから削除"
 
-#: efb_fb_messenger_slave/__init__.py:197
+#: efb_fb_messenger_slave/__init__.py:198
 #, python-brace-format
 msgid "Remove members from a group.\n"
 "Usage:\n"
@@ -97,11 +97,11 @@ msgstr "メンバーをグループから削除する。\n"
 "用法: \n"
 "    {function_name} グループID ユーザーID [ユーザーID...]"
 
-#: efb_fb_messenger_slave/__init__.py:203
+#: efb_fb_messenger_slave/__init__.py:204
 msgid "Change nickname"
 msgstr "ニックネームを変更"
 
-#: efb_fb_messenger_slave/__init__.py:204
+#: efb_fb_messenger_slave/__init__.py:205
 #, python-brace-format
 msgid "Change nickname of a user.\n"
 "Usage:\n"
@@ -110,11 +110,11 @@ msgstr "ユーザーのニックネームを変更する。\n"
 "用法: \n"
 "    {function_name} ユーザーID ニックネーム"
 
-#: efb_fb_messenger_slave/__init__.py:210
+#: efb_fb_messenger_slave/__init__.py:211
 msgid "Change group title"
 msgstr "グループのタイトルを変更"
 
-#: efb_fb_messenger_slave/__init__.py:211
+#: efb_fb_messenger_slave/__init__.py:212
 #, python-brace-format
 msgid "Change the title of a group.\n"
 "Usage:\n"
@@ -123,11 +123,11 @@ msgstr "グループのタイトルを変更する。\n"
 "用法: \n"
 "    {function_name} グループID タイトル"
 
-#: efb_fb_messenger_slave/__init__.py:217
+#: efb_fb_messenger_slave/__init__.py:218
 msgid "Change chat emoji"
 msgstr "チャットの絵文字を変更"
 
-#: efb_fb_messenger_slave/__init__.py:218
+#: efb_fb_messenger_slave/__init__.py:219
 #, python-brace-format
 msgid "Change the emoji of a chat.\n"
 "Usage:\n"
@@ -136,11 +136,11 @@ msgstr "チャットの絵文字を変更する。\n"
 "用法: \n"
 "    {function_name} グループID 絵文字"
 
-#: efb_fb_messenger_slave/__init__.py:224
+#: efb_fb_messenger_slave/__init__.py:225
 msgid "Change member nickname"
 msgstr "メンバーのニックネームを変更"
 
-#: efb_fb_messenger_slave/__init__.py:225
+#: efb_fb_messenger_slave/__init__.py:226
 #, python-brace-format
 msgid "Change the nickname of a group member.\n"
 "Usage:\n"
@@ -230,55 +230,59 @@ msgstr "グループ ID、メンバー ID とニックネームが必要しま�
 msgid "Nickname of {1} in {0} is set as {2}."
 msgstr "グループ {0} のメンバー {1} のニックネームは {2} にしました。"
 
-#: efb_fb_messenger_slave/__main__.py:34
+#: efb_fb_messenger_slave/__main__.py:27
+msgid "Target profile."
+msgstr ""
+
+#: efb_fb_messenger_slave/__main__.py:28
+msgid "Target instance ID."
+msgstr ""
+
+#: efb_fb_messenger_slave/__main__.py:38
 msgid "EFB Facebook Messenger Slave Session Updater\n"
 "============================================"
 msgstr "EFB Facebook Messenger スレーブチャンネル認証ツール\n"
 "============================================"
 
-#: efb_fb_messenger_slave/__main__.py:37
+#: efb_fb_messenger_slave/__main__.py:41
 #, python-brace-format
 msgid "You are running EFMS {0}."
 msgstr "こちらは EFMS バージョン {0} です。"
 
-#: efb_fb_messenger_slave/__main__.py:39
+#: efb_fb_messenger_slave/__main__.py:43
 msgid "This will update and overwrite your EFMS token by\n"
 "log into your account again manually."
 msgstr "このプログラムは、あなたのアカウントを認証し、その\n"
 "トークンを更新して、上書きします。"
 
-#: efb_fb_messenger_slave/__main__.py:42
+#: efb_fb_messenger_slave/__main__.py:46
 msgid "You usually need to do this when you want to log into\n"
 "a new account, or when the previous session is expired."
 msgstr "これは通常に新しいアカウントをログインする時、または\n"
 "前のセッションが切れたときには必要します。"
 
-#: efb_fb_messenger_slave/__main__.py:45
-#, python-brace-format
-msgid "This session is written to EFB profile \"{0}\",\n"
-"which has its EFMS data located at\n"
-"{1}"
-msgstr "このトークンは EFB プロフィール \"{0}\"、\n"
-"データパス {1}\n"
-"に書き込みます。"
-
 #: efb_fb_messenger_slave/__main__.py:49
+#, python-brace-format
+msgid "This session is written to{0}"
+msgstr ""
+
+#: efb_fb_messenger_slave/__main__.py:52
 msgid "To continue, press Enter/Return."
 msgstr "続けるには、Enter/Return キーを押してください。"
 
-#: efb_fb_messenger_slave/__main__.py:53
+#: efb_fb_messenger_slave/__main__.py:56
 msgid "Email: "
 msgstr "メール: "
 
-#: efb_fb_messenger_slave/__main__.py:54
+#: efb_fb_messenger_slave/__main__.py:57
 msgid "Password: "
 msgstr "パスワード: "
 
-#: efb_fb_messenger_slave/__main__.py:58
+#: efb_fb_messenger_slave/__main__.py:61
 msgid "Log in failed. Please check the information above and try again."
 msgstr "ログインに失敗しました。上記の情報を確認して、もう一度やり直してください。"
 
-#: efb_fb_messenger_slave/__main__.py:66
+#: efb_fb_messenger_slave/__main__.py:69
 #, python-brace-format
 msgid "Your session has been successfully updated. It's stored at\n"
 "{0}"
@@ -286,7 +290,7 @@ msgstr "あなたのセッションは正常に更新されました。\n"
 "{0}\n"
 "に保存されでいます。"
 
-#: efb_fb_messenger_slave/__main__.py:68
+#: efb_fb_messenger_slave/__main__.py:71
 msgid "Your session cookies is as valuable as your account credential.\n"
 "Please keep them with equal care."
 msgstr "セッションクッキーは、アカウントパスワードと同じくらい貴重です。\n"
