@@ -46,7 +46,7 @@ def main():
     print(_("You usually need to do this when you want to log into\n"
             "a new account, or when the previous session is expired."))
     print()
-    print(_("This session is written to"
+    print(_("This session is written to\n"
             "{0}").format(path))
     print()
     print(_("To continue, press Enter/Return."))
