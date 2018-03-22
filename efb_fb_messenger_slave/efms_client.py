@@ -29,8 +29,8 @@ class EFMSClient(Client):
 
     logger = logging.getLogger("EFMSClient")
 
-    """Set of messages IDs sent by EFMS, popped when message is received again."""
     sent_messages = set()
+    """Set of messages IDs sent by EFMS, popped when message is received again."""
 
     # Overrides for patches
 
@@ -122,7 +122,7 @@ class EFMSClient(Client):
 
     def process_url(self, url: str) -> str:
         """Unwrap Facebook-proxied URL if necessary."""
-        if self.client.flag('proxy_links_by_facebook'):
+        if self.channel.flag('proxy_links_by_facebook'):
             return url
         if 'safe_image.php' in url:
             query = urllib.parse.urlparse(url).query
@@ -245,7 +245,7 @@ class EFMSClient(Client):
             preview = get_value(link_information, ('media', 'playable_url'), None) if \
                 get_value(link_information, ('media', 'is_playable'), False) else None
             preview = preview or get_value(link_information, ('media', 'image', 'uri'), None)
-            url = link_information['media']['url']
+            url = link_information['media'].get('url', preview)
             msg.attributes = EFBMsgLinkAttribute(title=title,
                                                  description=description,
                                                  image=self.process_url(preview),
