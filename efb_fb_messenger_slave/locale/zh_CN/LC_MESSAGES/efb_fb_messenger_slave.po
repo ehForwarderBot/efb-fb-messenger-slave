@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-22 10:05+1100\n"
-"PO-Revision-Date: 2018-02-23 05:35-0500\n"
+"POT-Creation-Date: 2018-02-24 14:22+1100\n"
+"PO-Revision-Date: 2018-03-22 07:40-0400\n"
 "Last-Translator: blueset <ilove@1a23.com>\n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -132,7 +132,9 @@ msgstr "更改会话 Emoji"
 msgid "Change the emoji of a chat.\n"
 "Usage:\n"
 "    {function_name} ChatID emoji"
-msgstr ""
+msgstr "修改会话的 Emoji。\n"
+"用法: \n"
+"    {function_name} 群组ID Emoji"
 
 #: efb_fb_messenger_slave/__init__.py:225
 msgid "Change member nickname"
@@ -217,7 +219,7 @@ msgstr "缺少用户 ID 或 Emoji。"
 #: efb_fb_messenger_slave/extra_functions.py:130
 #, python-brace-format
 msgid "Emoji of group {0} is set to {1}."
-msgstr ""
+msgstr "群组 {0} 的 Emoji 已成功设置为 {1}。"
 
 #: efb_fb_messenger_slave/extra_functions.py:137
 msgid "Group ID, member ID and are nickname required."
@@ -230,11 +232,11 @@ msgstr "成员 {0} 在群组 {1} 的昵称已成功更改为 {2}。"
 
 #: efb_fb_messenger_slave/__main__.py:27
 msgid "Target profile."
-msgstr ""
+msgstr "目标配置文件。"
 
 #: efb_fb_messenger_slave/__main__.py:28
 msgid "Target instance ID."
-msgstr ""
+msgstr "目标实例 ID。"
 
 #: efb_fb_messenger_slave/__main__.py:38
 msgid "EFB Facebook Messenger Slave Session Updater\n"
@@ -260,8 +262,10 @@ msgstr "通常当你想要登陆新账户或是当前会话过期时，\n"
 
 #: efb_fb_messenger_slave/__main__.py:49
 #, python-brace-format
-msgid "This session is written to{0}"
-msgstr ""
+msgid "This session is written to\n"
+"{0}"
+msgstr "此会话将写入\n"
+"{0}"
 
 #: efb_fb_messenger_slave/__main__.py:52
 msgid "To continue, press Enter/Return."

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-22 10:05+1100\n"
-"PO-Revision-Date: 2018-02-23 05:45-0500\n"
+"POT-Creation-Date: 2018-02-24 14:22+1100\n"
+"PO-Revision-Date: 2018-03-22 07:40-0400\n"
 "Last-Translator: blueset <ilove@1a23.com>\n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -232,11 +232,11 @@ msgstr "Nama panggilan dari {1} di {0} diatur sebagai {2}."
 
 #: efb_fb_messenger_slave/__main__.py:27
 msgid "Target profile."
-msgstr ""
+msgstr "Target profil."
 
 #: efb_fb_messenger_slave/__main__.py:28
 msgid "Target instance ID."
-msgstr ""
+msgstr "ID contoh target."
 
 #: efb_fb_messenger_slave/__main__.py:38
 msgid "EFB Facebook Messenger Slave Session Updater\n"
@@ -263,8 +263,10 @@ msgstr "Biasanya anda perlu melakukan ini saat anda ingin masuk ke\n"
 
 #: efb_fb_messenger_slave/__main__.py:49
 #, python-brace-format
-msgid "This session is written to{0}"
-msgstr ""
+msgid "This session is written to\n"
+"{0}"
+msgstr "Sesi ini ditulis untuk\n"
+"{0}"
 
 #: efb_fb_messenger_slave/__main__.py:52
 msgid "To continue, press Enter/Return."
