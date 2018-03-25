@@ -35,7 +35,8 @@ class EFMSClient(Client):
     # Overrides for patches
 
     def __init__(self, *args, **kwargs):
-        kwargs['logging_level'] = logging.NOTSET
+        kwargs['logging_level'] = 100
+        # Disable all logging inside the module
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger(__name__)
 
