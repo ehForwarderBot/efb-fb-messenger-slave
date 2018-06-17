@@ -380,3 +380,8 @@ class EFMSClient(Client):
         coordinator.send_message(efb_msg)
 
         self.markAsDelivered(mid, thread_id)
+
+    def onChatTimestamp(self, buddylist=None, msg=None):
+        # No action needed on receiving timestamp update
+        # Suppress timestamp log
+        pass
