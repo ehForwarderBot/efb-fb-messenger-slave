@@ -6,7 +6,7 @@ import threading
 import emoji
 from typing import TYPE_CHECKING, Set
 
-from fbchat.models import Thread, Message, TypingStatus, ThreadType, Mention, EmojiSize, MessageReaction
+from fbchat.models import Thread, Message, TypingStatus, ThreadType, Mention, EmojiSize, MessageReaction, Sticker
 from ehforwarderbot import EFBMsg, MsgType
 from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgStatusAttribute, ChatType
 from ehforwarderbot.exceptions import EFBMessageTypeNotSupported
@@ -71,7 +71,16 @@ class MasterMessageManager:
             thread: Thread = self.client.fetchThreadInfo(msg.chat.chat_uid)[str(msg.chat.chat_uid)]
 
             if msg.type in (MsgType.Text, MsgType.Unsupported):
-                if msg.text[:-1] in emoji.UNICODE_EMOJI and msg.text[-1] in 'SML':
+                if msg.text == "👍":
+                    fb_msg.sticker = Sticker(uid=EmojiSize.SMALL)
+                elif msg.text[0] == "👍" and len(msg) == 2 and msg[1] in 'SML':
+                    if msg.text[-1] == 'S':
+                        fb_msg.sticker = Sticker(uid=EmojiSize.SMALL)
+                    elif msg.text[-1] == 'M':
+                        fb_msg.sticker = Sticker(uid=EmojiSize.MEDIUM)
+                    elif msg.text[-1] == 'L':
+                        fb_msg.sticker = Sticker(uid=EmojiSize.LARGE)
+                elif msg.text[:-1] in emoji.UNICODE_EMOJI and msg.text[-1] in 'SML':
                     self.logger.debug("[%s] Message is an Emoji message: %s", msg.uid, msg.text)
                     if msg.text[-1] == 'S':
                         fb_msg.emoji_size = EmojiSize.SMALL
