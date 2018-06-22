@@ -193,16 +193,16 @@ class EFMSClient(Client):
             msg.mime = msg.mime or 'image/gif'
             ext = os.path.splitext(msg.filename)[1]
             msg.file = NamedTemporaryFile(suffix=ext)
-            msg.file.write(requests.get(blob_attachment['animated_image']['uri']).content)
+            msg.file.write(requests.get(blob_attachment['animated_image']['uri'], allow_redirects=True).content)
             msg.file.seek(0)
             msg.path = msg.file.name
         elif attachment_type == 'MessageFile':
-            msg.type = MsgType.Image
+            msg.type = MsgType.File
             msg.filename = msg.filename or 'file'
             msg.mime = msg.mime or 'application/octet-stream'
             ext = os.path.splitext(msg.filename)[1]
             msg.file = NamedTemporaryFile(suffix=ext)
-            msg.file.write(requests.get(blob_attachment['url']).content)
+            msg.file.write(requests.get(blob_attachment['url']).content, allow_redirects=True)
             msg.file.seek(0)
             msg.path = msg.file.name
         elif attachment_type == 'MessageVideo':
@@ -211,7 +211,7 @@ class EFMSClient(Client):
             msg.mime = msg.mime or 'video/mpeg'
             ext = os.path.splitext(msg.filename)[1]
             msg.file = NamedTemporaryFile(suffix=ext)
-            msg.file.write(requests.get(blob_attachment['playable_url']).content)
+            msg.file.write(requests.get(blob_attachment['playable_url'], allow_redirects=True).content)
             msg.file.seek(0)
             msg.path = msg.file.name
         elif attachment_type == '__Sticker':
