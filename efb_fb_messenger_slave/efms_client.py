@@ -202,7 +202,7 @@ class EFMSClient(Client):
             msg.mime = msg.mime or 'application/octet-stream'
             ext = os.path.splitext(msg.filename)[1]
             msg.file = NamedTemporaryFile(suffix=ext)
-            msg.file.write(requests.get(blob_attachment['url']).content, allow_redirects=True)
+            msg.file.write(requests.get(blob_attachment['url'], allow_redirects=True).content)
             msg.file.seek(0)
             msg.path = msg.file.name
         elif attachment_type == 'MessageVideo':
