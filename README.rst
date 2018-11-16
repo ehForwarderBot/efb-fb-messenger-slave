@@ -52,6 +52,11 @@ Getting started
 
    And follow the instructions.
 
+Known issues
+------------
+- Message reactions from others and you on other clients will not
+  be received by EFMS.
+
 Optional configuration file
 ---------------------------
 
