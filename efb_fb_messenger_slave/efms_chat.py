@@ -131,6 +131,24 @@ class EFMSChat(EFBChat):
                     self.chat_name = self.chat_name or item['name']
                     self.vendor_specific['profile_picture_url'] = item['big_image_src']['uri']
                     self.vendor_specific['chat_type'] = item.get('__typename')
+            elif self.graph_ql_thread['thread_type'] == 'MARKETPLACE':
+                # Data of a marketplace thread
+                self.chat_type = ChatType.Group
+                self.chat_uid = self.graph_ql_thread['thread_key']['thread_fbid']
+                for i in self.graph_ql_thread['all_participants']['nodes']:
+                    self.members.append(EFMSChat(self.channel,
+                                                 graph_ql_thread=i,
+                                                 lazy_load='name' in i['messaging_actor']))
+                    self.members[-1].group = self
+                    self.members[-1].is_chat = False
+                self.vendor_specific['chat_type'] = 'Marketplace'
+                self.vendor_specific['marketplace_thread_data'] = self.graph_ql_thread['marketplace_thread_data']
+                item_picture = self.graph_ql_thread['marketplace_thread_data']\
+                    .get("for_sale_item", {}).get("primary_photo", {})\
+                    .get("image", {}).get("url", None)
+                if item_picture:
+                    self.vendor_specific['profile_picture_url'] = item_picture
+
             elif self.graph_ql_thread['thread_type'] == 'GROUP':
                 self.chat_type = ChatType.Group
                 self.chat_uid = self.graph_ql_thread['thread_key']['thread_fbid']
