@@ -91,7 +91,7 @@ class MasterMessageManager:
                     fb_msg.text = msg.text[:-1]
                 msg.uid = self.client.send(fb_msg, thread_id=thread.uid, thread_type=thread.type)
             elif msg.type in (MsgType.Image, MsgType.Sticker):
-                msg.uid = self.client.send_image_file(msg.path, msg.mime, message=fb_msg,
+                msg.uid = self.client.send_image_file(msg.filename, msg.file, msg.mime, message=fb_msg,
                                                       thread_id=thread.uid, thread_type=thread.type)
             elif msg.type == MsgType.Audio:
                 file_id = self.upload_file(msg)

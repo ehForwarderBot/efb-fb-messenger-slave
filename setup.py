@@ -36,7 +36,7 @@ setup(
     ],
     install_requires=[
         "ehforwarderbot",
-        "fbchat",
+        "fbchat>=1.4.2",
         "PyYaml",
         'requests',
         'emoji'

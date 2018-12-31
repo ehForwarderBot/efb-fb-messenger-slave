@@ -142,12 +142,13 @@ class EFMSChat(EFBChat):
                     self.members[-1].group = self
                     self.members[-1].is_chat = False
                 self.vendor_specific['chat_type'] = 'Marketplace'
-                self.vendor_specific['marketplace_thread_data'] = self.graph_ql_thread['marketplace_thread_data']
-                item_picture = self.graph_ql_thread['marketplace_thread_data']\
-                    .get("for_sale_item", {}).get("primary_photo", {})\
-                    .get("image", {}).get("url", None)
-                if item_picture:
-                    self.vendor_specific['profile_picture_url'] = item_picture
+                if 'marketplace_thread_data' in self.graph_ql_thread:
+                    self.vendor_specific['marketplace_thread_data'] = self.graph_ql_thread['marketplace_thread_data']
+                    item_picture = self.graph_ql_thread['marketplace_thread_data']\
+                        .get("for_sale_item", {}).get("primary_photo", {})\
+                        .get("image", {}).get("url", None)
+                    if item_picture:
+                        self.vendor_specific['profile_picture_url'] = item_picture
 
             elif self.graph_ql_thread['thread_type'] == 'GROUP':
                 self.chat_type = ChatType.Group

@@ -61,7 +61,7 @@ class EFMSClient(Client):
             raise FBchatException('Could not fetch image url from: {}'.format(j))
         return url
 
-    def send_image_file(self, image_path, mimetype, message=None, thread_id=None, thread_type=ThreadType.USER):
+    def send_image_file(self, filename, file, mimetype, message=None, thread_id=None, thread_type=ThreadType.USER):
         """
         Sends a local image to a thread
 
@@ -79,16 +79,14 @@ class EFMSClient(Client):
             FBchatException: if request failed
         """
         thread_id, thread_type = self._getThread(thread_id, thread_type)
-        is_gif = (mimetype == 'image/gif')
-        image_id = self._uploadImage(image_path, open(image_path, 'rb'), mimetype)
-        return self.sendImage(image_id=image_id, message=message, thread_id=thread_id,
-                              thread_type=thread_type, is_gif=is_gif)
+        files = self._upload([[filename, file, mimetype]])
+        return self._sendFiles(files=files, message=message, thread_id=thread_id, thread_type=thread_type)
 
     def markAsDelivered(self, thread_id, message_id):
         """Mark message as delivered"""
         super().markAsDelivered(thread_id, message_id)
 
-    # Original methods
+    # EFMS methods
 
     def get_thread_list(self, limit: int=50, before: int=None,
                         location: Tuple[ThreadLocation, ...]=(ThreadLocation.INBOX,)):
