@@ -18,6 +18,9 @@ if TYPE_CHECKING:
 
 
 class MasterMessageManager:
+    class CustomReaction:
+        def __init__(self, reaction):
+            self.value = reaction
 
     logger = logging.getLogger("MasterMessageManager")
 
@@ -39,11 +42,14 @@ class MasterMessageManager:
             mentions = []
 
             # Send message reaction
-            if msg.target and msg.text.startswith('r`') and getattr(MessageReaction, msg.text[2:], None)\
-                    and msg.uid.startswith("mid.$"):
+            if msg.target and msg.text.startswith('r`') and \
+                    msg.target.uid.startswith("mid.$"):
                 self.logger.debug("[%s] Message is a reaction to another message: %s", msg.uid, msg.text)
                 msg_id = ".".join(msg.target.uid.split(".", 2)[:2])
-                self.client.reactToMessage(msg_id, getattr(MessageReaction, msg.text[2:]))
+                if getattr(MessageReaction, msg.text[2:], None):
+                    self.client.reactToMessage(msg_id, getattr(MessageReaction, msg.text[2:]))
+                else:
+                    self.client.reactToMessage(msg_id, self.CustomReaction(msg.text[2:]))
                 msg.uid = "__reaction__"
                 return msg
 

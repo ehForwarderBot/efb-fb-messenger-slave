@@ -6,19 +6,20 @@ import os
 import urllib.parse
 import threading
 import time
+import json
+from collections import Counter
 from typing import TYPE_CHECKING, Any, Dict, Tuple
 from tempfile import NamedTemporaryFile
 
 import requests
 from fbchat import Client, ThreadType, FBchatException, ThreadLocation, GraphQL
-from fbchat.models import Message, EmojiSize
+from fbchat.models import Message, EmojiSize, MessageReaction
 from fbchat.utils import check_request, get_jsmods_require, ReqUrl
 from ehforwarderbot import EFBMsg, MsgType, coordinator
 from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgLocationAttribute
 
 from .efms_chat import EFMSChat
 from .utils import get_value
-
 
 if TYPE_CHECKING:
     from . import FBMessengerChannel
@@ -88,8 +89,8 @@ class EFMSClient(Client):
 
     # EFMS methods
 
-    def get_thread_list(self, limit: int=50, before: int=None,
-                        location: Tuple[ThreadLocation, ...]=(ThreadLocation.INBOX,)):
+    def get_thread_list(self, limit: int = 50, before: int = None,
+                        location: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)):
         location = list(i.name for i in location)
 
         j = self.graphql_request(GraphQL(doc_id='1349387578499440', params={
@@ -133,6 +134,70 @@ class EFMSClient(Client):
             return escaped
         else:
             return url
+
+    def attach_msg_type(self, msg: EFBMsg, attachment: Dict[str, Any]):
+        """
+        Attach message_type to a message.
+
+        Args:
+            msg: Message to be attached to
+            attachment:
+                Dict of information of the attachment
+                ``fbchat`` entity is not used as it is not completed.
+        """
+        blob_attachment: Dict[str, Any] = attachment.get('mercury', {}).get('blob_attachment', {})
+        attachment_type: str = blob_attachment.get("__typename", None)
+        if 'sticker_attachment' in attachment.get('mercury', {}):
+            attachment_type = '__Sticker'
+        if 'extensible_attachment' in attachment.get('mercury', {}):
+            attachment_type = '__Link'
+            if get_value(attachment, ('mercury', 'extensible_attachment',
+                                      'story_attachment', 'target', '__typename')) == 'MessageLocation':
+                attachment_type = 'MessageLocation'
+
+        if attachment_type == "MessageAudio":
+            msg.type = MsgType.Audio
+        elif attachment_type == 'MessageImage':
+            msg.type = MsgType.Image
+        elif attachment_type == 'MessageAnimatedImage':
+            msg.type = MsgType.Image
+        elif attachment_type == 'MessageFile':
+            msg.type = MsgType.File
+        elif attachment_type == 'MessageVideo':
+            msg.type = MsgType.Image
+        elif attachment_type == '__Sticker':
+            msg.type = MsgType.Sticker
+            msg.text = attachment['mercury']['sticker_attachment'].get('label', '')
+        elif attachment_type == '__Link':
+            msg.type = MsgType.Link
+            link_information = get_value(attachment, ('mercury', 'extensible_attachment', 'story_attachment'), {})
+            title = get_value(link_information, ('title_with_entities', 'text'), '')
+            description = get_value(link_information, ('description', 'text'), '')
+            source = get_value(link_information, ('source', 'text'), None)
+            if source:
+                description += " (via %s)" % source
+            preview = get_value(link_information, ('media', 'playable_url'), None) if \
+                get_value(link_information, ('media', 'is_playable'), False) else None
+            preview = preview or get_value(link_information, ('media', 'image', 'uri'), None)
+            url = link_information['media'].get('url', preview)
+            msg.attributes = EFBMsgLinkAttribute(title=title,
+                                                 description=description,
+                                                 image=self.process_url(preview),
+                                                 url=self.process_url(url))
+        elif attachment_type == 'MessageLocation':
+            msg.type = MsgType.Location
+            link_information = get_value(attachment, ('mercury', 'extensible_attachment', 'story_attachment'), {})
+            title = get_value(link_information, ('title_with_entities', 'text'), '')
+            description = get_value(link_information, ('description', 'text'), '')
+            msg.text = '\n'.join([title, description])
+            preview = get_value(link_information, ('media', 'image', 'uri'), None)
+            latitude, longitude = map(float.re.search(r'markers=([\d.]+)%2C([\d.]+)', preview).groups())
+            msg.attributes = EFBMsgLocationAttribute(
+                latitude=latitude, longitude=longitude
+            )
+        else:
+            msg.type = MsgType.Unsupported
+            msg.text = "Message type unsupported.\n%s" % msg.text
 
     def attach_media(self, msg: EFBMsg, attachment: Dict[str, Any]):
         """
@@ -256,7 +321,7 @@ class EFMSClient(Client):
             description = get_value(link_information, ('description', 'text'), '')
             msg.text = '\n'.join([title, description])
             preview = get_value(link_information, ('media', 'image', 'uri'), None)
-            latitude, longitude = map(float. re.search(r'markers=([\d.]+)%2C([\d.]+)', preview).groups())
+            latitude, longitude = map(float.re.search(r'markers=([\d.]+)%2C([\d.]+)', preview).groups())
             msg.attributes = EFBMsgLocationAttribute(
                 latitude=latitude, longitude=longitude
             )
@@ -315,8 +380,8 @@ class EFMSClient(Client):
         """Migrate message precessing to another thread to prevent blocking."""
         threading.Thread(target=self.on_message, args=args, kwargs=kwargs).run()
 
-    def on_message(self, mid: str=None, author_id: str=None, message: str=None, message_object: Message=None,
-                   thread_id: str=None, thread_type: str=ThreadType.USER, ts: str=None, metadata=None, msg=None):
+    def on_message(self, mid: str = None, author_id: str = None, message: str = None, message_object: Message = None,
+                   thread_id: str = None, thread_type: str = ThreadType.USER, ts: str = None, metadata=None, msg=None):
         """
         Called when the client is listening, and somebody sends a message
 
@@ -341,24 +406,7 @@ class EFMSClient(Client):
 
         self.logger.debug("[%s] Received message from Messenger: %s", mid, message_object)
 
-        efb_msg = EFBMsg()
-        efb_msg.uid = mid
-        efb_msg.text = message_object.text
-        efb_msg.type = MsgType.Text
-        efb_msg.deliver_to = coordinator.master
-
-        # Authors
-        efb_msg.author = EFMSChat(self.channel, uid=author_id)
-        efb_msg.chat = EFMSChat(self.channel, uid=thread_id)
-
-        if message_object.mentions:
-            mentions = dict()
-            for i in message_object.mentions:
-                mentions[(i.offset, i.offset + i.length)] = EFMSChat(self.channel, uid=i.thread_id)
-
-        if message_object.emoji_size:
-            efb_msg.text += " (%s)" % message_object.emoji_size.name[0]
-            # " (S)", " (M)", " (L)"
+        efb_msg = self.build_message(mid, thread_id, author_id, message_object)
 
         attachments = msg.get('delta', {}).get('attachments', [])
 
@@ -379,7 +427,70 @@ class EFMSClient(Client):
 
         self.markAsDelivered(mid, thread_id)
 
+    def build_message(self, mid: str, thread_id: str, author_id: str, message_object: Message) -> EFBMsg:
+        efb_msg = EFBMsg()
+        efb_msg.uid = mid
+        efb_msg.text = message_object.text
+        efb_msg.type = MsgType.Text
+        efb_msg.deliver_to = coordinator.master
+
+        # Authors
+        efb_msg.author = EFMSChat(self.channel, uid=author_id)
+        efb_msg.chat = EFMSChat(self.channel, uid=thread_id)
+
+        if message_object.mentions:
+            mentions = dict()
+            for i in message_object.mentions:
+                mentions[(i.offset, i.offset + i.length)] = EFMSChat(self.channel, uid=i.thread_id)
+
+        if message_object.emoji_size:
+            efb_msg.text += " (%s)" % message_object.emoji_size.name[0]
+            # " (S)", " (M)", " (L)"
+
+        if message_object.reactions:
+            counts: Dict[MessageReaction, int] = Counter(message_object.reactions.value())
+            counts_text = ", ".join(["%sx%d" % (i.value, counts[i]) for i in counts.keys()])
+            efb_msg.text += "\n\n[%s]" % counts_text
+
+        return efb_msg
+
     def onChatTimestamp(self, buddylist=None, msg=None):
         # No action needed on receiving timestamp update
         # Suppress timestamp log
         pass
+
+    def onUnknownMesssageType(self, msg=None):
+        if msg['type'] == 'delta' and \
+                msg['delta'].get('class') == 'ClientPayload' and \
+                type(msg['delta'].get('payload')) == list and \
+                all(type(i) == int for i in msg['data']['payload']):
+            # If message type is delta of type ClientPayload and
+            # msg['delta']['payload'] is an array of int
+
+            # Decode payload
+            payload = json.loads(''.join([chr(i) for i in msg['delta']['payload']]))
+
+            if type(payload.get('deltas')) == list:
+                for i in payload['deltas']:
+                    if "deltaMessageReaction" in i:
+                        self.on_message_reaction(i['deltaMessageReaction'])
+
+    def on_message_reaction(self, data: Dict[str, Any]):
+
+        thread_id = data['threadKey']['threadFbId']
+        message_id = data['messageId']
+
+        msg: Message = self.fetchMessageInfo(thread_id, message_id)
+
+        # edit message to include reactions.
+        efb_msg = self.build_message(message_id, thread_id, msg.author, msg)
+        attachments = msg.get('delta', {}).get('attachments', [])
+        if len(attachments):
+            self.attach_msg_type(efb_msg, attachments[-1])
+        if len(attachments) > 1:
+            efb_msg.uid += ".%d" % (len(attachments) - 1)
+            # If message is split, only modify the last message.
+
+        efb_msg.edit = True
+
+        coordinator.send_message(efb_msg)
