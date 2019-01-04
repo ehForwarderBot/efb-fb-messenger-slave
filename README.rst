@@ -101,7 +101,7 @@ Experimental flags
 The following flags are experimental features, may change, break, or
 disappear at any time. Use at your own risk.
 
--  ``proxy_links_by_facebook`` *(bool)* [Default: ``true``]
+-  ``proxy_links_by_facebook`` *(bool)* [Default: ``false``]
 
    Deliver links (including links in share entities and thumbnails)
    using Facebook’s proxy. Disable this option to show the source

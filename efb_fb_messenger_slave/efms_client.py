@@ -122,13 +122,15 @@ class EFMSClient(Client):
 
     def process_url(self, url: str) -> str:
         """Unwrap Facebook-proxied URL if necessary."""
+        if not url:
+            return url
         if self.channel.flag('proxy_links_by_facebook'):
             return url
         if 'safe_image.php' in url:
             query = urllib.parse.urlparse(url).query
             escaped = urllib.parse.parse_qs(query).get('url', [url])[0]
             return escaped
-        elif url.startswith('https://l.facebook.com/l.php'):
+        elif 'l.facebook.com/l.php' in url:
             query = urllib.parse.urlparse(url).query
             escaped = urllib.parse.parse_qs(query).get('u', [url])[0]
             return escaped
@@ -309,7 +311,7 @@ class EFMSClient(Client):
             preview = get_value(link_information, ('media', 'playable_url'), None) if \
                 get_value(link_information, ('media', 'is_playable'), False) else None
             preview = preview or get_value(link_information, ('media', 'image', 'uri'), None)
-            url = link_information['media'].get('url', preview)
+            url = link_information.get('url', preview)
             msg.attributes = EFBMsgLinkAttribute(title=title,
                                                  description=description,
                                                  image=self.process_url(preview),
