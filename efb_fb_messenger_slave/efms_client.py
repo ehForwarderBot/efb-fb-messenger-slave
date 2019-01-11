@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any, Dict, Tuple
 from tempfile import NamedTemporaryFile
 
 import requests
-from fbchat import Client, ThreadType, FBchatException, ThreadLocation, GraphQL
+from fbchat import Client, ThreadType, FBchatException, ThreadLocation, GraphQL, graphql_to_message
 from fbchat.models import Message, EmojiSize, MessageReaction
 from fbchat.utils import check_request, get_jsmods_require, ReqUrl
 from ehforwarderbot import EFBMsg, MsgType, coordinator
@@ -450,9 +450,9 @@ class EFMSClient(Client):
             # " (S)", " (M)", " (L)"
 
         if message_object.reactions:
-            counts: Dict[MessageReaction, int] = Counter(message_object.reactions.value())
+            counts: Dict[MessageReaction, int] = Counter(message_object.reactions.values())
             counts_text = ", ".join(["%sx%d" % (i.value, counts[i]) for i in counts.keys()])
-            efb_msg.text += "\n\n[%s]" % counts_text
+            efb_msg.text += "\n[%s]" % counts_text
 
         return efb_msg
 
@@ -465,7 +465,7 @@ class EFMSClient(Client):
         if msg['type'] == 'delta' and \
                 msg['delta'].get('class') == 'ClientPayload' and \
                 type(msg['delta'].get('payload')) == list and \
-                all(type(i) == int for i in msg['data']['payload']):
+                all(type(i) == int for i in msg['delta']['payload']):
             # If message type is delta of type ClientPayload and
             # msg['delta']['payload'] is an array of int
 
@@ -482,11 +482,13 @@ class EFMSClient(Client):
         thread_id = data['threadKey']['threadFbId']
         message_id = data['messageId']
 
-        msg: Message = self.fetchMessageInfo(thread_id, message_id)
+        thread_id, thread_type = self._getThread(thread_id, None)
+        msg_data = self._forcedFetch(thread_id, message_id).get("message")
+        msg: Message = graphql_to_message(msg_data)
 
         # edit message to include reactions.
         efb_msg = self.build_message(message_id, thread_id, msg.author, msg)
-        attachments = msg.get('delta', {}).get('attachments', [])
+        attachments = msg_data.get('delta', {}).get('attachments', [])
         if len(attachments):
             self.attach_msg_type(efb_msg, attachments[-1])
         if len(attachments) > 1:
