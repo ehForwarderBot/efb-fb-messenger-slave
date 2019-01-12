@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-24 14:22+1100\n"
-"PO-Revision-Date: 2018-06-22T08:56:51+0000\n"
+"PO-Revision-Date: 2018-10-02 23:07\n"
 "Last-Translator: blueset <ilove@1a23.com>\n"
 "Language-Team: Malay\n"
 "Language: ms_MY\n"
@@ -38,7 +38,8 @@ msgstr "Tunjukkan senarai benang"
 #, python-brace-format
 msgid "Usage:\n"
 "    {function_name}"
-msgstr ""
+msgstr "Penggunaan:\n"
+"   {fungsi_nama}"
 
 #: efb_fb_messenger_slave/__init__.py:162
 msgid "Search for users"
@@ -64,7 +65,7 @@ msgstr "Cari muka surat"
 
 #: efb_fb_messenger_slave/__init__.py:183
 msgid "Search for threads"
-msgstr ""
+msgstr "Cari tema"
 
 #: efb_fb_messenger_slave/__init__.py:190
 msgid "Add to group"
@@ -75,7 +76,7 @@ msgstr "Tambah ke kumpulan"
 msgid "Add members to a group.\n"
 "Usage:\n"
 "    {function_name} GroupID UserID [UserID ...]"
-msgstr ""
+msgstr "Tambah ahli ke dalam kumpulan"
 
 #: efb_fb_messenger_slave/__init__.py:197
 msgid "Remove from group"
@@ -86,7 +87,7 @@ msgstr "Alih keluar dari kumpulan"
 msgid "Remove members from a group.\n"
 "Usage:\n"
 "    {function_name} GroupID UserID [UserID ...]"
-msgstr ""
+msgstr "Singkirkan  ahli dari satu kumpulan"
 
 #: efb_fb_messenger_slave/__init__.py:204
 msgid "Change nickname"
@@ -253,7 +254,7 @@ msgstr "Untuk meneruskan, tekan Enter / Return."
 
 #: efb_fb_messenger_slave/__main__.py:56
 msgid "Email: "
-msgstr ""
+msgstr "e-mel"
 
 #: efb_fb_messenger_slave/__main__.py:57
 msgid "Password: "
