@@ -147,7 +147,7 @@ class EFMSClient(Client):
                 Dict of information of the attachment
                 ``fbchat`` entity is not used as it is not completed.
         """
-        blob_attachment: Dict[str, Any] = attachment.get('mercury', {}).get('blob_attachment', {})
+        blob_attachment: Dict[str, Any] = attachment.get('mercury', {}).get('blob_attachment', attachment)
         attachment_type: str = blob_attachment.get("__typename", None)
         if 'sticker_attachment' in attachment.get('mercury', {}):
             attachment_type = '__Sticker'
@@ -488,7 +488,7 @@ class EFMSClient(Client):
 
         # edit message to include reactions.
         efb_msg = self.build_message(message_id, thread_id, msg.author, msg)
-        attachments = msg_data.get('delta', {}).get('attachments', [])
+        attachments = msg_data.get('blob_attachments', [])
         if len(attachments):
             self.attach_msg_type(efb_msg, attachments[-1])
         if len(attachments) > 1:
