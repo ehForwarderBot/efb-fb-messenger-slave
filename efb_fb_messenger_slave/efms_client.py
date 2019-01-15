@@ -3,6 +3,7 @@
 import logging
 import copy
 import os
+import re
 import urllib.parse
 import threading
 import time
@@ -323,7 +324,7 @@ class EFMSClient(Client):
             description = get_value(link_information, ('description', 'text'), '')
             msg.text = '\n'.join([title, description])
             preview = get_value(link_information, ('media', 'image', 'uri'), None)
-            latitude, longitude = map(float.re.search(r'markers=([\d.]+)%2C([\d.]+)', preview).groups())
+            latitude, longitude = map(float, re.search(r'markers=([\d.]+)%2C([\d.]+)', preview).groups())
             msg.attributes = EFBMsgLocationAttribute(
                 latitude=latitude, longitude=longitude
             )

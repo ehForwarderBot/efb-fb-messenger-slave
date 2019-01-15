@@ -78,14 +78,18 @@ class MasterMessageManager:
 
             if msg.type in (MsgType.Text, MsgType.Unsupported):
                 if msg.text == "👍":
-                    fb_msg.sticker = Sticker(uid=EmojiSize.SMALL)
-                elif msg.text[0] == "👍" and len(msg) == 2 and msg[1] in 'SML':
+                    fb_msg.sticker = Sticker(uid=EmojiSize.SMALL.value)
+                    if not prefix:
+                        fb_msg.text = None
+                elif msg.text[0] == "👍" and len(msg.text) == 2 and msg.text[1] in 'SML':
                     if msg.text[-1] == 'S':
-                        fb_msg.sticker = Sticker(uid=EmojiSize.SMALL)
+                        fb_msg.sticker = Sticker(uid=EmojiSize.SMALL.value)
                     elif msg.text[-1] == 'M':
-                        fb_msg.sticker = Sticker(uid=EmojiSize.MEDIUM)
+                        fb_msg.sticker = Sticker(uid=EmojiSize.MEDIUM.value)
                     elif msg.text[-1] == 'L':
-                        fb_msg.sticker = Sticker(uid=EmojiSize.LARGE)
+                        fb_msg.sticker = Sticker(uid=EmojiSize.LARGE.value)
+                    if not prefix:
+                        fb_msg.text = None
                 elif msg.text[:-1] in emoji.UNICODE_EMOJI and msg.text[-1] in 'SML':
                     self.logger.debug("[%s] Message is an Emoji message: %s", msg.uid, msg.text)
                     if msg.text[-1] == 'S':
