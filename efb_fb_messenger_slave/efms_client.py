@@ -499,3 +499,6 @@ class EFMSClient(Client):
         efb_msg.edit = True
 
         coordinator.send_message(efb_msg)
+
+    def onMessageError(self, exception=None, msg=None):
+        self.logger.exception("Error %s occurred while parsing %s", exception, msg, exc_info=exception)
