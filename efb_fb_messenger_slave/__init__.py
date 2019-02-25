@@ -48,7 +48,7 @@ class FBMessengerChannel(EFBChannel):
 
     def __init__(self, instance_id: str = None):
         super().__init__(instance_id)
-        session_path = os.path.join(efb_utils.get_data_path(self.channel_id), "session.pickle")
+        session_path = efb_utils.get_data_path(self.channel_id) / "session.pickle"
         try:
             data = pickle.load(open(session_path, 'rb'))
             self.client = EFMSClient(None, None, session_cookies=data)
