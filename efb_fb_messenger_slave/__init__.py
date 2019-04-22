@@ -17,7 +17,7 @@ from ehforwarderbot.utils import extra
 from ehforwarderbot.status import EFBMessageRemoval
 from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported
 
-from .__version__ import __version__ as version
+from .__version__ import __version__
 from .efms_chat import EFMSChat
 from .efms_client import EFMSClient
 from .master_messages import MasterMessageManager
@@ -27,11 +27,12 @@ from .utils import ExperimentalFlagsManager
 
 
 class FBMessengerChannel(EFBChannel):
+
     channel_name: str = "Facebook Messenger Slave"
     channel_emoji: str = "⚡️"
     channel_id = "blueset.fbmessenger"
     channel_type: ChannelType = ChannelType.Slave
-    __version__: str = version
+    __version__: str = __version__
 
     client: EFMSClient = None
     config: Dict[str, Any] = None
@@ -150,6 +151,9 @@ class FBMessengerChannel(EFBChannel):
         photo = BytesIO(requests.get(photo_url).content)
         photo.seek(0)
         return photo
+
+    def get_message_by_id(self, msg_id: str) -> Optional['EFBMsg']:
+        pass
 
     # Additional features
 
