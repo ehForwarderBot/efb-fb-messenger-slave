@@ -9,6 +9,7 @@ EFB Facebook Messenger Slave (EFMS)
    :target: https://crowdin.com/project/ehforwarderbot/
 
 `README in other languages`_.
+
 .. _README in other languages: ./readme_translations
 .. TRANSLATORS: change the URL on previous line as "." (without quotations).
 
@@ -139,8 +140,8 @@ EFMS’s chats provides the following vendor specific options:
 * ``'profile_picture_url'`` *(str)*: URL to the thread’s
   profile picture.
 
-Experimental localization support
----------------------------------
+Localization support
+--------------------
 
 EFMS supports localized user interface prompts experimentally,
 by setting the locale environmental variable (``LANGUAGE``,

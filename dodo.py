@@ -1,7 +1,9 @@
 import glob
+from doit.action import CmdAction
 
 
 PACKAGE = "efb_fb_messenger_slave"
+README_BASE = "./README.md"
 DEFAULT_BUMP_MODE = "beta"
 # major, minor, patch, alpha, beta, dev, post
 DOIT_CONFIG = {
@@ -10,25 +12,45 @@ DOIT_CONFIG = {
 
 
 def task_gettext():
-    pot = "./{package}/locale/{package}.pot".format(package=PACKAGE)
-    sources = glob.glob("./{package}/**/*.py".format(package=PACKAGE), recursive=True)
+    pot = f"./{PACKAGE}/locale/{PACKAGE}.pot"
+    sources = glob.glob(f"./{PACKAGE}/**/*.py", recursive=True)
     sources = [i for i in sources if "__version__.py" not in i]
     command = "xgettext --add-comments=TRANSLATORS -o " + pot + " " + " ".join(sources)
     return {
         "actions": [
-            command
+            command,
+            ['cp', README_BASE, './.cache/README.rst'],
+            ['sphinx-build', '-b', 'gettext', '-C', '-D', 'master_doc=README',
+             'gettext_additional_targets=literal-block,image',
+             './.cache', './readme_translations/locale', './.cache/README.rst'],
+            ['rm', './.cache/README.rst'],
         ],
         "targets": [
-            pot
+            pot,
+            "./readme_translations/locale/README.pot"
         ],
         "file_dep": sources
     }
 
 
 def task_msgfmt():
-    sources = glob.glob("./{package}/**/*.po".format(package=PACKAGE), recursive=True)
+    languages = [i[i.rfind('/')+1:i.rfind('.')] for i in glob.glob("./readme_translations/locale/*.po")]
+
+    sources = glob.glob("./**/*.po", recursive=True)
     dests = [i[:-3] + ".mo" for i in sources]
-    actions = [("msgfmt", sources[i], "-o", dests[i]) for i in range(len(sources))]
+    actions = [["msgfmt", sources[i], "-o", dests[i]] for i in range(len(sources))]
+
+    actions.append(["mkdir", "./.cache/source"])
+    actions.append(["cp", README_BASE, "./.cache/source/README.rst"])
+    for i in languages:
+        actions.append(["sphinx-build", "-E", "-b", "rst", "-C",
+                        "-D", "language=zh_cn", "-D", "locale_dirs=./readme_translations/locale",
+                        "-D", "extensions=sphinxcontrib.restbuilder",
+                        "-D", "master_doc=README", "./.cache/source", f"./.cache/{i}"])
+        actions.append(["mv", f"./.cache/{i}/README.md", f"./readme_translations/{i}.md"])
+        actions.append(["rm", "-rf", f"./.cache/{i}"])
+    actions.append(["rm", "-rf", "./.cache/source"])
+
     return {
         "actions": actions,
         "targets": dests,
