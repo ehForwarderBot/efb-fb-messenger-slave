@@ -8,14 +8,16 @@ import urllib.parse
 import threading
 import time
 import json
-from collections import Counter
+from collections import Counter, defaultdict
 from typing import TYPE_CHECKING, Any, Dict, Tuple
 from tempfile import NamedTemporaryFile
 
 import requests
-from fbchat import Client, ThreadType, FBchatException, ThreadLocation, GraphQL, graphql_to_message
+from fbchat import Client
+from fbchat._graphql import GraphQL
+from fbchat._exception import FBchatException
+from fbchat._thread import ThreadType, ThreadLocation
 from fbchat.models import Message, EmojiSize, MessageReaction
-from fbchat.utils import check_request, get_jsmods_require, ReqUrl
 from ehforwarderbot import EFBMsg, MsgType, coordinator
 from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgLocationAttribute
 
@@ -41,27 +43,6 @@ class EFMSClient(Client):
         # Disable all logging inside the module
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger(__name__)
-
-    def fetchImageUrl(self, image_id):
-        """Fetches the url to the original image from an image attachment ID
-        Overrides original method with a bug fix.
-
-        Args:
-            image_id (str): The image you want to fetch
-
-        Returns:
-            str: An url where you can download the original image
-
-        Raises:
-            FBChatException: if request failed
-        """
-        image_id = str(image_id)
-        j = check_request(self._get(ReqUrl.ATTACHMENT_PHOTO, query={'photo_id': str(image_id)}))
-
-        url = get_jsmods_require(j, 3)
-        if url is None:
-            raise FBchatException('Could not fetch image url from: {}'.format(j))
-        return url
 
     def send_image_file(self, filename, file, mimetype, message=None, thread_id=None, thread_type=ThreadType.USER):
         """
@@ -451,9 +432,9 @@ class EFMSClient(Client):
             # " (S)", " (M)", " (L)"
 
         if message_object.reactions:
-            counts: Dict[MessageReaction, int] = Counter(message_object.reactions.values())
-            counts_text = ", ".join(["%sx%d" % (i.value, counts[i]) for i in counts.keys()])
-            efb_msg.text += "\n[%s]" % counts_text
+            efb_msg.reactions = defaultdict(set)
+            for user_id, reaction in message_object.reactions:
+                efb_msg.reactions[reaction.value].add(EFMSChat(self.channel, uid=user_id))
 
         return efb_msg
 
@@ -462,30 +443,17 @@ class EFMSClient(Client):
         # Suppress timestamp log
         pass
 
-    def onUnknownMesssageType(self, msg=None):
-        if msg['type'] == 'delta' and \
-                msg['delta'].get('class') == 'ClientPayload' and \
-                type(msg['delta'].get('payload')) == list and \
-                all(type(i) == int for i in msg['delta']['payload']):
-            # If message type is delta of type ClientPayload and
-            # msg['delta']['payload'] is an array of int
+    def onReactionAdded(self, mid=None, reaction=None, author_id=None, thread_id=None, thread_type=None, ts=None,
+                        msg=None):
+        self.on_message_reaction(thread_id, mid)
 
-            # Decode payload
-            payload = json.loads(''.join([chr(i) for i in msg['delta']['payload']]))
+    def onReactionRemoved(self, mid=None, author_id=None, thread_id=None, thread_type=None, ts=None, msg=None):
+        self.on_message_reaction(thread_id, mid)
 
-            if type(payload.get('deltas')) == list:
-                for i in payload['deltas']:
-                    if "deltaMessageReaction" in i:
-                        self.on_message_reaction(i['deltaMessageReaction'])
-
-    def on_message_reaction(self, data: Dict[str, Any]):
-
-        thread_id = data['threadKey']['threadFbId']
-        message_id = data['messageId']
-
+    def on_message_reaction(self, thread_id, message_id):
         thread_id, thread_type = self._getThread(thread_id, None)
         msg_data = self._forcedFetch(thread_id, message_id).get("message")
-        msg: Message = graphql_to_message(msg_data)
+        msg: Message = Message._from_graphql(msg_data)
 
         # edit message to include reactions.
         efb_msg = self.build_message(message_id, thread_id, msg.author, msg)

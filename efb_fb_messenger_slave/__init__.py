@@ -2,6 +2,7 @@
 
 import os
 import pickle
+import logging
 from io import BytesIO
 from pkg_resources import resource_filename
 from gettext import translation
@@ -9,9 +10,9 @@ from typing import Optional, List, IO, Dict, Any
 
 import requests
 import yaml
-from fbchat import FBchatUserError, ThreadLocation, logging
+from fbchat import FBchatUserError, ThreadLocation
 from fbchat.models import Thread
-from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType, MsgType
+from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType
 from ehforwarderbot import utils as efb_utils
 from ehforwarderbot.utils import extra
 from ehforwarderbot.status import EFBMessageRemoval
