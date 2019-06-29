@@ -7,8 +7,7 @@ import re
 import urllib.parse
 import threading
 import time
-import json
-from collections import Counter, defaultdict
+from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Dict, Tuple
 from tempfile import NamedTemporaryFile
 
@@ -17,9 +16,10 @@ from fbchat import Client
 from fbchat._graphql import GraphQL
 from fbchat._exception import FBchatException
 from fbchat._thread import ThreadType, ThreadLocation
-from fbchat.models import Message, EmojiSize, MessageReaction
+from fbchat.models import Message, EmojiSize
 from ehforwarderbot import EFBMsg, MsgType, coordinator
 from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgLocationAttribute
+from ehforwarderbot.status import EFBMessageRemoval
 
 from .efms_chat import EFMSChat
 from .utils import get_value
@@ -451,6 +451,8 @@ class EFMSClient(Client):
         # Suppress timestamp log
         pass
 
+    # Incoming message reactions
+
     def onReactionAdded(self, mid=None, reaction=None, author_id=None, thread_id=None, thread_type=None, ts=None,
                         msg=None):
         self.on_message_reaction(thread_id, mid)
@@ -475,6 +477,17 @@ class EFMSClient(Client):
         efb_msg.edit = True
 
         coordinator.send_message(efb_msg)
+
+    def onMessageUnsent(self, mid=None, author_id=None, thread_id=None, thread_type=None, ts=None, msg=None):
+        efb_msg = EFBMsg()
+        efb_msg.chat = EFMSChat(self.channel, uid=thread_id)
+        efb_msg.author = EFMSChat(self.channel, uid=author_id)
+        efb_msg.uid = mid
+        coordinator.send_status(
+            EFBMessageRemoval(source_channel=self.channel,
+                              destination_channel=coordinator.master,
+                              message=efb_msg)
+        )
 
     def onMessageError(self, exception=None, msg=None):
         self.logger.exception("Error %s occurred while parsing %s", exception, msg, exc_info=exception)

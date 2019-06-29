@@ -6,7 +6,7 @@ import logging
 from io import BytesIO
 from pkg_resources import resource_filename
 from gettext import translation
-from typing import Optional, List, IO, Dict, Any
+from typing import Optional, List, IO, Dict, Any, Tuple
 
 import requests
 import yaml
@@ -91,7 +91,7 @@ class FBMessengerChannel(EFBChannel):
             self.config: Dict[str, Any] = yaml.load(f)
 
     def get_chats(self) -> List[EFMSChat]:
-        locations = (ThreadLocation.INBOX,)
+        locations: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)
         if self.flag('show_pending_threads'):
             locations += (ThreadLocation.PENDING, ThreadLocation.OTHER)
         if self.flag('show_archived_threads'):
@@ -124,7 +124,7 @@ class FBMessengerChannel(EFBChannel):
 
     def send_status(self, status: EFBStatus):
         if isinstance(status, EFBMessageRemoval):
-            raise EFBOperationNotSupported(self._("Messages cannot be removed in Facebook Messenger."))
+            self.client.unsend(status.message.uid)
         # Other status types go here
         raise EFBOperationNotSupported()
 
