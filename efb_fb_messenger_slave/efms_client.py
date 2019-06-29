@@ -411,7 +411,8 @@ class EFMSClient(Client):
 
         self.markAsDelivered(mid, thread_id)
 
-    def build_message(self, mid: str, thread_id: str, author_id: str, message_object: Message) -> EFBMsg:
+    def build_message(self, mid: str, thread_id: str, author_id: str, message_object: Message,
+                      nested: bool = False) -> EFBMsg:
         efb_msg = EFBMsg()
         efb_msg.uid = mid
         efb_msg.text = message_object.text
@@ -421,6 +422,13 @@ class EFMSClient(Client):
         # Authors
         efb_msg.author = EFMSChat(self.channel, uid=author_id)
         efb_msg.chat = EFMSChat(self.channel, uid=thread_id)
+
+        if not nested and message_object.replied_to:
+            efb_msg.target = self.build_message(message_object.reply_to_id,
+                                                thread_id=thread_id,
+                                                author_id=message_object.author,
+                                                message_object=message_object.replied_to,
+                                                nested=True)
 
         if message_object.mentions:
             mentions = dict()

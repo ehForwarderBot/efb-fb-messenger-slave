@@ -153,9 +153,6 @@ class FBMessengerChannel(EFBChannel):
         photo.seek(0)
         return photo
 
-    def get_message_by_id(self, msg_id: str) -> Optional['EFBMsg']:
-        pass
-
     # Additional features
 
     @extra(name=_("Show threads list"),

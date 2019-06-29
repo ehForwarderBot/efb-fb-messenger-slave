@@ -76,6 +76,9 @@ class MasterMessageManager:
             fb_msg = Message(text=prefix + msg.text, mentions=mentions)
             thread: Thread = self.client.fetchThreadInfo(msg.chat.chat_uid)[str(msg.chat.chat_uid)]
 
+            if msg.target and msg.target.uid:
+                fb_msg.reply_to_id = msg.target.uid
+
             if msg.type in (MsgType.Text, MsgType.Unsupported):
                 if msg.text == "👍":
                     fb_msg.sticker = Sticker(uid=EmojiSize.SMALL.value)
