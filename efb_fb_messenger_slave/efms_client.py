@@ -102,11 +102,11 @@ class EFMSClient(Client):
 
         return j['message_thread']
 
-    def process_url(self, url: str) -> str:
+    def process_url(self, url: str, override: bool = False) -> str:
         """Unwrap Facebook-proxied URL if necessary."""
         if not url:
             return url
-        if self.channel.flag('proxy_links_by_facebook'):
+        if not override and self.channel.flag('proxy_links_by_facebook'):
             return url
         if 'safe_image.php' in url:
             query = urllib.parse.urlparse(url).query
@@ -249,7 +249,7 @@ class EFMSClient(Client):
             msg.mime = msg.mime or 'application/octet-stream'
             ext = os.path.splitext(msg.filename)[1]
             msg.file = NamedTemporaryFile(suffix=ext)
-            msg.file.write(requests.get(blob_attachment['url'], allow_redirects=True).content)
+            msg.file.write(requests.get(self.process_url(blob_attachment['url'], True), allow_redirects=True).content)
             msg.file.seek(0)
             msg.path = msg.file.name
         elif attachment_type == 'MessageVideo':
