@@ -26,9 +26,9 @@ class MasterMessageManager:
 
     def __init__(self, channel: 'FBMessengerChannel'):
         self.channel = channel
-        channel.supported_message_types: Set[MsgType] = {MsgType.Text, MsgType.Image, MsgType.Sticker,
-                                                         MsgType.Audio, MsgType.File, MsgType.Video,
-                                                         MsgType.Status, MsgType.Unsupported}
+        channel.supported_message_types = {MsgType.Text, MsgType.Image, MsgType.Sticker,
+                                           MsgType.Audio, MsgType.File, MsgType.Video,
+                                           MsgType.Status, MsgType.Unsupported}
         self.client = channel.client
         self.flag = channel.flag
 
@@ -119,6 +119,7 @@ class MasterMessageManager:
                 msg.uid = self.client.send_video(file_id=file_id, message=fb_msg,
                                                  thread_id=thread.uid, thread_type=thread.type)
             elif msg.type == MsgType.Status:
+                assert (isinstance(msg.attributes, EFBMsgStatusAttribute))
                 attribute: EFBMsgStatusAttribute = msg.attributes
                 if attribute.status_type in (EFBMsgStatusAttribute.Types.TYPING,
                                              EFBMsgStatusAttribute.Types.UPLOADING_AUDIO,
@@ -128,6 +129,7 @@ class MasterMessageManager:
                     self.client.setTypingStatus(TypingStatus.TYPING, thread_id=thread.uid, thread_type=thread.type)
                     threading.Thread(target=self.stop_typing, args=(attribute.timeout, thread.uid, thread.type)).run()
             elif msg.type == MsgType.Link:
+                assert (isinstance(msg.attributes, EFBMsgLinkAttribute))
                 attribute: EFBMsgLinkAttribute = msg.attributes
                 if self.flag('send_link_with_description'):
                     info = (attribute.title,)
