@@ -61,9 +61,9 @@ def main():
         print(_("Log in failed. Please check the information above and try again."))
         exit(1)
 
-    session_path = os.path.join(path, "session.pickle")
+    session_path = path / "session.pickle"
 
-    with open(session_path, 'wb') as f:
+    with session_path.open('wb') as f:
         pickle.dump(client.getSession(), f)
 
     print(_("Your session has been successfully updated. It's stored at\n"

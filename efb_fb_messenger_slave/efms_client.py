@@ -12,8 +12,7 @@ from typing import TYPE_CHECKING, Any, Dict, Tuple
 from tempfile import NamedTemporaryFile
 
 import requests
-from fbchat import Client
-from fbchat._graphql import GraphQL
+from fbchat import Client, _graphql
 from fbchat._exception import FBchatException
 from fbchat._thread import ThreadType, ThreadLocation
 from fbchat.models import Message, EmojiSize
@@ -62,8 +61,9 @@ class EFMSClient(Client):
             FBchatException: if request failed
         """
         thread_id, thread_type = self._getThread(thread_id, thread_type)
-        files = self._upload([[filename, file, mimetype]])
-        return self._sendFiles(files=files, message=message, thread_id=thread_id, thread_type=thread_type)
+        files = [(filename, file, mimetype)]
+        file_ids = self._upload(files)
+        return self._sendFiles(files=file_ids, message=message, thread_id=thread_id, thread_type=thread_type)
 
     def markAsDelivered(self, thread_id, message_id):
         """Mark message as delivered"""
@@ -75,7 +75,7 @@ class EFMSClient(Client):
                         location: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)):
         location = list(i.name for i in location)
 
-        j = self.graphql_request(GraphQL(doc_id='1349387578499440', params={
+        j = self.graphql_request(_graphql.from_doc_id(doc_id='1349387578499440', params={
             'limit': limit,
             'tags': location,
             'includeDeliveryReceipts': True,
@@ -88,9 +88,9 @@ class EFMSClient(Client):
 
         return j['viewer']['message_threads']['nodes']
 
-    def get_thread_info(self, id: str):
-        j = self.graphql_request(GraphQL(doc_id='1508526735892416', params={
-            'id': id,
+    def get_thread_info(self, tid: str):
+        j = self.graphql_request(_graphql.from_doc_id(doc_id='1508526735892416', params={
+            'id': tid,
             'message_limit': 0,
             'load_message': 0,
             'load_read_receipt': False,
@@ -315,45 +315,6 @@ class EFMSClient(Client):
 
     def send(self, *args, **kwargs):
         result = super().send(*args, **kwargs)
-        if result.startswith('mid.$'):
-            self.sent_messages.add(result)
-        return result
-
-    def send_audio(self, file_id, message=None, thread_id=None, thread_type=ThreadType.USER):
-        thread_id, thread_type = self._getThread(thread_id, thread_type)
-        data = self._getSendData(message=message, thread_id=thread_id, thread_type=thread_type)
-
-        data['action_type'] = 'ma-type:user-generated-message'
-        data['has_attachment'] = True
-        data['audio_ids[0]'] = file_id
-
-        result = self._doSendRequest(data)
-        if result.startswith('mid.$'):
-            self.sent_messages.add(result)
-        return result
-
-    def send_file(self, file_id, message=None, thread_id=None, thread_type=ThreadType.USER):
-        thread_id, thread_type = self._getThread(thread_id, thread_type)
-        data = self._getSendData(message=message, thread_id=thread_id, thread_type=thread_type)
-
-        data['action_type'] = 'ma-type:user-generated-message'
-        data['has_attachment'] = True
-        data['file_ids[0]'] = file_id
-
-        result = self._doSendRequest(data)
-        if result.startswith('mid.$'):
-            self.sent_messages.add(result)
-        return result
-
-    def send_video(self, file_id, message=None, thread_id=None, thread_type=ThreadType.USER):
-        thread_id, thread_type = self._getThread(thread_id, thread_type)
-        data = self._getSendData(message=message, thread_id=thread_id, thread_type=thread_type)
-
-        data['action_type'] = 'ma-type:user-generated-message'
-        data['has_attachment'] = True
-        data['video_ids[0]'] = file_id
-
-        result = self._doSendRequest(data)
         if result.startswith('mid.$'):
             self.sent_messages.add(result)
         return result

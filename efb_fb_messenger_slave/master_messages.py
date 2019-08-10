@@ -4,7 +4,7 @@ import logging
 import time
 import threading
 import emoji
-from typing import TYPE_CHECKING, Set
+from typing import TYPE_CHECKING, Set, Tuple, List
 
 from fbchat.models import Thread, Message, TypingStatus, ThreadType, Mention, EmojiSize, MessageReaction, Sticker
 from ehforwarderbot import EFBMsg, MsgType
@@ -107,17 +107,17 @@ class MasterMessageManager:
                 msg.uid = self.client.send_image_file(msg.filename, msg.file, msg.mime, message=fb_msg,
                                                       thread_id=thread.uid, thread_type=thread.type)
             elif msg.type == MsgType.Audio:
-                file_id = self.upload_file(msg)
-                msg.uid = self.client.send_audio(file_id=file_id, message=fb_msg,
+                files = self.upload_file(msg, voice_clip=True)
+                msg.uid = self.client._sendFiles(files=files, message=fb_msg,
                                                  thread_id=thread.uid, thread_type=thread.type)
-            elif msg.type == MsgType.File:
-                file_id = self.upload_file(msg)
-                msg.uid = self.client.send_file(file_id=file_id, message=fb_msg,
-                                                thread_id=thread.uid, thread_type=thread.type)
-            elif msg.type == MsgType.Video:
-                file_id = self.upload_file(msg)
-                msg.uid = self.client.send_video(file_id=file_id, message=fb_msg,
+                if msg.uid.startswith('mid.$'):
+                    self.client.sent_messages.add(msg.uid)
+            elif msg.type in (MsgType.File, MsgType.Video):
+                files = self.upload_file(msg)
+                msg.uid = self.client._sendFiles(files=files, message=fb_msg,
                                                  thread_id=thread.uid, thread_type=thread.type)
+                if msg.uid.startswith('mid.$'):
+                    self.client.sent_messages.add(msg.uid)
             elif msg.type == MsgType.Status:
                 assert (isinstance(msg.attributes, EFBMsgStatusAttribute))
                 attribute: EFBMsgStatusAttribute = msg.attributes
@@ -157,11 +157,6 @@ class MasterMessageManager:
         time.sleep(timeout / 1000)
         self.client.setTypingStatus(TypingStatus.STOPPED, thread_id=thread_uid, thread_type=thread_type)
 
-    def upload_file(self, msg: EFBMsg) -> int:
+    def upload_file(self, msg: EFBMsg, voice_clip=False) -> List[Tuple[int, str]]:
         """Upload media of a message as file, and return the file id."""
-        response = self.client._postFile(self.client.req_url.UPLOAD, {
-            'file': (msg.filename, msg.file, msg.mime)
-        }, fix_request=True, as_json=True)
-        return get_value(response, ('payload', 'metadata', 0, 'file_id')) or \
-               get_value(response, ('payload', 'metadata', 0, 'audio_id')) or \
-               get_value(response, ('payload', 'metadata', 0, 'video_id'))
+        return self.client._upload([(msg.filename, msg.file, msg.mime)], voice_clip)

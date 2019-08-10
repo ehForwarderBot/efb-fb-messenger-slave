@@ -13,14 +13,13 @@ if TYPE_CHECKING:
 
 
 class EFMSChat(EFBChat):
-
     logger = logging.getLogger("EFMSChat")
 
     cache = dict()
 
-    def __init__(self, channel: 'FBMessengerChannel', thread: Thread=None,
-                 graph_ql_thread: Dict[str, Any]=None,
-                 uid: str=None, lazy_load=False):
+    def __init__(self, channel: 'FBMessengerChannel', thread: Thread = None,
+                 graph_ql_thread: Dict[str, Any] = None,
+                 uid: str = None, lazy_load=False):
         """
         Create a chat based on fbchat Thread objects or GraphQL result dict.
 
@@ -144,8 +143,8 @@ class EFMSChat(EFBChat):
                 self.vendor_specific['chat_type'] = 'Marketplace'
                 if 'marketplace_thread_data' in self.graph_ql_thread:
                     self.vendor_specific['marketplace_thread_data'] = self.graph_ql_thread['marketplace_thread_data']
-                    item_picture = self.graph_ql_thread['marketplace_thread_data']\
-                        .get("for_sale_item", {}).get("primary_photo", {})\
+                    item_picture = self.graph_ql_thread['marketplace_thread_data'] \
+                        .get("for_sale_item", {}).get("primary_photo", {}) \
                         .get("image", {}).get("url", None)
                     if item_picture:
                         self.vendor_specific['profile_picture_url'] = item_picture
