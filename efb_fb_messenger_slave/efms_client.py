@@ -18,7 +18,7 @@ from fbchat._thread import ThreadType, ThreadLocation
 from fbchat.models import Message, EmojiSize
 from ehforwarderbot import EFBMsg, MsgType, coordinator
 from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgLocationAttribute
-from ehforwarderbot.status import EFBMessageRemoval
+from ehforwarderbot.status import EFBMessageRemoval, EFBMessageReactionsUpdate
 
 from .efms_chat import EFMSChat
 from .utils import get_value
@@ -401,9 +401,9 @@ class EFMSClient(Client):
             # " (S)", " (M)", " (L)"
 
         if message_object.reactions:
-            efb_msg.reactions = defaultdict(set)
-            for user_id, reaction in message_object.reactions:
-                efb_msg.reactions[reaction.value].add(EFMSChat(self.channel, uid=user_id))
+            efb_msg.reactions = defaultdict(list)
+            for user_id, reaction in message_object.reactions.items():
+                efb_msg.reactions[reaction.value].append(EFMSChat(self.channel, uid=user_id))
 
         return efb_msg
 
@@ -426,18 +426,17 @@ class EFMSClient(Client):
         msg_data = self._forcedFetch(thread_id, message_id).get("message")
         msg: Message = Message._from_graphql(msg_data)
 
-        # edit message to include reactions.
-        efb_msg = self.build_message(message_id, thread_id, msg.author, msg)
-        attachments = msg_data.get('blob_attachments', [])
-        if len(attachments):
-            self.attach_msg_type(efb_msg, attachments[-1])
-        if len(attachments) > 1:
-            efb_msg.uid += ".%d" % (len(attachments) - 1)
-            # If message is split, only modify the last message.
+        reactions = {}
+        if msg.reactions:
+            reactions = defaultdict(list)
+            for user_id, reaction in msg.reactions.items():
+                reactions[reaction.value].append(EFMSChat(self.channel, uid=user_id))
 
-        efb_msg.edit = True
+        chat = EFMSChat(self.channel, uid=thread_id)
 
-        coordinator.send_message(efb_msg)
+        update = EFBMessageReactionsUpdate(chat=chat, msg_id=message_id, reactions=reactions)
+
+        coordinator.send_status(update)
 
     def onMessageUnsent(self, mid=None, author_id=None, thread_id=None, thread_type=None, ts=None, msg=None):
         efb_msg = EFBMsg()

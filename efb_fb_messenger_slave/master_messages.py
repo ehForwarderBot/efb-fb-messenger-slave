@@ -42,16 +42,16 @@ class MasterMessageManager:
             mentions = []
 
             # Send message reaction
-            if msg.target and msg.text.startswith('r`') and \
-                    msg.target.uid.startswith("mid.$"):
-                self.logger.debug("[%s] Message is a reaction to another message: %s", msg.uid, msg.text)
-                msg_id = ".".join(msg.target.uid.split(".", 2)[:2])
-                if getattr(MessageReaction, msg.text[2:], None):
-                    self.client.reactToMessage(msg_id, getattr(MessageReaction, msg.text[2:]))
-                else:
-                    self.client.reactToMessage(msg_id, self.CustomReaction(msg.text[2:]))
-                msg.uid = "__reaction__"
-                return msg
+            # if msg.target and msg.text.startswith('r`') and \
+            #         msg.target.uid.startswith("mid.$"):
+            #     self.logger.debug("[%s] Message is a reaction to another message: %s", msg.uid, msg.text)
+            #     msg_id = ".".join(msg.target.uid.split(".", 2)[:2])
+            #     if getattr(MessageReaction, msg.text[2:], None):
+            #         self.client.reactToMessage(msg_id, getattr(MessageReaction, msg.text[2:]))
+            #     else:
+            #         self.client.reactToMessage(msg_id, self.CustomReaction(msg.text[2:]))
+            #     msg.uid = "__reaction__"
+            #     return msg
 
             # Target message
             if msg.target:

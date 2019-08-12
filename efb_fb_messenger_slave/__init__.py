@@ -10,13 +10,13 @@ from typing import Optional, List, IO, Dict, Any, Tuple
 
 import requests
 import yaml
-from fbchat import FBchatUserError, ThreadLocation
+from fbchat import FBchatUserError, ThreadLocation, MessageReaction, FBchatException
 from fbchat.models import Thread
-from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType
+from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType, MsgType
 from ehforwarderbot import utils as efb_utils
 from ehforwarderbot.utils import extra
-from ehforwarderbot.status import EFBMessageRemoval
-from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported
+from ehforwarderbot.status import EFBMessageRemoval, EFBReactToMessage
+from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported, EFBMessageReactionNotPossible
 
 from .__version__ import __version__
 from .efms_chat import EFMSChat
@@ -39,6 +39,21 @@ class FBMessengerChannel(EFBChannel):
     config: Dict[str, Any] = None
 
     logger = logging.getLogger(channel_id)
+
+    suggested_reactions = [MessageReaction.LOVE.value,
+                           MessageReaction.SMILE.value,
+                           MessageReaction.WOW.value,
+                           MessageReaction.SAD.value,
+                           MessageReaction.ANGRY.value,
+                           MessageReaction.YES.value,
+                           MessageReaction.NO.value]
+
+    supported_message_types = {
+        MsgType.Text, MsgType.Unsupported,
+        MsgType.Image, MsgType.Sticker,
+        MsgType.File, MsgType.Video,
+        MsgType.Status, MsgType.Link
+    }
 
     # Translator
     translator = translation("efb_fb_messenger_slave",
@@ -124,7 +139,14 @@ class FBMessengerChannel(EFBChannel):
 
     def send_status(self, status: EFBStatus):
         if isinstance(status, EFBMessageRemoval):
-            self.client.unsend(status.message.uid)
+            return self.client.unsend(status.message.uid)
+        elif isinstance(status, EFBReactToMessage):
+            try:
+                self.client.reactToMessage(status.msg_id, status.reaction and MessageReaction(status.reaction))
+            except FBchatException as e:
+                self.logger.error(f"Error occurred while sending status: {e}")
+                raise EFBMessageReactionNotPossible(*e.args)
+            return
         # Other status types go here
         raise EFBOperationNotSupported()
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from typing import TYPE_CHECKING, Dict, Any, Hashable, Tuple, Union, Iterable
+from typing import TYPE_CHECKING, Dict, Any, Hashable, Tuple, Union, Sequence
 
 if TYPE_CHECKING:
     from . import FBMessengerChannel
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class ExperimentalFlagsManager:
 
     DEFAULT_VALUES = {
-        'proxy_links_by_facebook': False,  # True then links are proxied by facebook
+        'proxy_links_by_facebook': False,  # True then links with Facebook redirections
         'send_link_with_description': False,  # Send link messages with descriptions
         'show_pending_threads': False,  # Show threads pending approval in the thread list
         'show_archived_threads': False,  # Show archived threads in the thread list
@@ -25,7 +25,7 @@ class ExperimentalFlagsManager:
         return self.config[flag_key]
 
 
-def get_value(source: Union[dict, Iterable], path: Tuple[Hashable, ...], default=None) -> Any:
+def get_value(source: Union[dict, Sequence], path: Tuple[Hashable, ...], default=None) -> Any:
     """
     Get value from a path of keys
     Args:
