@@ -2,7 +2,7 @@
 
 import logging
 from typing import TYPE_CHECKING, Dict, Any
-from ehforwarderbot import EFBChat, ChatType
+from ehforwarderbot import EFBChat, ChatType, coordinator
 from fbchat.models import Thread, User, Page, Group, Room
 
 from .utils import get_value
@@ -194,3 +194,20 @@ class EFMSChat(EFBChat):
         if item in {"chat_name", "chat_alias", "members", "chat_type"} and not self.loaded:
             self.load_chat()
         return super().__getattribute__(item)
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+
+        # Convert channel object to channel ID
+        if state['channel'] is not None:
+            state['channel'] = state['channel'].channel_id
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]):
+        # Try to load channel object
+        try:
+            state['channel'] = coordinator.get_module_by_id(state['channel'])
+        except NameError:
+            del state['channel']
+
+        self.__dict__.update(state)
