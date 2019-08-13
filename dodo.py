@@ -16,7 +16,7 @@ def task_gettext():
     sources = glob.glob(f"./{PACKAGE}/**/*.py", recursive=True)
     sources = [i for i in sources if "__version__.py" not in i]
     command = "xgettext --add-comments=TRANSLATORS -o " + pot + " " + " ".join(sources)
-    sources.append("README.rst")
+    sources.append(README_BASE)
     return {
         "actions": [
             command,
@@ -45,7 +45,7 @@ def task_msgfmt():
     actions.append(["cp", README_BASE, "./.cache/source/README.rst"])
     for i in languages:
         actions.append(["sphinx-build", "-E", "-b", "rst", "-C",
-                        "-D", "language=zh_cn", "-D", "locale_dirs=./readme_translations/locale",
+                        "-D", f"language={i}", "-D", "locale_dirs=./readme_translations/locale",
                         "-D", "extensions=sphinxcontrib.restbuilder",
                         "-D", "master_doc=README", "./.cache/source", f"./.cache/{i}"])
         actions.append(["mv", f"./.cache/{i}/README.rst", f"./readme_translations/{i}.rst"])
