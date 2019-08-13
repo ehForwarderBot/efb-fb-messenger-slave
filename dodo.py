@@ -3,7 +3,7 @@ from doit.action import CmdAction
 
 
 PACKAGE = "efb_fb_messenger_slave"
-README_BASE = "./README.md"
+README_BASE = "./README.rst"
 DEFAULT_BUMP_MODE = "beta"
 # major, minor, patch, alpha, beta, dev, post
 DOIT_CONFIG = {
@@ -16,13 +16,14 @@ def task_gettext():
     sources = glob.glob(f"./{PACKAGE}/**/*.py", recursive=True)
     sources = [i for i in sources if "__version__.py" not in i]
     command = "xgettext --add-comments=TRANSLATORS -o " + pot + " " + " ".join(sources)
+    sources.append("README.rst")
     return {
         "actions": [
             command,
             ['cp', README_BASE, './.cache/README.rst'],
             ['sphinx-build', '-b', 'gettext', '-C', '-D', 'master_doc=README',
-             'gettext_additional_targets=literal-block,image',
-             './.cache', './readme_translations/locale', './.cache/README.rst'],
+             '-D', 'gettext_additional_targets=literal-block,image',
+             './.cache', './readme_translations/locale/', './.cache/README.rst'],
             ['rm', './.cache/README.rst'],
         ],
         "targets": [
@@ -47,7 +48,7 @@ def task_msgfmt():
                         "-D", "language=zh_cn", "-D", "locale_dirs=./readme_translations/locale",
                         "-D", "extensions=sphinxcontrib.restbuilder",
                         "-D", "master_doc=README", "./.cache/source", f"./.cache/{i}"])
-        actions.append(["mv", f"./.cache/{i}/README.md", f"./readme_translations/{i}.md"])
+        actions.append(["mv", f"./.cache/{i}/README.rst", f"./readme_translations/{i}.rst"])
         actions.append(["rm", "-rf", f"./.cache/{i}"])
     actions.append(["rm", "-rf", "./.cache/source"])
 

@@ -143,7 +143,7 @@ class FBMessengerChannel(EFBChannel):
         elif isinstance(status, EFBReactToMessage):
             try:
                 self.client.reactToMessage(status.msg_id, status.reaction and MessageReaction(status.reaction))
-            except FBchatException as e:
+            except (FBchatException, ValueError) as e:
                 self.logger.error(f"Error occurred while sending status: {e}")
                 raise EFBMessageReactionNotPossible(*e.args)
             return

@@ -86,19 +86,9 @@ Example
 Tips and tricks
 ---------------
 
--  To react to a message, reply (target) to the message with one of the
-   following commands:
-
-   -  ``r`LOVE`` for 😍
-   -  ``r`SMILE`` for 😆
-   -  ``r`WOW`` for 😮
-   -  ``r`SAD`` for 😢
-   -  ``r`ANGRY`` for 😠
-   -  ``r`YES`` for 👍
-   -  ``r`NO`` for 👎
-
 -  To send large emoji, send the emoji as text following by ``S``,
    ``M``, or ``L`` as small, medium and large emoji accordingly.
+   For example, to send a large smile emoji, send ``😆L``.
 
 Experimental flags
 ------------------
@@ -140,10 +130,10 @@ EFMS’s chats provides the following vendor specific options:
 * ``'profile_picture_url'`` *(str)*: URL to the thread’s
   profile picture.
 
-Localization support
+Translations support
 --------------------
 
-EFMS supports localized user interface prompts experimentally,
+EFMS supports translated user interface prompts experimentally,
 by setting the locale environmental variable (``LANGUAGE``,
 ``LC_ALL``, ``LC_MESSAGES`` or ``LANG``) to one of our
 `supported languages`_. Meanwhile, you can help to translate
