@@ -29,7 +29,7 @@ class MasterMessageManager:
         channel.supported_message_types = {MsgType.Text, MsgType.Image, MsgType.Sticker,
                                            MsgType.Audio, MsgType.File, MsgType.Video,
                                            MsgType.Status, MsgType.Unsupported,
-                                           MsgType.Location}
+                                           MsgType.Location, MsgType.Animation}
         self.client = channel.client
         self.flag = channel.flag
 
@@ -104,7 +104,7 @@ class MasterMessageManager:
                         fb_msg.emoji_size = EmojiSize.LARGE
                     fb_msg.text = msg.text[:-1]
                 msg.uid = self.client.send(fb_msg, thread_id=thread.uid, thread_type=thread.type)
-            elif msg.type in (MsgType.Image, MsgType.Sticker):
+            elif msg.type in (MsgType.Image, MsgType.Sticker, MsgType.Animation):
                 msg.uid = self.client.send_image_file(msg.filename, msg.file, msg.mime, message=fb_msg,
                                                       thread_id=thread.uid, thread_type=thread.type)
             elif msg.type == MsgType.Audio:

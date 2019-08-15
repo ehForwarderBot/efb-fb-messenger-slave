@@ -238,7 +238,7 @@ class EFMSClient(Client):
             msg.file.seek(0)
             msg.path = msg.file.name
         elif attachment_type == 'MessageAnimatedImage':
-            msg.type = MsgType.Image
+            msg.type = MsgType.Animation
             msg.filename = msg.filename or 'image.gif'
             msg.mime = msg.mime or 'image/gif'
             ext = os.path.splitext(msg.filename)[1]
