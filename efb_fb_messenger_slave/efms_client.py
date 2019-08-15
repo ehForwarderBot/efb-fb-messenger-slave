@@ -175,7 +175,7 @@ class EFMSClient(Client):
             description = get_value(link_information, ('description', 'text'), '')
             msg.text = '\n'.join([title, description])
             preview = get_value(link_information, ('media', 'image', 'uri'), None)
-            latitude, longitude = map(float.re.search(r'markers=([\d.]+)%2C([\d.]+)', preview).groups())
+            latitude, longitude = map(float.re.search(r'markers=([\d.-]+)%2C([\d.-]+)', preview).groups())
             msg.attributes = EFBMsgLocationAttribute(
                 latitude=latitude, longitude=longitude
             )
@@ -201,9 +201,12 @@ class EFMSClient(Client):
             attachment_type = '__Sticker'
         if 'extensible_attachment' in attachment.get('mercury', {}):
             attachment_type = '__Link'
-            if get_value(attachment, ('mercury', 'extensible_attachment',
-                                      'story_attachment', 'target', '__typename')) == 'MessageLocation':
+            extensible_type = get_value(attachment, ('mercury', 'extensible_attachment',
+                                   'story_attachment', 'target', '__typename'))
+            if extensible_type == 'MessageLocation':
                 attachment_type = 'MessageLocation'
+            elif extensible_type == 'MessageLiveLocation':
+                attachment_type = 'MessageLocation'  # TODO: Change if live location is supported by framework.
 
         self.logger.debug("[%s] The attachment has type %s", msg.uid, attachment_type)
 
@@ -305,7 +308,7 @@ class EFMSClient(Client):
             description = get_value(link_information, ('description', 'text'), '')
             msg.text = '\n'.join([title, description])
             preview = get_value(link_information, ('media', 'image', 'uri'), None)
-            latitude, longitude = map(float, re.search(r'markers=([\d.]+)%2C([\d.]+)', preview).groups())
+            latitude, longitude = map(float, re.search(r'markers=([\d.-]+)%2C([\d.-]+)', preview).groups())
             msg.attributes = EFBMsgLocationAttribute(
                 latitude=latitude, longitude=longitude
             )

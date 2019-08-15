@@ -6,9 +6,9 @@ import threading
 import emoji
 from typing import TYPE_CHECKING, Set, Tuple, List
 
-from fbchat.models import Thread, Message, TypingStatus, ThreadType, Mention, EmojiSize, MessageReaction, Sticker
+from fbchat.models import Thread, Message, TypingStatus, ThreadType, Mention, EmojiSize, Sticker, LocationAttachment
 from ehforwarderbot import EFBMsg, MsgType
-from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgStatusAttribute, ChatType
+from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgStatusAttribute, ChatType, EFBMsgLocationAttribute
 from ehforwarderbot.exceptions import EFBMessageTypeNotSupported
 
 from .utils import get_value
@@ -28,7 +28,8 @@ class MasterMessageManager:
         self.channel = channel
         channel.supported_message_types = {MsgType.Text, MsgType.Image, MsgType.Sticker,
                                            MsgType.Audio, MsgType.File, MsgType.Video,
-                                           MsgType.Status, MsgType.Unsupported}
+                                           MsgType.Status, MsgType.Unsupported,
+                                           MsgType.Location}
         self.client = channel.client
         self.flag = channel.flag
 
@@ -120,29 +121,35 @@ class MasterMessageManager:
                     self.client.sent_messages.add(msg.uid)
             elif msg.type == MsgType.Status:
                 assert (isinstance(msg.attributes, EFBMsgStatusAttribute))
-                attribute: EFBMsgStatusAttribute = msg.attributes
-                if attribute.status_type in (EFBMsgStatusAttribute.Types.TYPING,
-                                             EFBMsgStatusAttribute.Types.UPLOADING_AUDIO,
-                                             EFBMsgStatusAttribute.Types.UPLOADING_VIDEO,
-                                             EFBMsgStatusAttribute.Types.UPLOADING_IMAGE,
-                                             EFBMsgStatusAttribute.Types.UPLOADING_FILE):
+                status: EFBMsgStatusAttribute = msg.attributes
+                if status.status_type in (EFBMsgStatusAttribute.Types.TYPING,
+                                          EFBMsgStatusAttribute.Types.UPLOADING_AUDIO,
+                                          EFBMsgStatusAttribute.Types.UPLOADING_VIDEO,
+                                          EFBMsgStatusAttribute.Types.UPLOADING_IMAGE,
+                                          EFBMsgStatusAttribute.Types.UPLOADING_FILE):
                     self.client.setTypingStatus(TypingStatus.TYPING, thread_id=thread.uid, thread_type=thread.type)
-                    threading.Thread(target=self.stop_typing, args=(attribute.timeout, thread.uid, thread.type)).run()
+                    threading.Thread(target=self.stop_typing, args=(status.timeout, thread.uid, thread.type)).run()
             elif msg.type == MsgType.Link:
                 assert (isinstance(msg.attributes, EFBMsgLinkAttribute))
-                attribute: EFBMsgLinkAttribute = msg.attributes
+                link: EFBMsgLinkAttribute = msg.attributes
                 if self.flag('send_link_with_description'):
-                    info = (attribute.title,)
-                    if attribute.description:
-                        info += (attribute.description,)
-                    info += (attribute.url,)
+                    info = (link.title,)
+                    if link.description:
+                        info += (link.description,)
+                    info += (link.url,)
                     text = "\n".join(info)
                 else:
-                    text = attribute.url
+                    text = link.url
                 if fb_msg.text:
                     text = fb_msg.text + "\n" + text
                 fb_msg.text = text
                 msg.uid = self.client.send(fb_msg, thread_id=thread.uid, thread_type=thread.type)
+            elif msg.type == MsgType.Location:
+                assert (isinstance(msg.attributes, EFBMsgLocationAttribute))
+                location_attr: EFBMsgLocationAttribute = msg.attributes
+                location = LocationAttachment(latitude=location_attr.latitude,
+                                              longitude=location_attr.longitude)
+                self.client.sendPinnedLocation(location, fb_msg, thread_id=thread.uid, thread_type=thread.type)
             else:
                 raise EFBMessageTypeNotSupported()
             return msg

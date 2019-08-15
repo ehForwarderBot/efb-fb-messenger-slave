@@ -48,13 +48,6 @@ class FBMessengerChannel(EFBChannel):
                            MessageReaction.YES.value,
                            MessageReaction.NO.value]
 
-    supported_message_types = {
-        MsgType.Text, MsgType.Unsupported,
-        MsgType.Image, MsgType.Sticker,
-        MsgType.File, MsgType.Video,
-        MsgType.Status, MsgType.Link
-    }
-
     # Translator
     translator = translation("efb_fb_messenger_slave",
                              resource_filename("efb_fb_messenger_slave", 'locale'),
