@@ -59,8 +59,11 @@ Getting started
 
 Known issues
 ------------
-- Message reactions from others and you on other clients will not
-  be received by EFMS.
+- Messages from threads in ``MARKETPLACE`` type (i.e. messages from interested
+  buyers on Facebook Marketplace) cannot be processed.
+- Live location cannot be updated properly.
+- Poll messages, reminders and events are not yet supported.
+- Voice calls are not planned to be supported.
 
 Optional configuration file
 ---------------------------
