@@ -39,10 +39,13 @@ setup(
         "fbchat>=1.7.3",
         "PyYaml",
         'requests',
-        'emoji'
+        'emoji',
+        "bullet",
+        "cjkwrap"
     ],
     entry_points={
         "console_scripts": ["efms-auth = efb_fb_messenger_slave.__main__:main"],
-        "ehforwarderbot.slave": ["blueset.fbmessenger = efb_fb_messenger_slave:FBMessengerChannel"]
+        "ehforwarderbot.slave": ["blueset.fbmessenger = efb_fb_messenger_slave:FBMessengerChannel"],
+        "ehforwarderbot.wizard": ["blueset.fbmessenger = efb_fb_messenger_slave.wizard:wizard"]
     }
 )

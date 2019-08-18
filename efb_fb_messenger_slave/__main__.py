@@ -29,12 +29,17 @@ def main():
 
     args = parser.parse_args()
     profile = args.profile
+    instance = args.instance
+
+    run(instance, profile)
+
+
+def run(instance, profile):
     coordinator.profile = profile
     channel_id = FBMessengerChannel.channel_id
-    if args.instance:
-        channel_id += f"#{args.instance}"
+    if instance:
+        channel_id += f"#{instance}"
     path = utils.get_data_path(channel_id)
-
     print(_("EFB Facebook Messenger Slave Session Updater\n"
             "============================================"))
     print()
@@ -50,22 +55,16 @@ def main():
             "{0}").format(path))
     print()
     print(_("To continue, press Enter/Return."))
-
     input()
-
     email = input(_("Email: "))
     password = getpass.getpass(_("Password: "))
     client = Client(email, password)
-
     if not client.isLoggedIn():
         print(_("Log in failed. Please check the information above and try again."))
         exit(1)
-
     session_path = path / "session.pickle"
-
     with session_path.open('wb') as f:
         pickle.dump(client.getSession(), f)
-
     print(_("Your session has been successfully updated. It's stored at\n"
             "{0}").format(session_path))
     print(_("Your session cookies is as valuable as your account credential.\n"
