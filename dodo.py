@@ -146,12 +146,13 @@ def task_build():
 
 def task_publish():
     def get_twine_command():
-        __version__ = __import__("{}.__version__".format(PACKAGE)).__version__
+        __version__ = __import__(PACKAGE).__version__
         if 'dev' in __version__:
             raise ValueError(f"Cannot publish dev version ({__version__}).")
         binarys = glob.glob("./dist/*{}*".format(__version__), recursive=True)
-        return ["twine", "upload"] + binarys
+        return " ".join(["twine", "upload"] + binarys)
+
     return {
-        "actions": [get_twine_command],
-        "task_dep": ["msgfmt", "build"]  # ["test",
+        "actions": [CmdAction(get_twine_command)],
+        "task_dep": ["build"]
     }
