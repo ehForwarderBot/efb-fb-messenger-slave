@@ -15,7 +15,7 @@ def task_gettext():
     pot = f"./{PACKAGE}/locale/{PACKAGE}.pot"
     sources = glob.glob(f"./{PACKAGE}/**/*.py", recursive=True)
     sources = [i for i in sources if "__version__.py" not in i]
-    command = "xgettext --add-comments=TRANSLATORS -o " + pot + " " + " ".join(sources)
+    command = "xgettext --add-comments=TRANSLATORS --from-code=UTF-8 -o " + pot + " " + " ".join(sources)
     sources.append(README_BASE)
     return {
         "actions": [
