@@ -63,8 +63,14 @@ Getting started
 Known issues
 ============
 
-* Message reactions from others and you on other clients will not be
-   received by EFMS.
+* Messages from threads in ``MARKETPLACE`` type (i.e. messages from
+   interested buyers on Facebook Marketplace) cannot be processed.
+
+* Live location cannot be updated properly.
+
+* Poll messages, reminders and events are not yet supported.
+
+* Voice calls are not planned to be supported.
 
 
 Optional configuration file
@@ -115,9 +121,32 @@ disappear at any time. Use at your own risk.
    When processing link message from the Master Channel, attach the
    title and description besides the link when the option is enabled.
 
-   注解: Regardless of this option, link messages are sent as text, and
-      Facebook Messenger may or may not attach its own link preview
-      per its system configuration.*
+   注解: Regardless
+      of
+      this
+      option,
+      link
+      messages
+      are
+      sent
+      as
+      text,
+      and
+      Facebook
+      Messenger
+      may
+      or
+      may
+      not
+      attach
+      its
+      own
+      link
+      preview
+      per
+      its
+      system
+      configuration.*
 
 * ``show_pending_threads`` *(bool)* [Default: ``false``]
 
@@ -140,10 +169,10 @@ EFMS’s chats provides the following vendor specific options:
    picture.
 
 
-Localization support
+Translations support
 ====================
 
-EFMS supports localized user interface prompts experimentally, by
+EFMS supports translated user interface prompts experimentally, by
 setting the locale environmental variable (``LANGUAGE``, ``LC_ALL``,
 ``LC_MESSAGES`` or ``LANG``) to one of our `supported languages
 <https://crowdin.com/project/ehforwarderbot/>`_. Meanwhile, you can

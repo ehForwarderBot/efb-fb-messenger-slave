@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-13 14:23+0800\n"
-"PO-Revision-Date: 2019-08-13 06:25\n"
+"POT-Creation-Date: 2019-08-18 12:26+0800\n"
+"PO-Revision-Date: 2019-08-18 06:32\n"
 "Last-Translator: Eana Hufwe (blueset)\n"
 "Language-Team: English\n"
 "Language: en_US\n"
@@ -16,112 +16,112 @@ msgstr ""
 "X-Crowdin-Language: en\n"
 "X-Crowdin-File: /EFBChannels/efb-fb-messenger-slave/efb_fb_messenger_slave/locale/efb_fb_messenger_slave.pot\n"
 
-#: efb_fb_messenger_slave/__init__.py:76
+#: efb_fb_messenger_slave/__init__.py:69
 msgid "Session not found, please authorize your account.\n"
 "To do so, run: efms-auth"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:80
+#: efb_fb_messenger_slave/__init__.py:73
 msgid "You may need to re-authorize your account.\n"
 "To do so, run: efms-auth"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:180
+#: efb_fb_messenger_slave/__init__.py:197
 msgid "Show threads list"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:181
+#: efb_fb_messenger_slave/__init__.py:198
 #, python-brace-format
 msgid "Usage:\n"
 "    {function_name}"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:186
+#: efb_fb_messenger_slave/__init__.py:203
 msgid "Search for users"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:187
-#: efb_fb_messenger_slave/__init__.py:194
-#: efb_fb_messenger_slave/__init__.py:201
-#: efb_fb_messenger_slave/__init__.py:208
+#: efb_fb_messenger_slave/__init__.py:204
+#: efb_fb_messenger_slave/__init__.py:211
+#: efb_fb_messenger_slave/__init__.py:218
+#: efb_fb_messenger_slave/__init__.py:225
 #, python-brace-format
 msgid "Show the first 10 results.\n"
 "Usage:\n"
 "    {function_name} keyword"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:193
+#: efb_fb_messenger_slave/__init__.py:210
 msgid "Search for groups"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:200
+#: efb_fb_messenger_slave/__init__.py:217
 msgid "Search for pages"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:207
+#: efb_fb_messenger_slave/__init__.py:224
 msgid "Search for threads"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:214
+#: efb_fb_messenger_slave/__init__.py:231
 msgid "Add to group"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:215
+#: efb_fb_messenger_slave/__init__.py:232
 #, python-brace-format
 msgid "Add members to a group.\n"
 "Usage:\n"
 "    {function_name} GroupID UserID [UserID ...]"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:221
+#: efb_fb_messenger_slave/__init__.py:238
 msgid "Remove from group"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:222
+#: efb_fb_messenger_slave/__init__.py:239
 #, python-brace-format
 msgid "Remove members from a group.\n"
 "Usage:\n"
 "    {function_name} GroupID UserID [UserID ...]"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:228
+#: efb_fb_messenger_slave/__init__.py:245
 msgid "Change nickname"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:229
+#: efb_fb_messenger_slave/__init__.py:246
 #, python-brace-format
 msgid "Change nickname of a user.\n"
 "Usage:\n"
 "    {function_name} UserID nickname"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:235
+#: efb_fb_messenger_slave/__init__.py:252
 msgid "Change group title"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:236
+#: efb_fb_messenger_slave/__init__.py:253
 #, python-brace-format
 msgid "Change the title of a group.\n"
 "Usage:\n"
 "    {function_name} GroupID title"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:242
+#: efb_fb_messenger_slave/__init__.py:259
 msgid "Change chat emoji"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:243
+#: efb_fb_messenger_slave/__init__.py:260
 #, python-brace-format
 msgid "Change the emoji of a chat.\n"
 "Usage:\n"
 "    {function_name} ChatID emoji"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:249
+#: efb_fb_messenger_slave/__init__.py:266
 msgid "Change member nickname"
 msgstr ""
 
-#: efb_fb_messenger_slave/__init__.py:250
+#: efb_fb_messenger_slave/__init__.py:267
 #, python-brace-format
 msgid "Change the nickname of a group member.\n"
 "Usage:\n"

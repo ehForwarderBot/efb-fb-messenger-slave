@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-24 14:22+1100\n"
-"PO-Revision-Date: 2019-01-23 23:58\n"
-"Last-Translator: blueset <ilove@1a23.com>\n"
+"POT-Creation-Date: 2019-08-18 12:26+0800\n"
+"PO-Revision-Date: 2019-08-18 14:05\n"
+"Last-Translator: Eana Hufwe (blueset)\n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -16,41 +16,37 @@ msgstr ""
 "X-Crowdin-Language: zh-CN\n"
 "X-Crowdin-File: /EFBChannels/efb-fb-messenger-slave/efb_fb_messenger_slave/locale/efb_fb_messenger_slave.pot\n"
 
-#: efb_fb_messenger_slave/__init__.py:59
+#: efb_fb_messenger_slave/__init__.py:69
 msgid "Session not found, please authorize your account.\n"
 "To do so, run: efms-auth"
 msgstr "未找到登录记录。\n"
 "请运行 efms-auth 以登录您的账户。"
 
-#: efb_fb_messenger_slave/__init__.py:63
+#: efb_fb_messenger_slave/__init__.py:73
 msgid "You may need to re-authorize your account.\n"
 "To do so, run: efms-auth"
 msgstr "您可能需要重新登录您的帐户。\n"
 "请运行 efms-auth 以登录您的账户。"
 
-#: efb_fb_messenger_slave/__init__.py:125
-msgid "Messages cannot be removed in Facebook Messenger."
-msgstr "Facebook Messenger 不支持撤回消息。"
-
-#: efb_fb_messenger_slave/__init__.py:156
+#: efb_fb_messenger_slave/__init__.py:197
 msgid "Show threads list"
 msgstr "显示会话列表"
 
-#: efb_fb_messenger_slave/__init__.py:157
+#: efb_fb_messenger_slave/__init__.py:198
 #, python-brace-format
 msgid "Usage:\n"
 "    {function_name}"
 msgstr "用法：\n"
 "    {function_name}"
 
-#: efb_fb_messenger_slave/__init__.py:162
+#: efb_fb_messenger_slave/__init__.py:203
 msgid "Search for users"
 msgstr "搜索用户"
 
-#: efb_fb_messenger_slave/__init__.py:163
-#: efb_fb_messenger_slave/__init__.py:170
-#: efb_fb_messenger_slave/__init__.py:177
-#: efb_fb_messenger_slave/__init__.py:184
+#: efb_fb_messenger_slave/__init__.py:204
+#: efb_fb_messenger_slave/__init__.py:211
+#: efb_fb_messenger_slave/__init__.py:218
+#: efb_fb_messenger_slave/__init__.py:225
 #, python-brace-format
 msgid "Show the first 10 results.\n"
 "Usage:\n"
@@ -59,23 +55,23 @@ msgstr "显示前 10 个搜索结果。\n"
 "用法:\n"
 "    {function_name} 关键词"
 
-#: efb_fb_messenger_slave/__init__.py:169
+#: efb_fb_messenger_slave/__init__.py:210
 msgid "Search for groups"
 msgstr "搜索群组"
 
-#: efb_fb_messenger_slave/__init__.py:176
+#: efb_fb_messenger_slave/__init__.py:217
 msgid "Search for pages"
 msgstr "搜索页面"
 
-#: efb_fb_messenger_slave/__init__.py:183
+#: efb_fb_messenger_slave/__init__.py:224
 msgid "Search for threads"
 msgstr "搜索会话"
 
-#: efb_fb_messenger_slave/__init__.py:190
+#: efb_fb_messenger_slave/__init__.py:231
 msgid "Add to group"
 msgstr "添加至群组"
 
-#: efb_fb_messenger_slave/__init__.py:191
+#: efb_fb_messenger_slave/__init__.py:232
 #, python-brace-format
 msgid "Add members to a group.\n"
 "Usage:\n"
@@ -84,11 +80,11 @@ msgstr "添加成员到群组。\n"
 "用法：\n"
 "    {function_name} 群组ID 用户ID [用户ID ...]"
 
-#: efb_fb_messenger_slave/__init__.py:197
+#: efb_fb_messenger_slave/__init__.py:238
 msgid "Remove from group"
 msgstr "从群组中移除"
 
-#: efb_fb_messenger_slave/__init__.py:198
+#: efb_fb_messenger_slave/__init__.py:239
 #, python-brace-format
 msgid "Remove members from a group.\n"
 "Usage:\n"
@@ -97,11 +93,11 @@ msgstr "从群组中移除用户。\n"
 "用法: \n"
 "    {function_name} 群组ID 用户ID [用户ID ...]"
 
-#: efb_fb_messenger_slave/__init__.py:204
+#: efb_fb_messenger_slave/__init__.py:245
 msgid "Change nickname"
 msgstr "更改昵称"
 
-#: efb_fb_messenger_slave/__init__.py:205
+#: efb_fb_messenger_slave/__init__.py:246
 #, python-brace-format
 msgid "Change nickname of a user.\n"
 "Usage:\n"
@@ -110,11 +106,11 @@ msgstr "更改用户的昵称\n"
 "用法：\n"
 "    {function_name} 用户ID 昵称"
 
-#: efb_fb_messenger_slave/__init__.py:211
+#: efb_fb_messenger_slave/__init__.py:252
 msgid "Change group title"
 msgstr "更改群名称"
 
-#: efb_fb_messenger_slave/__init__.py:212
+#: efb_fb_messenger_slave/__init__.py:253
 #, python-brace-format
 msgid "Change the title of a group.\n"
 "Usage:\n"
@@ -123,11 +119,11 @@ msgstr "修改群组名。\n"
 "用法: \n"
 "    {function_name} 群组ID 新名称"
 
-#: efb_fb_messenger_slave/__init__.py:218
+#: efb_fb_messenger_slave/__init__.py:259
 msgid "Change chat emoji"
 msgstr "更改会话 Emoji"
 
-#: efb_fb_messenger_slave/__init__.py:219
+#: efb_fb_messenger_slave/__init__.py:260
 #, python-brace-format
 msgid "Change the emoji of a chat.\n"
 "Usage:\n"
@@ -136,11 +132,11 @@ msgstr "修改会话的 Emoji。\n"
 "用法: \n"
 "    {function_name} 群组ID Emoji"
 
-#: efb_fb_messenger_slave/__init__.py:225
+#: efb_fb_messenger_slave/__init__.py:266
 msgid "Change member nickname"
 msgstr "更改群组成员昵称"
 
-#: efb_fb_messenger_slave/__init__.py:226
+#: efb_fb_messenger_slave/__init__.py:267
 #, python-brace-format
 msgid "Change the nickname of a group member.\n"
 "Usage:\n"
