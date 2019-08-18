@@ -1,4 +1,6 @@
 import glob
+import subprocess
+
 from doit.action import CmdAction
 
 
@@ -76,10 +78,15 @@ def task_crowdin_pull():
 
 
 def task_commit_lang_file():
+    def git_actions():
+        if subprocess.run(['git', 'diff-index', '--quiet', 'HEAD']).returncode != 0:
+            return ["git commit -m \"Sync localization files from Crowdin\""]
+        return ["echo"]
+
     return {
         "actions": [
-            ("git", "add", "*.po"),
-            ("git", "commit", "-s", "Sync localization files from Crowdin")
+            ["git", "add", "*.po", "readme_translations/*.rst"],
+            CmdAction(git_actions)
         ],
         "task_dep": ["crowdin", "crowdin_pull"]
     }
@@ -113,20 +120,20 @@ def task_bump_version():
 
 
 def task_mypy():
-    sources = glob.glob("./{package}/**/*.py".format(package=PACKAGE), recursive=True)
-    actions = ["mypy {}".format(i) for i in sources]
+    # sources = glob.glob("./{package}/**/*.py".format(package=PACKAGE), recursive=True)
+    actions = ["mypy -p {} --ignore-missing-imports".format(PACKAGE)]
     return {
         "actions": actions
     }
 
 
-def task_test():
-    return {
-        "actions": [
-            "coverage run --source ./{} pytest".format(PACKAGE),
-            "coverage report"
-        ]
-    }
+# def task_test():
+#     return {
+#         "actions": [
+#             "coverage run --source ./{} pytest".format(PACKAGE),
+#             "coverage report"
+#         ]
+#     }
 
 
 def task_build():
@@ -146,5 +153,5 @@ def task_publish():
         return ["twine", "upload"] + binarys
     return {
         "actions": [get_twine_command],
-        "task_dep": ["test", "msgfmt", "build"]
+        "task_dep": ["msgfmt", "build"]  # ["test",
     }
