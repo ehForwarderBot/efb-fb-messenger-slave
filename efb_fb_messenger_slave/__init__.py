@@ -1,30 +1,29 @@
 # coding=utf-8
 
-import os
-import pickle
 import logging
-from io import BytesIO
-from pkg_resources import resource_filename
+import pickle
 from gettext import translation
+from io import BytesIO
 from typing import Optional, List, IO, Dict, Any, Tuple
 
 import requests
 import yaml
 from fbchat import FBchatUserError, ThreadLocation, MessageReaction, FBchatException, Message
 from fbchat.models import Thread
-from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType, MsgType
-from ehforwarderbot import utils as efb_utils
-from ehforwarderbot.utils import extra
-from ehforwarderbot.status import EFBMessageRemoval, EFBReactToMessage
-from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported, EFBMessageReactionNotPossible
-from types import ChatID, MessageID
+from pkg_resources import resource_filename
 
+from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType
+from ehforwarderbot import utils as efb_utils
+from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported, EFBMessageReactionNotPossible
+from ehforwarderbot.status import EFBMessageRemoval, EFBReactToMessage
+from ehforwarderbot.types import ChatID, MessageID
+from ehforwarderbot.utils import extra
+from . import utils as efms_utils
 from .__version__ import __version__
 from .efms_chat import EFMSChat
 from .efms_client import EFMSClient
-from .master_messages import MasterMessageManager
 from .extra_functions import ExtraFunctionsManager
-from . import utils as efms_utils
+from .master_messages import MasterMessageManager
 from .utils import ExperimentalFlagsManager
 
 
