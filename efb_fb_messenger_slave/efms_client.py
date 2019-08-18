@@ -354,7 +354,7 @@ class EFMSClient(Client):
 
         self.logger.debug("[%s] Received message from Messenger: %s", mid, message_object)
 
-        efb_msg = self.build_message(mid, thread_id, author_id, message_object)
+        efb_msg = self.build_efb_msg(mid, thread_id, author_id, message_object)
 
         attachments = msg.get('delta', {}).get('attachments', [])
 
@@ -375,7 +375,7 @@ class EFMSClient(Client):
 
         self.markAsDelivered(mid, thread_id)
 
-    def build_message(self, mid: str, thread_id: str, author_id: str, message_object: Message,
+    def build_efb_msg(self, mid: str, thread_id: str, author_id: str, message_object: Message,
                       nested: bool = False) -> EFBMsg:
         efb_msg = EFBMsg()
         efb_msg.uid = mid
@@ -388,7 +388,7 @@ class EFMSClient(Client):
         efb_msg.chat = EFMSChat(self.channel, uid=thread_id)
 
         if not nested and message_object.replied_to:
-            efb_msg.target = self.build_message(message_object.reply_to_id,
+            efb_msg.target = self.build_efb_msg(message_object.reply_to_id,
                                                 thread_id=thread_id,
                                                 author_id=message_object.author,
                                                 message_object=message_object.replied_to,

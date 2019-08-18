@@ -10,13 +10,14 @@ from typing import Optional, List, IO, Dict, Any, Tuple
 
 import requests
 import yaml
-from fbchat import FBchatUserError, ThreadLocation, MessageReaction, FBchatException
+from fbchat import FBchatUserError, ThreadLocation, MessageReaction, FBchatException, Message
 from fbchat.models import Thread
 from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType, MsgType
 from ehforwarderbot import utils as efb_utils
 from ehforwarderbot.utils import extra
 from ehforwarderbot.status import EFBMessageRemoval, EFBReactToMessage
 from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported, EFBMessageReactionNotPossible
+from types import ChatID, MessageID
 
 from .__version__ import __version__
 from .efms_chat import EFMSChat
@@ -28,15 +29,14 @@ from .utils import ExperimentalFlagsManager
 
 
 class FBMessengerChannel(EFBChannel):
-
     channel_name: str = "Facebook Messenger Slave"
     channel_emoji: str = "⚡️"
     channel_id = "blueset.fbmessenger"
     channel_type: ChannelType = ChannelType.Slave
     __version__: str = __version__
 
-    client: EFMSClient = None
-    config: Dict[str, Any] = None
+    client: EFMSClient
+    config: Dict[str, Any] = {}
 
     logger = logging.getLogger(channel_id)
 
@@ -60,7 +60,7 @@ class FBMessengerChannel(EFBChannel):
         super().__init__(instance_id)
         session_path = efb_utils.get_data_path(self.channel_id) / "session.pickle"
         try:
-            data = pickle.load(open(session_path, 'rb'))
+            data = pickle.load(session_path.open('rb'))
             self.client = EFMSClient(None, None, session_cookies=data)
             self.client.channel = self
             EFMSChat.cache[EFBChat.SELF_ID] = EFMSChat(self,
@@ -92,10 +92,10 @@ class FBMessengerChannel(EFBChannel):
         Configuration file is in YAML format.
         """
         config_path = efb_utils.get_config_path(self.channel_id)
-        if not os.path.exists(config_path):
+        if not config_path.exists():
             self.config: Dict[str, Any] = dict()
             return
-        with open(config_path) as f:
+        with config_path.open() as f:
             self.config: Dict[str, Any] = yaml.load(f)
 
     def get_chats(self) -> List[EFMSChat]:
@@ -167,6 +167,30 @@ class FBMessengerChannel(EFBChannel):
         photo = BytesIO(requests.get(photo_url).content)
         photo.seek(0)
         return photo
+
+    def get_message_by_id(self, chat_uid: ChatID, msg_id: MessageID) -> Optional['EFBMsg']:
+        index = None
+        if msg_id.split('.')[-1].isdecimal():
+            # is sub-message
+            index = int(msg_id.split('.')[-1])
+            msg_id = '.'.join(msg_id.split('.')[:-1])
+
+        thread_id, thread_type = self.client._getThread(chat_uid, None)
+        message_info = self.client._forcedFetch(thread_id, msg_id).get("message")
+        message = Message._from_graphql(message_info)
+
+        efb_msg = self.client.build_efb_msg(msg_id, chat_uid, message.author,
+                                            message)
+
+        attachments = message_info.get('delta', {}).get('attachments', [])
+
+        if attachments:
+            attachment = attachments[index]
+            self.client.attach_media(efb_msg, attachment)
+
+        efb_msg.uid = msg_id
+
+        return efb_msg
 
     # Additional features
 
