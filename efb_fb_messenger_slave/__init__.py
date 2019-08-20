@@ -52,13 +52,8 @@ class FBMessengerChannel(EFBChannel):
                              resource_filename("efb_fb_messenger_slave", 'locale'),
                              fallback=True)
 
-    @property
-    def _(self):
-        return self.translator._
-
-    @property
-    def ngettext(self):
-        return self.translator.ngettext
+    _ = translator.gettext  # type: ignore
+    ngettext = translator.ngettext  # type: ignore
 
     def __init__(self, instance_id: InstanceID = None):
         super().__init__(instance_id)
