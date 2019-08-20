@@ -54,18 +54,6 @@ class MasterMessageManager:
             #     msg.uid = "__reaction__"
             #     return msg
 
-            # Target message
-            if msg.target:
-                self.logger.debug("[%s] Message replying to another message: %s", msg.uid, msg.target)
-                if msg.target.chat.chat_type == ChatType.Group:
-                    target_msg_name = msg.target.author.chat_alias or msg.target.author.chat_name
-                    prefix = '@%s "%s"\n' % (target_msg_name, msg.target.text or msg.target.type)
-                    mentions.append(Mention(msg.target.author.chat_uid, 1, len(target_msg_name)))
-                else:
-                    prefix = '"%s"\n' % msg.target.text or msg.target.type
-                target_msg_offset = len(prefix)
-                self.logger.debug("[%s] Converted to prefix: %s", msg.uid, prefix)
-
             # Message substitutions
             if msg.substitutions:
                 self.logger.debug("[%s] Message has substitutions: %s", msg.uid, msg.substitutions)
@@ -109,16 +97,18 @@ class MasterMessageManager:
                                                       thread_id=thread.uid, thread_type=thread.type)
             elif msg.type == MsgType.Audio:
                 files = self.upload_file(msg, voice_clip=True)
-                msg.uid = self.client._sendFiles(files=files, message=fb_msg,
+                msg_uid = self.client._sendFiles(files=files, message=fb_msg,
                                                  thread_id=thread.uid, thread_type=thread.type)
-                if msg.uid.startswith('mid.$'):
-                    self.client.sent_messages.add(msg.uid)
+                if msg_uid.startswith('mid.$'):
+                    self.client.sent_messages.add(msg_uid)
+                msg.uid = msg_uid
             elif msg.type in (MsgType.File, MsgType.Video):
                 files = self.upload_file(msg)
-                msg.uid = self.client._sendFiles(files=files, message=fb_msg,
+                msg_uid = self.client._sendFiles(files=files, message=fb_msg,
                                                  thread_id=thread.uid, thread_type=thread.type)
-                if msg.uid.startswith('mid.$'):
-                    self.client.sent_messages.add(msg.uid)
+                if msg_uid.startswith('mid.$'):
+                    self.client.sent_messages.add(msg_uid)
+                msg.uid = msg_uid
             elif msg.type == MsgType.Status:
                 assert (isinstance(msg.attributes, EFBMsgStatusAttribute))
                 status: EFBMsgStatusAttribute = msg.attributes
@@ -133,7 +123,7 @@ class MasterMessageManager:
                 assert (isinstance(msg.attributes, EFBMsgLinkAttribute))
                 link: EFBMsgLinkAttribute = msg.attributes
                 if self.flag('send_link_with_description'):
-                    info = (link.title,)
+                    info: Tuple[str, ...] = (link.title,)
                     if link.description:
                         info += (link.description,)
                     info += (link.url,)

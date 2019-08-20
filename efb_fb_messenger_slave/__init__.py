@@ -16,7 +16,7 @@ from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType
 from ehforwarderbot import utils as efb_utils
 from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported, EFBMessageReactionNotPossible
 from ehforwarderbot.status import EFBMessageRemoval, EFBReactToMessage
-from ehforwarderbot.types import ChatID, MessageID
+from ehforwarderbot.types import ChatID, MessageID, ModuleID, InstanceID
 from ehforwarderbot.utils import extra
 from . import utils as efms_utils
 from .__version__ import __version__
@@ -30,7 +30,7 @@ from .utils import ExperimentalFlagsManager
 class FBMessengerChannel(EFBChannel):
     channel_name: str = "Facebook Messenger Slave"
     channel_emoji: str = "⚡️"
-    channel_id = "blueset.fbmessenger"
+    channel_id: ModuleID = ModuleID("blueset.fbmessenger")
     channel_type: ChannelType = ChannelType.Slave
     __version__: str = __version__
 
@@ -52,16 +52,20 @@ class FBMessengerChannel(EFBChannel):
                              resource_filename("efb_fb_messenger_slave", 'locale'),
                              fallback=True)
 
-    _ = translator.gettext
-    ngettext = translator.ngettext
+    @property
+    def _(self):
+        return self.translator._
 
-    def __init__(self, instance_id: str = None):
+    @property
+    def ngettext(self):
+        return self.translator.ngettext
+
+    def __init__(self, instance_id: InstanceID = None):
         super().__init__(instance_id)
         session_path = efb_utils.get_data_path(self.channel_id) / "session.pickle"
         try:
             data = pickle.load(session_path.open('rb'))
-            self.client = EFMSClient(None, None, session_cookies=data)
-            self.client.channel = self
+            self.client = EFMSClient(self, None, None, session_cookies=data)
             EFMSChat.cache[EFBChat.SELF_ID] = EFMSChat(self,
                                                        self.client.fetchThreadInfo(self.client.uid)[self.client.uid])
         except FileNotFoundError:
@@ -97,14 +101,14 @@ class FBMessengerChannel(EFBChannel):
         with config_path.open() as f:
             self.config: Dict[str, Any] = yaml.load(f)
 
-    def get_chats(self) -> List[EFMSChat]:
+    def get_chats(self) -> List[EFBChat]:
         locations: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)
         if self.flag('show_pending_threads'):
             locations += (ThreadLocation.PENDING, ThreadLocation.OTHER)
         if self.flag('show_archived_threads'):
             locations += (ThreadLocation.ARCHIVED,)
-        chats = list(map(lambda graphql: EFMSChat(self, graph_ql_thread=graphql),
-                         self.client.get_thread_list(location=locations)))
+        chats: List[EFBChat] = list(map(lambda graphql: EFMSChat(self, graph_ql_thread=graphql),
+                                        self.client.get_thread_list(location_obj=locations)))
         loaded_chats = set(i.chat_uid for i in chats)
         for i in self.client.fetchAllUsers():
             if i.uid not in loaded_chats:
@@ -172,7 +176,7 @@ class FBMessengerChannel(EFBChannel):
         if msg_id.split('.')[-1].isdecimal():
             # is sub-message
             index = int(msg_id.split('.')[-1])
-            msg_id = '.'.join(msg_id.split('.')[:-1])
+            msg_id = MessageID('.'.join(msg_id.split('.')[:-1]))
 
         thread_id, thread_type = self.client._getThread(chat_uid, None)
         message_info = self.client._forcedFetch(thread_id, msg_id).get("message")

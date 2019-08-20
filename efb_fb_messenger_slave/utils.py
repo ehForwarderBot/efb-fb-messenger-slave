@@ -1,6 +1,7 @@
 # coding=utf-8
-
-from typing import TYPE_CHECKING, Dict, Any, Hashable, Tuple, Union, Sequence
+import collections
+from collections import deque
+from typing import TYPE_CHECKING, Dict, Any, Hashable, Union, Sequence
 
 if TYPE_CHECKING:
     from . import FBMessengerChannel
@@ -25,7 +26,9 @@ class ExperimentalFlagsManager:
         return self.config[flag_key]
 
 
-def get_value(source: Union[dict, Sequence], path: Tuple[Hashable, ...], default=None) -> Any:
+def get_value(source: Union[Dict, Sequence],
+              path: Sequence[Union[int, Hashable]],
+              default: Any = None) -> Any:
     """
     Get value from a path of keys
     Args:
@@ -37,11 +40,10 @@ def get_value(source: Union[dict, Sequence], path: Tuple[Hashable, ...], default
         The value found or the default value.
     """
 
-    data = source
-    stack = path
+    data: Any = source
+    stack = deque(path)
     while stack:
-        key = stack[0]
-        stack = stack[1:]
+        key = stack.popleft()
         try:
             data = data.__getitem__(key)
         except (AttributeError, KeyError, IndexError, TypeError):

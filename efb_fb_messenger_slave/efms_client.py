@@ -8,7 +8,7 @@ import urllib.parse
 import threading
 import time
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Dict, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Tuple, Set, List, DefaultDict, cast
 from tempfile import NamedTemporaryFile
 
 import requests
@@ -19,6 +19,7 @@ from fbchat.models import Message, EmojiSize
 from ehforwarderbot import EFBMsg, MsgType, coordinator
 from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgLocationAttribute
 from ehforwarderbot.status import EFBMessageRemoval, EFBMessageReactionsUpdate
+from ehforwarderbot.types import MessageID, ReactionName, ChatID
 
 from .efms_chat import EFMSChat
 from .utils import get_value
@@ -28,18 +29,19 @@ if TYPE_CHECKING:
 
 
 class EFMSClient(Client):
-    channel: "FBMessengerChannel" = None
+    channel: 'FBMessengerChannel'
 
     logger = logging.getLogger("EFMSClient")
 
-    sent_messages = set()
+    sent_messages: Set[str] = set()
     """Set of messages IDs sent by EFMS, popped when message is received again."""
 
     # Overrides for patches
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, channel: 'FBMessengerChannel', *args, **kwargs):
         kwargs['logging_level'] = 100
         # Disable all logging inside the module
+        self.channel = channel
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger(__name__)
 
@@ -48,7 +50,8 @@ class EFMSClient(Client):
         Sends a local image to a thread
 
         Args:
-            image_path: Path of an image to upload and send
+            filename: Name of the image file to send
+            file: image file (IO) object to send
             mimetype: MIME type of the image
             message: Additional message
             thread_id: User/Group ID to send to. See :ref:`intro_threads`
@@ -72,8 +75,8 @@ class EFMSClient(Client):
     # EFMS methods
 
     def get_thread_list(self, limit: int = 50, before: int = None,
-                        location: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)):
-        location = list(i.name for i in location)
+                        location_obj: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)):
+        location = list(i.name for i in location_obj)
 
         j = self.graphql_request(_graphql.from_doc_id(doc_id='1349387578499440', params={
             'limit': limit,
@@ -175,13 +178,19 @@ class EFMSClient(Client):
             description = get_value(link_information, ('description', 'text'), '')
             msg.text = '\n'.join([title, description])
             preview = get_value(link_information, ('media', 'image', 'uri'), None)
-            latitude, longitude = map(float.re.search(r'markers=([\d.-]+)%2C([\d.-]+)', preview).groups())
+            matches = re.search(r'markers=([\d.-]+)%2C([\d.-]+)', preview)
+            if matches:
+                latitude, longitude = map(float, matches.groups())
+            else:
+                msg.type = MsgType.Unsupported
+                msg.text = self._("Message type unsupported.\n{content}").format(msg.text)
+                return
             msg.attributes = EFBMsgLocationAttribute(
                 latitude=latitude, longitude=longitude
             )
         else:
             msg.type = MsgType.Unsupported
-            msg.text = "Message type unsupported.\n%s" % msg.text
+            msg.text = self._("Message type unsupported.\n{content}").format(msg.text)
 
     def attach_media(self, msg: EFBMsg, attachment: Dict[str, Any]):
         """
@@ -277,8 +286,9 @@ class EFMSClient(Client):
             msg.type = MsgType.Sticker
             url = attachment['mercury']['sticker_attachment']['url']
             msg.text = attachment['mercury']['sticker_attachment'].get('label', '')
-            msg.filename = os.path.split(urllib.parse.urlparse(url).path)[1]
-            ext = os.path.splitext(msg.filename)[1]
+            filename = os.path.split(urllib.parse.urlparse(url).path)[1]
+            msg.filename = filename
+            ext = os.path.splitext(filename)[1]
             response = requests.get(url)
             msg.mime = response.headers['content-type']
             msg.file = NamedTemporaryFile(suffix=ext)
@@ -308,13 +318,19 @@ class EFMSClient(Client):
             description = get_value(link_information, ('description', 'text'), '')
             msg.text = '\n'.join([title, description])
             preview = get_value(link_information, ('media', 'image', 'uri'), None)
-            latitude, longitude = map(float, re.search(r'markers=([\d.-]+)%2C([\d.-]+)', preview).groups())
+            matches = re.search(r'markers=([\d.-]+)%2C([\d.-]+)', preview)
+            if matches:
+                latitude, longitude = map(float, matches.groups())
+            else:
+                msg.type = MsgType.Unsupported
+                msg.text = self._("Message type unsupported.\n{content}").format(msg.text)
+                return
             msg.attributes = EFBMsgLocationAttribute(
                 latitude=latitude, longitude=longitude
             )
         else:
             msg.type = MsgType.Unsupported
-            msg.text = "Message type unsupported.\n%s" % msg.text
+            msg.text = self._("Message type unsupported.\n{content}").format(msg.text)
 
     def send(self, *args, **kwargs):
         result = super().send(*args, **kwargs)
@@ -328,8 +344,8 @@ class EFMSClient(Client):
         """Migrate message precessing to another thread to prevent blocking."""
         threading.Thread(target=self.on_message, args=args, kwargs=kwargs).run()
 
-    def on_message(self, mid: str = None, author_id: str = None, message: str = None, message_object: Message = None,
-                   thread_id: str = None, thread_type: str = ThreadType.USER, ts: str = None, metadata=None, msg=None):
+    def on_message(self, mid: str = '', author_id: str = '', message: str = '', message_object: Message = None,
+                   thread_id: str = '', thread_type: str = ThreadType.USER, ts: str = '', metadata=None, msg=None):
         """
         Called when the client is listening, and somebody sends a message
 
@@ -363,7 +379,7 @@ class EFMSClient(Client):
                               mid, len(attachments))
             for idx, i in enumerate(attachments):
                 sub_msg = copy.copy(efb_msg)
-                sub_msg.uid += ".%d" % idx
+                sub_msg.uid = MessageID(f"{efb_msg.uid}.{idx}")
                 self.attach_media(sub_msg, i)
                 coordinator.send_message(sub_msg)
             return
@@ -378,14 +394,14 @@ class EFMSClient(Client):
     def build_efb_msg(self, mid: str, thread_id: str, author_id: str, message_object: Message,
                       nested: bool = False) -> EFBMsg:
         efb_msg = EFBMsg()
-        efb_msg.uid = mid
+        efb_msg.uid = MessageID(mid)
         efb_msg.text = message_object.text
         efb_msg.type = MsgType.Text
         efb_msg.deliver_to = coordinator.master
 
         # Authors
-        efb_msg.author = EFMSChat(self.channel, uid=author_id)
-        efb_msg.chat = EFMSChat(self.channel, uid=thread_id)
+        efb_msg.author = EFMSChat(self.channel, uid=ChatID(author_id))
+        efb_msg.chat = EFMSChat(self.channel, uid=ChatID(thread_id))
 
         if not nested and message_object.replied_to:
             efb_msg.target = self.build_efb_msg(message_object.reply_to_id,
@@ -404,10 +420,11 @@ class EFMSClient(Client):
             # " (S)", " (M)", " (L)"
 
         if message_object.reactions:
-            efb_msg.reactions = defaultdict(list)
+            reactions: DefaultDict[ReactionName, List[EFMSChat]] = defaultdict(list)
             for user_id, reaction in message_object.reactions.items():
-                efb_msg.reactions[reaction.value].append(EFMSChat(self.channel, uid=user_id))
-
+                reactions[ReactionName(reaction.value)].append(
+                    EFMSChat(self.channel, uid=user_id))
+            efb_msg.reactions = reactions
         return efb_msg
 
     def onChatTimestamp(self, buddylist=None, msg=None):

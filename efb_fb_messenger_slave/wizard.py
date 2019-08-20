@@ -8,6 +8,7 @@ from pkg_resources import resource_filename
 from ruamel.yaml import YAML
 
 from ehforwarderbot import coordinator, utils
+from ehforwarderbot.types import ModuleID
 from . import FBMessengerChannel
 from .__main__ import run
 
@@ -35,7 +36,7 @@ class DataModel:
         self.instance_id = instance_id
         self.channel_id = FBMessengerChannel.channel_id
         if instance_id:
-            self.channel_id += "#" + instance_id
+            self.channel_id = ModuleID(self.channel_id + "#" + instance_id)
         self.config_path = utils.get_config_path(self.channel_id)
         self.session_path = utils.get_data_path(self.channel_id) / "session.pickle"
         self.yaml = YAML()

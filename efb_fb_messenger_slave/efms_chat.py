@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Dict, Any
 from ehforwarderbot import EFBChat, ChatType, coordinator
 from fbchat.models import Thread, User, Page, Group, Room
 
+from ehforwarderbot.types import ChatID
 from .utils import get_value
 
 if TYPE_CHECKING:
@@ -15,11 +16,11 @@ if TYPE_CHECKING:
 class EFMSChat(EFBChat):
     logger = logging.getLogger("EFMSChat")
 
-    cache = dict()
+    cache: Dict[str, 'EFMSChat'] = dict()
 
     def __init__(self, channel: 'FBMessengerChannel', thread: Thread = None,
                  graph_ql_thread: Dict[str, Any] = None,
-                 uid: str = None, lazy_load=False):
+                 uid: ChatID = None, lazy_load=False):
         """
         Create a chat based on fbchat Thread objects or GraphQL result dict.
 
@@ -33,7 +34,8 @@ class EFMSChat(EFBChat):
         super().__init__(channel)
         self.channel = channel
         self.thread = thread
-        self.chat_uid = uid
+        if uid is not None:
+            self.chat_uid = uid
         self.client: EFMSClient = channel.client
         self.loaded = False
         self.graph_ql_thread = graph_ql_thread

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from fbchat import ThreadType
+from fbchat.models import ThreadType
 
 from .efms_chat import EFMSChat
 
@@ -25,8 +25,8 @@ class ExtraFunctionsManager:
     def __init__(self, channel: 'FBMessengerChannel'):
         self.channel = channel
         self.client = channel.client
-        self._ = self.channel._
-        self.ngettext = self.channel.ngettext
+        self._ = channel._
+        self.ngettext = channel.ngettext
 
     @catch_exceptions
     def threads_list(self, args: str) -> str:
@@ -83,9 +83,9 @@ class ExtraFunctionsManager:
         return msg
 
     @catch_exceptions
-    def add_to_group(self, args: str) -> str:
+    def add_to_group(self, argv: str) -> str:
         """GroupID UserID [UserID ...]"""
-        args = args.split(' ')
+        args = argv.split(' ')
         if len(args) < 2:
             return self._("Group ID and user IDs are required")
         self.client.addUsersToGroup(args[1:], args[0])
@@ -94,45 +94,45 @@ class ExtraFunctionsManager:
                              len(args) - 1).format(args[1:], args[0])
 
     @catch_exceptions
-    def remove_from_group(self, args: str) -> str:
+    def remove_from_group(self, argv: str) -> str:
         """GroupID UserID"""
-        args = args.split(' ')
+        args = argv.split(' ')
         if len(args) != 2:
             return self._("Group ID and user ID are required.")
         self.client.removeUserFromGroup(args[1], args[0])
         return self._("User {0} is successfully removed from group {1}.").format(args[1], args[0])
 
     @catch_exceptions
-    def set_nickname(self, args: str) -> str:
+    def set_nickname(self, argv: str) -> str:
         """UserID nickname"""
-        args = args.split(' ', 1)
+        args = argv.split(' ', 1)
         if len(args) < 2:
             return self._("User ID and nickname are required.")
         self.client.changeNickname(args[1], args[0], args[0])
         return self._("Nickname of {0} is set to {1}.").format(*args)
 
     @catch_exceptions
-    def set_group_title(self, args: str) -> str:
+    def set_group_title(self, argv: str) -> str:
         """GroupID title"""
-        args = args.split(' ', 1)
+        args = argv.split(' ', 1)
         if len(args) < 2:
             return self._("User ID and title are required.")
         self.client.changeThreadTitle(args[1], args[0], thread_type=ThreadType.GROUP)
         return self._("Title of group {0} is set to {1}.").format(*args)
 
     @catch_exceptions
-    def set_chat_emoji(self, args: str) -> str:
+    def set_chat_emoji(self, argv: str) -> str:
         """ChatID emoji"""
-        args = args.split(' ', 1)
+        args = argv.split(' ', 1)
         if len(args) < 2:
             return self._("User ID and emoji are required.")
         self.client.changeThreadEmoji(args[1], args[0])
         return self._("Emoji of group {0} is set to {1}.").format(*args)
 
     @catch_exceptions
-    def set_member_nickname(self, args: str) -> str:
+    def set_member_nickname(self, argv: str) -> str:
         """GroupID MemberID nickname"""
-        args = args.split(' ', 2)
+        args = argv.split(' ', 2)
         if len(args) < 3:
             return self._("Group ID, member ID and are nickname required.")
         self.client.changeNickname(args[2], args[1], args[0])
