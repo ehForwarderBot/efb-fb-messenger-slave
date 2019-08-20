@@ -171,18 +171,18 @@ class FBMessengerChannel(EFBChannel):
         photo.seek(0)
         return photo
 
-    def get_message_by_id(self, chat_uid: ChatID, msg_id: MessageID) -> Optional['EFBMsg']:
+    def get_message_by_id(self, chat: EFBChat, msg_id: MessageID) -> Optional['EFBMsg']:
         index = None
         if msg_id.split('.')[-1].isdecimal():
             # is sub-message
             index = int(msg_id.split('.')[-1])
             msg_id = MessageID('.'.join(msg_id.split('.')[:-1]))
 
-        thread_id, thread_type = self.client._getThread(chat_uid, None)
+        thread_id, thread_type = self.client._getThread(chat.chat_uid, None)
         message_info = self.client._forcedFetch(thread_id, msg_id).get("message")
         message = Message._from_graphql(message_info)
 
-        efb_msg = self.client.build_efb_msg(msg_id, chat_uid, message.author,
+        efb_msg = self.client.build_efb_msg(msg_id, chat.chat_uid, message.author,
                                             message)
 
         attachments = message_info.get('delta', {}).get('attachments', [])
