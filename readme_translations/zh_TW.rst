@@ -1,6 +1,6 @@
 
-EFB Facebook Messenger Slave (EFMS)
-***********************************
+EFB Facebook Messenger 从端 (EFMS)
+**********************************
 
 .. image:: https://img.shields.io/pypi/v/efb-fb-messenger-slave.svg
    :target: https://pypi.org/project/efb-fb-messenger-slave/
@@ -10,79 +10,78 @@ EFB Facebook Messenger Slave (EFMS)
    :target: https://crowdin.com/project/ehforwarderbot/
    :alt: Translate this project
 
-`README in other languages <./readme_translations>`_.
+.. image:: https://github.com/blueset/efb-fb-messenger-slave/blob/master/banner.png
+   :alt: Banner
 
-**Channel ID**: ``blueset.fbmessenger``
+`其他语言的 README <./readme_translations>`_.
 
-EFMS is a channel that connects to Facebook Messenger for EH Forwarder
-Bot, based on simulation of Facebook Messenger Web, and `fbchat
-<https://github.com/carpedm20/fbchat>`_.
+**信道 ID**: ``blueset.fbmessenger``
 
-
-Beta version
-============
-
-This is an unstable beta version, and its functionality may change at
-any time.
+EFMS 是一个基于模拟 Facebook Messenger 网页端和 `fbchat
+<https://github.com/carpedm20/fbchat>`_ 将 Facebook Messenger 与 EH
+Forwarder Bot 连接起来的信道。
 
 
-Requirements
-============
+测试版
+======
+
+该从端非稳定版本，且其功能随时可能会被更改。
+
+
+依赖
+====
 
 * Python >= 3.6
 
 * EH Forwarder Bot >= 2.0.0
 
 
-Getting started
-===============
+使用步骤
+========
 
-1. Install required binary dependencies
+1. 安装所需的依赖
 
-2. Install
+2. 安装
 
     ::
        pip3 install efb-fb-messenger-slave
 
-3. Enable the channel in the profile’s ``config.yaml``.
+3. 在配置档案中的 ``config.yaml`` 中启用信道。
 
-    The path to the current profile may vary depends on your
-    configuration.
+    该路径可能因您的配置档案而有所不同。
 
-    **(In EFB 2.0.0a1, the default profile path is**
-    ``~/.ehforwarderbot/profiles/default`` **)**
+    **（在 EFB 2.0.0a1 中，默认的配置档案路径为**
+    ``~/.ehforwarderbot/profiles/default`` **）**
 
-4. Sign in
+4. 登录
 
     ::
        $ efms-auth
 
-    And follow the instructions.
+    然后跟随提示进行操作。
 
 
-Known issues
-============
+已知问题
+========
 
-* Messages from threads in ``MARKETPLACE`` type (i.e. messages from
-   interested buyers on Facebook Marketplace) cannot be processed.
+* 无法处理来自 ``MARTTPLACE`` 类型（例如，来自 Facebook 市场上的相关买家的消息）的会话消息。
 
-* Live location cannot be updated properly.
+* 无法正确更新实时位置。
 
-* Poll messages, reminders and events are not yet supported.
+* 投票消息、提醒和活动尚未支持。
 
-* Voice calls are not planned to be supported.
-
-
-Optional configuration file
-===========================
-
-EFMS allows user to enable or disable experimental features with the
-configuration file. It is located at ``<Path to current
-profile>/blueset.fbmessenger/config.yaml``.
+* 没有计划支持语音通话。
 
 
-Example
--------
+可选的配置文件
+==============
+
+EFMS
+允许用户通过配置文件来启用或关闭实验性功能。位置：``<当前配置档案路径>/blueset.fbmessenger/config.yaml``。
+
+
+示例
+----
 
 ::
 
@@ -96,85 +95,83 @@ Example
        option_three: "foobar"
 
 
-Tips and tricks
-===============
+提示与技巧
+==========
 
-* To send large emoji, send the emoji as text following by ``S``,
-   ``M``, or ``L`` as small, medium and large emoji accordingly. For
-   example, to send a large smile emoji, send ``😆L``.
-
-
-Experimental flags
-==================
-
-The following flags are experimental features, may change, break, or
-disappear at any time. Use at your own risk.
-
-* ``proxy_links_by_facebook`` *(bool)* [Default: ``false``]
-
-   Deliver links (including links in share entities and thumbnails)
-   using Facebook’s proxy. Disable this option to show the source
-   directly.
-
-* ``send_link_with_description`` *(bool)* [Default: ``false``]
-
-   When processing link message from the Master Channel, attach the
-   title and description besides the link when the option is enabled.
-
-   備註: Regardless
-      of
-      this
-      option,
-      link
-      messages
-      are
-      sent
-      as
-      text,
-      and
-      Facebook
-      Messenger
-      may
-      or
-      may
-      not
-      attach
-      its
-      own
-      link
-      preview
-      per
-      its
-      system
-      configuration.*
-
-* ``show_pending_threads`` *(bool)* [Default: ``false``]
-
-   When showing the threads list, include threads pending approval.
-
-* ``show_archived_threads`` *(bool)* [Default: ``false``]
-
-   When showing the threads list, include archived threads.
+* 要发送大号 emoji，请在 emoji 后面添加``S``、``M`` 或 ``L`` 作为发送小号、中号和大号
+  emoji。例如，要发送一个大号微笑 emoji，输入``😆L`` 来发送。
 
 
-Vendor-specifics
-================
+实验性功能
+==========
 
-EFMS’s chats provides the following vendor specific options:
+以下的实验性功能随时可能被更改或被删除，请自行承担相关风险。
 
-* ``'chat_type'`` *(str)*: Type of the thread: ``'User'``,
-   ``'Page'``, or ``'Group'``.
+* ``proxy_links_by_facebook`` *(bool)* [默认值：``false``]
 
-* ``'profile_picture_url'`` *(str)*: URL to the thread’s profile
-   picture.
+  使用 Facebook 代理发送链接（包括共享内容和缩略图里的链接）。禁用此选项直接显示来源。
+
+* ``send_link_with_description`` *(bool)* [默认值：``false``]
+
+  当处理来自主端的链接消息时，将附带发送标题与描述。
+
+  備註: 无论是否选择此选项，链接消息将作为文本发送，Facebook Messenger 可能会或不会根据其系统设置附加自带的链接预览。
+
+* ``show_pending_threads`` *(bool)* [默认值：``false``]
+
+  显示会话列表时，包括待批准的会话。
+
+* ``show_archived_threads`` *(bool)* [默认值：``false``]
+
+  显示会话列表时，包括已归档的会话。
 
 
-Translations support
-====================
+供应商特定选项（``vendor_specific``）
+=====================================
 
-EFMS supports translated user interface prompts experimentally, by
-setting the locale environmental variable (``LANGUAGE``, ``LC_ALL``,
-``LC_MESSAGES`` or ``LANG``) to one of our `supported languages
+EFMS 的会话提供了以下供应商特定选项：
+
+* ``'chat_type'`` *(str)*: 会话类型：``'User'``、``'Page'`` 或 ``'Group'``。
+
+* ``'profile_picture_url'`` *(str)*: 会话头像链接
+
+
+License
+=======
+
+EFMS is licensed under `GNU Affero General Public License 3.0
+<https://www.gnu.org/licenses/agpl-3.0.txt>`_ or later versions:
+
+::
+
+   EFB Facebook Messenger Slave Channel: An slave channel for EH Forwarder Bot.
+   Copyright (C) 2016 - 2019 Eana Hufwe, and the EFB Facebook Messenger Slave Channel contributors
+   All rights reserved.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Affero General Public License as
+   published by the Free Software Foundation, either version 3 of the
+   License, or any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU Affero General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+翻译支持
+========
+
+EFMS supports translated user interface prompts, by setting the locale
+environmental variable (``LANGUAGE``, ``LC_ALL``, ``LC_MESSAGES`` or
+``LANG``) to one of our \ `supported languages
 <https://crowdin.com/project/ehforwarderbot/>`_. Meanwhile, you can
 help to translate this project into your languages on `our Crowdin
 page <https://crowdin.com/project/ehforwarderbot/>`_.
+
+備註: If your are installing from source code, you will not get
+   translations of the user interface without manual compile of
+   message catalogs (``.mo``) prior to installation.

@@ -10,12 +10,15 @@ EFB Facebook Messenger Slave (EFMS)
    :target: https://crowdin.com/project/ehforwarderbot/
    :alt: Translate this project
 
+.. image:: https://github.com/blueset/efb-fb-messenger-slave/blob/master/banner.png
+   :alt: Banner
+
 `README in other languages <./readme_translations>`_.
 
 **Channel ID**: ``blueset.fbmessenger``
 
 EFMS is a channel that connects to Facebook Messenger for EH Forwarder
-Bot, based on simulation of Facebook Messenger Web, and `fbchat
+Bot, based on simulation of Facebook Messenger Web, and \ `fbchat
 <https://github.com/carpedm20/fbchat>`_.
 
 
@@ -64,7 +67,7 @@ Known issues
 ============
 
 * Messages from threads in ``MARKETPLACE`` type (i.e. messages from
-   interested buyers on Facebook Marketplace) cannot be processed.
+  interested buyers on Facebook Marketplace) cannot be processed.
 
 * Live location cannot be updated properly.
 
@@ -77,7 +80,7 @@ Optional configuration file
 ===========================
 
 EFMS allows user to enable or disable experimental features with the
-configuration file. It is located at ``<Path to current
+configuration file. It is located at \ ``<Path to current
 profile>/blueset.fbmessenger/config.yaml``.
 
 
@@ -100,8 +103,8 @@ Tips and tricks
 ===============
 
 * To send large emoji, send the emoji as text following by ``S``,
-   ``M``, or ``L`` as small, medium and large emoji accordingly. For
-   example, to send a large smile emoji, send ``😆L``.
+  ``M``, or ``L`` as small, medium and large emoji accordingly. For
+  example, to send a large smile emoji, send ``😆L``.
 
 
 Experimental flags
@@ -112,42 +115,26 @@ disappear at any time. Use at your own risk.
 
 * ``proxy_links_by_facebook`` *(bool)* [Default: ``false``]
 
-   Deliver links (including links in share entities and thumbnails)
-   using Facebook’s proxy. Disable this option to show the source
-   directly.
+  Deliver links (including links in share entities and thumbnails)
+  using Facebook’s proxy. Disable this option to show the source
+  directly.
 
 * ``send_link_with_description`` *(bool)* [Default: ``false``]
 
-   When processing link message from the Master Channel, attach the
-   title and description besides the link when the option is enabled.
+  When processing link message from the Master Channel, attach the
+  title and description besides the link when the option is enabled.
 
-   Catatan: Regardless
-      of this
-      option,
-      link
-      messages
-      are sent
-      as text,
-      and
-      Facebook
-      Messenger
-      may or
-      may not
-      attach
-      its own
-      link
-      preview
-      per its
-      system
-      configuration.*
+  Catatan: Regardless of this option, link messages are sent as text,
+     and Facebook Messenger may or may not attach its own link
+     preview per its system configuration.*
 
 * ``show_pending_threads`` *(bool)* [Default: ``false``]
 
-   When showing the threads list, include threads pending approval.
+  When showing the threads list, include threads pending approval.
 
 * ``show_archived_threads`` *(bool)* [Default: ``false``]
 
-   When showing the threads list, include archived threads.
+  When showing the threads list, include archived threads.
 
 
 Vendor-specifics
@@ -155,19 +142,49 @@ Vendor-specifics
 
 EFMS’s chats provides the following vendor specific options:
 
-* ``'chat_type'`` *(str)*: Type of the thread: ``'User'``,
-   ``'Page'``, or ``'Group'``.
+* ``'chat_type'`` *(str)*: Type of the thread: ``'User'``, ``'Page'``,
+  or \ ``'Group'``.
 
 * ``'profile_picture_url'`` *(str)*: URL to the thread’s profile
-   picture.
+  picture.
+
+
+License
+=======
+
+EFMS is licensed under `GNU Affero General Public License 3.0
+<https://www.gnu.org/licenses/agpl-3.0.txt>`_ or later versions:
+
+::
+
+   EFB Facebook Messenger Slave Channel: An slave channel for EH Forwarder Bot.
+   Copyright (C) 2016 - 2019 Eana Hufwe, and the EFB Facebook Messenger Slave Channel contributors
+   All rights reserved.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Affero General Public License as
+   published by the Free Software Foundation, either version 3 of the
+   License, or any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU Affero General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 Translations support
 ====================
 
-EFMS supports translated user interface prompts experimentally, by
-setting the locale environmental variable (``LANGUAGE``, ``LC_ALL``,
-``LC_MESSAGES`` or ``LANG``) to one of our `supported languages
+EFMS supports translated user interface prompts, by setting the locale
+environmental variable (``LANGUAGE``, ``LC_ALL``, ``LC_MESSAGES`` or
+``LANG``) to one of our \ `supported languages
 <https://crowdin.com/project/ehforwarderbot/>`_. Meanwhile, you can
 help to translate this project into your languages on `our Crowdin
 page <https://crowdin.com/project/ehforwarderbot/>`_.
+
+Catatan: If your are installing from source code, you will not get
+   translations of the user interface without manual compile of
+   message catalogs (``.mo``) prior to installation.

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-18 12:26+0800\n"
-"PO-Revision-Date: 2019-08-18 06:32\n"
+"POT-Creation-Date: 2019-09-03 16:04+0800\n"
+"PO-Revision-Date: 2019-09-03 08:09\n"
 "Last-Translator: Eana Hufwe (blueset)\n"
 "Language-Team: Azerbaijani\n"
 "Language: az_AZ\n"
@@ -16,37 +16,46 @@ msgstr ""
 "X-Crowdin-Language: az\n"
 "X-Crowdin-File: /EFBChannels/efb-fb-messenger-slave/efb_fb_messenger_slave/locale/efb_fb_messenger_slave.pot\n"
 
-#: efb_fb_messenger_slave/__init__.py:69
+#: efb_fb_messenger_slave/__init__.py:67
+#: build/lib/efb_fb_messenger_slave/__init__.py:68
 msgid "Session not found, please authorize your account.\n"
 "To do so, run: efms-auth"
 msgstr "Sessiya tapılmadı, zəhmət olmasa hesabınıza daxil olun.\n"
 "Yerinə yetirmək üçün, icra edin: efms-auth"
 
-#: efb_fb_messenger_slave/__init__.py:73
+#: efb_fb_messenger_slave/__init__.py:71
+#: build/lib/efb_fb_messenger_slave/__init__.py:72
 msgid "You may need to re-authorize your account.\n"
 "To do so, run: efms-auth"
 msgstr "Siz hesabınıza yenidən daxil olmalısınız.\n"
 "Yerinə yetirmək üçün, icra edin: efms-auth"
 
-#: efb_fb_messenger_slave/__init__.py:197
+#: efb_fb_messenger_slave/__init__.py:195
+#: build/lib/efb_fb_messenger_slave/__init__.py:196
 msgid "Show threads list"
 msgstr "Mövzular siyahısını göstər"
 
-#: efb_fb_messenger_slave/__init__.py:198
+#: efb_fb_messenger_slave/__init__.py:196
+#: build/lib/efb_fb_messenger_slave/__init__.py:197
 #, python-brace-format
 msgid "Usage:\n"
 "    {function_name}"
 msgstr "İstifadə:\n"
 "    {function_name}"
 
-#: efb_fb_messenger_slave/__init__.py:203
+#: efb_fb_messenger_slave/__init__.py:201
+#: build/lib/efb_fb_messenger_slave/__init__.py:202
 msgid "Search for users"
 msgstr "İstifadəçiləri axtar"
 
-#: efb_fb_messenger_slave/__init__.py:204
-#: efb_fb_messenger_slave/__init__.py:211
-#: efb_fb_messenger_slave/__init__.py:218
-#: efb_fb_messenger_slave/__init__.py:225
+#: efb_fb_messenger_slave/__init__.py:202
+#: efb_fb_messenger_slave/__init__.py:209
+#: efb_fb_messenger_slave/__init__.py:216
+#: efb_fb_messenger_slave/__init__.py:223
+#: build/lib/efb_fb_messenger_slave/__init__.py:203
+#: build/lib/efb_fb_messenger_slave/__init__.py:210
+#: build/lib/efb_fb_messenger_slave/__init__.py:217
+#: build/lib/efb_fb_messenger_slave/__init__.py:224
 #, python-brace-format
 msgid "Show the first 10 results.\n"
 "Usage:\n"
@@ -55,23 +64,28 @@ msgstr "İlk 10 nəticə göstərilir.\n"
 "İstifadə:\n"
 "    {function_name} açar söz"
 
-#: efb_fb_messenger_slave/__init__.py:210
+#: efb_fb_messenger_slave/__init__.py:208
+#: build/lib/efb_fb_messenger_slave/__init__.py:209
 msgid "Search for groups"
 msgstr "Qurupları axtar"
 
-#: efb_fb_messenger_slave/__init__.py:217
+#: efb_fb_messenger_slave/__init__.py:215
+#: build/lib/efb_fb_messenger_slave/__init__.py:216
 msgid "Search for pages"
 msgstr "Səhifələri axtar"
 
-#: efb_fb_messenger_slave/__init__.py:224
+#: efb_fb_messenger_slave/__init__.py:222
+#: build/lib/efb_fb_messenger_slave/__init__.py:223
 msgid "Search for threads"
 msgstr "Mövzularda axtar"
 
-#: efb_fb_messenger_slave/__init__.py:231
+#: efb_fb_messenger_slave/__init__.py:229
+#: build/lib/efb_fb_messenger_slave/__init__.py:230
 msgid "Add to group"
 msgstr "Qrup əlavə et"
 
-#: efb_fb_messenger_slave/__init__.py:232
+#: efb_fb_messenger_slave/__init__.py:230
+#: build/lib/efb_fb_messenger_slave/__init__.py:231
 #, python-brace-format
 msgid "Add members to a group.\n"
 "Usage:\n"
@@ -80,11 +94,13 @@ msgstr "İstifadəçiləri qrupa əlavə et.\n"
 "İstifadə:\n"
 "    {function_name} QrupID İstifadəçiID [İstifadəçiID ...]"
 
-#: efb_fb_messenger_slave/__init__.py:238
+#: efb_fb_messenger_slave/__init__.py:236
+#: build/lib/efb_fb_messenger_slave/__init__.py:237
 msgid "Remove from group"
 msgstr "Qrupdan sil"
 
-#: efb_fb_messenger_slave/__init__.py:239
+#: efb_fb_messenger_slave/__init__.py:237
+#: build/lib/efb_fb_messenger_slave/__init__.py:238
 #, python-brace-format
 msgid "Remove members from a group.\n"
 "Usage:\n"
@@ -93,11 +109,13 @@ msgstr "İstifadəçiləri qrupdan sil.\n"
 "İstifadə:\n"
 "    {function_name} QrupID İstifadəçiID [İstifadəçiID ...]"
 
-#: efb_fb_messenger_slave/__init__.py:245
+#: efb_fb_messenger_slave/__init__.py:243
+#: build/lib/efb_fb_messenger_slave/__init__.py:244
 msgid "Change nickname"
 msgstr "Ləqəbi dəyişdir"
 
-#: efb_fb_messenger_slave/__init__.py:246
+#: efb_fb_messenger_slave/__init__.py:244
+#: build/lib/efb_fb_messenger_slave/__init__.py:245
 #, python-brace-format
 msgid "Change nickname of a user.\n"
 "Usage:\n"
@@ -106,11 +124,13 @@ msgstr "İstifadəçinin ləqəbini dəyişdir.\n"
 "istifadə:\n"
 "    {function_name} İstifadəçiID ləqəb"
 
-#: efb_fb_messenger_slave/__init__.py:252
+#: efb_fb_messenger_slave/__init__.py:250
+#: build/lib/efb_fb_messenger_slave/__init__.py:251
 msgid "Change group title"
 msgstr "Qrup başlığını dəyişdir"
 
-#: efb_fb_messenger_slave/__init__.py:253
+#: efb_fb_messenger_slave/__init__.py:251
+#: build/lib/efb_fb_messenger_slave/__init__.py:252
 #, python-brace-format
 msgid "Change the title of a group.\n"
 "Usage:\n"
@@ -119,11 +139,13 @@ msgstr "Qrupun başlığını dəyişdir.\n"
 "İstifadə:\n"
 "    {function_name} QrupID başlıq"
 
-#: efb_fb_messenger_slave/__init__.py:259
+#: efb_fb_messenger_slave/__init__.py:257
+#: build/lib/efb_fb_messenger_slave/__init__.py:258
 msgid "Change chat emoji"
 msgstr "Çatın emojisini dəyişdirin"
 
-#: efb_fb_messenger_slave/__init__.py:260
+#: efb_fb_messenger_slave/__init__.py:258
+#: build/lib/efb_fb_messenger_slave/__init__.py:259
 #, python-brace-format
 msgid "Change the emoji of a chat.\n"
 "Usage:\n"
@@ -132,11 +154,13 @@ msgstr "Çatın emojisini dəyişdir.\n"
 "İstifadə:\n"
 "    {function_name} ÇatİD emoji"
 
-#: efb_fb_messenger_slave/__init__.py:266
+#: efb_fb_messenger_slave/__init__.py:264
+#: build/lib/efb_fb_messenger_slave/__init__.py:265
 msgid "Change member nickname"
 msgstr "İstifadəçinin ləqəbini dəyişdir"
 
-#: efb_fb_messenger_slave/__init__.py:267
+#: efb_fb_messenger_slave/__init__.py:265
+#: build/lib/efb_fb_messenger_slave/__init__.py:266
 #, python-brace-format
 msgid "Change the nickname of a group member.\n"
 "Usage:\n"
@@ -144,7 +168,17 @@ msgid "Change the nickname of a group member.\n"
 msgstr "Qrup istifadəçisinin ləqəbini dəyişdir.\n"
 "    {function_name} QrupİD İstifadəçiİD ləqəb"
 
+#: efb_fb_messenger_slave/efms_client.py:186
+#: efb_fb_messenger_slave/efms_client.py:193
+#: efb_fb_messenger_slave/efms_client.py:326
+#: efb_fb_messenger_slave/efms_client.py:333
+#, python-brace-format
+msgid "Message type unsupported.\n"
+"{content}"
+msgstr ""
+
 #: efb_fb_messenger_slave/extra_functions.py:34
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:34
 #, python-brace-format
 msgid "You have {0} thread in your thread list."
 msgid_plural "You have {0} threads in your thread list."
@@ -152,34 +186,40 @@ msgstr[0] "Sizin mövzu siyahınızda {0} mövzu var."
 msgstr[1] "Sizin mövzu siyahınızda {0} mövzular var."
 
 #: efb_fb_messenger_slave/extra_functions.py:46
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:46
 msgid "Found {} user."
 msgid_plural "Found {} users."
 msgstr[0] "İstifadəçi {} tapıldı."
 msgstr[1] "İstifadəçilər {} tapıldı."
 
 #: efb_fb_messenger_slave/extra_functions.py:56
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:56
 msgid "Found {} group."
 msgid_plural "Found {} groups."
 msgstr[0] "Qrup {} tapıldı."
 msgstr[1] "Qruplar {} tapıldı."
 
 #: efb_fb_messenger_slave/extra_functions.py:66
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:66
 msgid "Found {} page."
 msgid_plural "Found {} pages."
 msgstr[0] "Səhifə {} tapıldı."
 msgstr[1] "Səhifələr {} tapıldı."
 
 #: efb_fb_messenger_slave/extra_functions.py:76
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:76
 msgid "Found {} thread."
 msgid_plural "Found {} threads."
 msgstr[0] "Mövzu {} tapıldı."
 msgstr[1] "Mövzular {} tapıldı."
 
 #: efb_fb_messenger_slave/extra_functions.py:90
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:90
 msgid "Group ID and user IDs are required"
 msgstr "Qrup İD və istifadəçi İD vacibdir"
 
 #: efb_fb_messenger_slave/extra_functions.py:92
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:92
 #, python-brace-format
 msgid "User {0} are successfully added to group {1}."
 msgid_plural "Users {0} are successfully added to group {1}."
@@ -187,108 +227,211 @@ msgstr[0] "{0} istifadəçi uğurla qrupa əlavə olundu {1}."
 msgstr[1] "{0} istifadəçilər uğurla qrupa əlavə olundu {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:101
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:101
 msgid "Group ID and user ID are required."
 msgstr "Qrup İD və istifadəçi İD vacibdir."
 
 #: efb_fb_messenger_slave/extra_functions.py:103
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:103
 #, python-brace-format
 msgid "User {0} is successfully removed from group {1}."
 msgstr "{0} istifadəçi uğurla qrupdan silindi {1}."
 
 #: efb_fb_messenger_slave/extra_functions.py:110
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:110
 msgid "User ID and nickname are required."
 msgstr "İstifadəçi İD və ləqəb vacibdir."
 
 #: efb_fb_messenger_slave/extra_functions.py:112
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:112
 #, python-brace-format
 msgid "Nickname of {0} is set to {1}."
 msgstr "{0} ləqəb {1} olaraq təyin olundu."
 
 #: efb_fb_messenger_slave/extra_functions.py:119
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:119
 msgid "User ID and title are required."
 msgstr "İstifadəçi İD və başlıq vacibdir."
 
 #: efb_fb_messenger_slave/extra_functions.py:121
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:121
 #, python-brace-format
 msgid "Title of group {0} is set to {1}."
 msgstr "{0} qrup başlığı {1} olaraq təyin edildi."
 
 #: efb_fb_messenger_slave/extra_functions.py:128
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:128
 msgid "User ID and emoji are required."
 msgstr "İstifadəçi İD və emoji vacibdir."
 
 #: efb_fb_messenger_slave/extra_functions.py:130
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:130
 #, python-brace-format
 msgid "Emoji of group {0} is set to {1}."
 msgstr "{0} qrup emojisi {1} olaraq təyin olundu."
 
 #: efb_fb_messenger_slave/extra_functions.py:137
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:137
 msgid "Group ID, member ID and are nickname required."
 msgstr "Qrup İD, istifadəçi İD və ləqəb vacibdir."
 
 #: efb_fb_messenger_slave/extra_functions.py:139
+#: build/lib/efb_fb_messenger_slave/extra_functions.py:139
 #, python-brace-format
 msgid "Nickname of {1} in {0} is set as {2}."
 msgstr "{0} içində {1} ləqəb {2} olaraq təyin olundu."
 
+#: efb_fb_messenger_slave/wizard.py:51
+#: build/lib/efb_fb_messenger_slave/wizard.py:50
+msgid "# =======================================================\n"
+"# EFB Facebook Messenger Slave Channel Configuration File\n"
+"# =======================================================\n"
+"#\n"
+"# This file can help you to adjust some experimental features provided in\n"
+"# EFMS. It is not required to have this file for EFMS to work.\n"
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:72
+#: build/lib/efb_fb_messenger_slave/wizard.py:71
+msgid "Log in to your Facebook (Messenger) account\n"
+"-------------------------------------------"
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:78
+#: build/lib/efb_fb_messenger_slave/wizard.py:77
+msgid "We find that you have successfully logged in once before. You don't need to log in again if everything is already working properly."
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:83
+#: build/lib/efb_fb_messenger_slave/wizard.py:82
+msgid "Do you want to log in again? "
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:93
+#: build/lib/efb_fb_messenger_slave/wizard.py:92
+msgid "Deliver links (including links in share entities and thumbnails) using Facebook’s proxy. Disable this option to show the source directly."
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:99
+#: build/lib/efb_fb_messenger_slave/wizard.py:98
+msgid "When processing link message from the Master Channel, attach the title and description besides the link when the option is enabled.\n\n"
+"Note: Regardless of this option, link messages are sent as text, and Facebook Messenger may or may not attach its own link preview per its system configuration."
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:109
+#: build/lib/efb_fb_messenger_slave/wizard.py:108
+msgid "When showing the threads list, include threads pending approval."
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:114
+#: build/lib/efb_fb_messenger_slave/wizard.py:113
+msgid "When showing the threads list, include archived threads."
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:122
+#: build/lib/efb_fb_messenger_slave/wizard.py:121
+msgid "EFMS has also provided some experimental features that you can use. They are not required to be enabled for EFMS to work."
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:126
+#: build/lib/efb_fb_messenger_slave/wizard.py:125
+msgid "Do you want to config experimental features? "
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:161
+#: build/lib/efb_fb_messenger_slave/wizard.py:160
+msgid "Saving configurations..."
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:163
+#: build/lib/efb_fb_messenger_slave/wizard.py:162
+msgid "OK"
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:170
+#: build/lib/efb_fb_messenger_slave/wizard.py:169
+msgid "=================================================\n"
+"EFB Facebook Messenger Slave Channel Setup Wizard\n"
+"=================================================\n\n"
+"This wizard will guide you to setup your EFB Facebook Messenger Slave channel (EFMS). This would be really quick and simple."
+msgstr ""
+
+#: efb_fb_messenger_slave/wizard.py:183
+#: build/lib/efb_fb_messenger_slave/wizard.py:182
+msgid "Congratulations! You have finished the setup wizard for EFB Facebook Messenger Slave channel."
+msgstr ""
+
 #: efb_fb_messenger_slave/__main__.py:27
+#: build/lib/efb_fb_messenger_slave/__main__.py:27
 msgid "Target profile."
 msgstr "Hədəf profil."
 
 #: efb_fb_messenger_slave/__main__.py:28
+#: build/lib/efb_fb_messenger_slave/__main__.py:28
 msgid "Target instance ID."
 msgstr "Hədəf instansiya İD."
 
-#: efb_fb_messenger_slave/__main__.py:38
+#: efb_fb_messenger_slave/__main__.py:43
+#: build/lib/efb_fb_messenger_slave/__main__.py:43
 msgid "EFB Facebook Messenger Slave Session Updater\n"
 "============================================"
 msgstr "EFB Facebook Messenger Sessiya Yeniləyici"
 
-#: efb_fb_messenger_slave/__main__.py:41
+#: efb_fb_messenger_slave/__main__.py:46
+#: build/lib/efb_fb_messenger_slave/__main__.py:46
 #, python-brace-format
 msgid "You are running EFMS {0}."
 msgstr "Siz EFMS {0} istifadə edirsiniz."
 
-#: efb_fb_messenger_slave/__main__.py:43
+#: efb_fb_messenger_slave/__main__.py:48
+#: build/lib/efb_fb_messenger_slave/__main__.py:48
 msgid "This will update and overwrite your EFMS token by\n"
 "log into your account again manually."
 msgstr "Bu yeniləmə sizin EFMS tokenizin üzərinə yazılacaq və siz yenidən əl ilə daxil olacaqsınız."
 
-#: efb_fb_messenger_slave/__main__.py:46
+#: efb_fb_messenger_slave/__main__.py:51
+#: build/lib/efb_fb_messenger_slave/__main__.py:51
 msgid "You usually need to do this when you want to log into\n"
 "a new account, or when the previous session is expired."
 msgstr "Siz ya yeni hesabınıza daxil olmalısınız və ya köhnə hesabınızın sessiya müddəti bitməlidir."
 
-#: efb_fb_messenger_slave/__main__.py:49
+#: efb_fb_messenger_slave/__main__.py:54
+#: build/lib/efb_fb_messenger_slave/__main__.py:54
 #, python-brace-format
 msgid "This session is written to\n"
 "{0}"
 msgstr "Bu sessiya bura yazılır \n"
 "{0}"
 
-#: efb_fb_messenger_slave/__main__.py:52
+#: efb_fb_messenger_slave/__main__.py:57
+#: build/lib/efb_fb_messenger_slave/__main__.py:57
 msgid "To continue, press Enter/Return."
 msgstr "Davam etmək üçün, Daxil ol/Qayıt basın."
 
-#: efb_fb_messenger_slave/__main__.py:56
+#: efb_fb_messenger_slave/__main__.py:59
+#: build/lib/efb_fb_messenger_slave/__main__.py:59
 msgid "Email: "
 msgstr "E-poçt: "
 
-#: efb_fb_messenger_slave/__main__.py:57
+#: efb_fb_messenger_slave/__main__.py:60
+#: build/lib/efb_fb_messenger_slave/__main__.py:60
 msgid "Password: "
 msgstr "Şifrə: "
 
-#: efb_fb_messenger_slave/__main__.py:61
+#: efb_fb_messenger_slave/__main__.py:63
+#: build/lib/efb_fb_messenger_slave/__main__.py:63
 msgid "Log in failed. Please check the information above and try again."
 msgstr "Daxil olma alınmadı. Zəhmət olmasa məlumatlarınızı yoxlayın və yenidən cəhd edin."
 
-#: efb_fb_messenger_slave/__main__.py:69
+#: efb_fb_messenger_slave/__main__.py:68
+#: build/lib/efb_fb_messenger_slave/__main__.py:68
 #, python-brace-format
 msgid "Your session has been successfully updated. It's stored at\n"
 "{0}"
 msgstr "Sizin sessiyanız uğurla yeniləndi. Burada saxlanılır {0}"
 
-#: efb_fb_messenger_slave/__main__.py:71
+#: efb_fb_messenger_slave/__main__.py:70
+#: build/lib/efb_fb_messenger_slave/__main__.py:70
 msgid "Your session cookies is as valuable as your account credential.\n"
 "Please keep them with equal care."
 msgstr "Sizin sessiya kukiləriniz sizin hesab məlumatlarınız qədər dəyərlidir. Zəhmət olmasa onları diqqətinizdə saxlayın."
