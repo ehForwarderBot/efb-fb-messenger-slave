@@ -93,14 +93,19 @@ class MasterMessageManager:
                     fb_msg.text = msg.text[:-1]
                 msg.uid = self.client.send(fb_msg, thread_id=thread.uid, thread_type=thread.type)
             elif msg.type in (MsgType.Image, MsgType.Sticker, MsgType.Animation):
-                msg.uid = self.client.send_image_file(msg.filename, msg.file, msg.mime, message=fb_msg,
+                msg_uid = self.client.send_image_file(msg.filename, msg.file, msg.mime, message=fb_msg,
                                                       thread_id=thread.uid, thread_type=thread.type)
+                if msg_uid.startswith('mid.$'):
+                    self.client.sent_messages.add(msg_uid)
+                    self.logger.debug("Sent message with ID %s", msg_uid)
+                msg.uid = msg_uid
             elif msg.type == MsgType.Audio:
                 files = self.upload_file(msg, voice_clip=True)
                 msg_uid = self.client._sendFiles(files=files, message=fb_msg,
                                                  thread_id=thread.uid, thread_type=thread.type)
                 if msg_uid.startswith('mid.$'):
                     self.client.sent_messages.add(msg_uid)
+                    self.logger.debug("Sent message with ID %s", msg_uid)
                 msg.uid = msg_uid
             elif msg.type in (MsgType.File, MsgType.Video):
                 files = self.upload_file(msg)
@@ -108,6 +113,7 @@ class MasterMessageManager:
                                                  thread_id=thread.uid, thread_type=thread.type)
                 if msg_uid.startswith('mid.$'):
                     self.client.sent_messages.add(msg_uid)
+                    self.logger.debug("Sent message with ID %s", msg_uid)
                 msg.uid = msg_uid
             elif msg.type == MsgType.Status:
                 assert (isinstance(msg.attributes, EFBMsgStatusAttribute))
