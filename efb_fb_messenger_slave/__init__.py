@@ -94,7 +94,7 @@ class FBMessengerChannel(EFBChannel):
             self.config: Dict[str, Any] = dict()
             return
         with config_path.open() as f:
-            self.config: Dict[str, Any] = yaml.load(f)
+            self.config: Dict[str, Any] = yaml.load(f) or dict()
 
     def get_chats(self) -> List[EFBChat]:
         locations: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)

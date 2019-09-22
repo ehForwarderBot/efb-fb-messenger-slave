@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class ExperimentalFlagsManager:
 
     DEFAULT_VALUES = {
-        'proxy_links_by_facebook': False,  # True then links with Facebook redirections
+        'proxy_links_by_facebook': False,  # True then links with Facebook redirection
         'send_link_with_description': False,  # Send link messages with descriptions
         'show_pending_threads': False,  # Show threads pending approval in the thread list
         'show_archived_threads': False,  # Show archived threads in the thread list
