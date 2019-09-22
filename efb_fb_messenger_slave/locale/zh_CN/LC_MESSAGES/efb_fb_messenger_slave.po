@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-03 16:04+0800\n"
-"PO-Revision-Date: 2019-09-03 08:08\n"
+"PO-Revision-Date: 2019-09-22 08:38\n"
 "Last-Translator: Eana Hufwe (blueset)\n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -176,7 +176,8 @@ msgstr "更改群组成员的昵称。\n"
 #, python-brace-format
 msgid "Message type unsupported.\n"
 "{content}"
-msgstr ""
+msgstr "不支持对消息类型。\n"
+"{content}"
 
 #: efb_fb_messenger_slave/extra_functions.py:34
 #: build/lib/efb_fb_messenger_slave/extra_functions.py:34
@@ -284,64 +285,71 @@ msgid "# =======================================================\n"
 "#\n"
 "# This file can help you to adjust some experimental features provided in\n"
 "# EFMS. It is not required to have this file for EFMS to work.\n"
-msgstr ""
+msgstr "# ==========================================\n"
+"# EFB Facebook Messenger 从端（EWS）设置向导\n"
+"# ==========================================\n"
+"#\n"
+"# 此文件可以用来配置 EFMS 中提供的试验性功能。EFMS 的正常工作并\n"
+"# 不依赖此文件的存在。\n"
 
 #: efb_fb_messenger_slave/wizard.py:72
 #: build/lib/efb_fb_messenger_slave/wizard.py:71
 msgid "Log in to your Facebook (Messenger) account\n"
 "-------------------------------------------"
-msgstr ""
+msgstr "登录到您的 Facebook (Messenger) 帐户\n"
+"------------------------------------"
 
 #: efb_fb_messenger_slave/wizard.py:78
 #: build/lib/efb_fb_messenger_slave/wizard.py:77
 msgid "We find that you have successfully logged in once before. You don't need to log in again if everything is already working properly."
-msgstr ""
+msgstr "我们发现您以前已成功登录过一次。如果一切工作正常，则无需重新登录。"
 
 #: efb_fb_messenger_slave/wizard.py:83
 #: build/lib/efb_fb_messenger_slave/wizard.py:82
 msgid "Do you want to log in again? "
-msgstr ""
+msgstr "是否要再次登录？"
 
 #: efb_fb_messenger_slave/wizard.py:93
 #: build/lib/efb_fb_messenger_slave/wizard.py:92
 msgid "Deliver links (including links in share entities and thumbnails) using Facebook’s proxy. Disable this option to show the source directly."
-msgstr ""
+msgstr "使用 Facebook 代理发送链接（包括共享内容和缩略图里的链接）。禁用此选项直接显示来源。"
 
 #: efb_fb_messenger_slave/wizard.py:99
 #: build/lib/efb_fb_messenger_slave/wizard.py:98
 msgid "When processing link message from the Master Channel, attach the title and description besides the link when the option is enabled.\n\n"
 "Note: Regardless of this option, link messages are sent as text, and Facebook Messenger may or may not attach its own link preview per its system configuration."
-msgstr ""
+msgstr "当处理来自主端的链接消息时，将附带发送标题与描述。\n\n"
+"注：无论是否选择此选项，链接消息将作为文本发送，Facebook Messenger 可能会或不会根据其系统设置附加自带的链接预览。"
 
 #: efb_fb_messenger_slave/wizard.py:109
 #: build/lib/efb_fb_messenger_slave/wizard.py:108
 msgid "When showing the threads list, include threads pending approval."
-msgstr ""
+msgstr "显示会话列表时，包括待批准的会话。"
 
 #: efb_fb_messenger_slave/wizard.py:114
 #: build/lib/efb_fb_messenger_slave/wizard.py:113
 msgid "When showing the threads list, include archived threads."
-msgstr ""
+msgstr "显示会话列表时，包括已归档的会话。"
 
 #: efb_fb_messenger_slave/wizard.py:122
 #: build/lib/efb_fb_messenger_slave/wizard.py:121
 msgid "EFMS has also provided some experimental features that you can use. They are not required to be enabled for EFMS to work."
-msgstr ""
+msgstr "EFMS 还提供了一些可供使用的实验功能。EFMS 的正常运作不依赖这些实验功能。"
 
 #: efb_fb_messenger_slave/wizard.py:126
 #: build/lib/efb_fb_messenger_slave/wizard.py:125
 msgid "Do you want to config experimental features? "
-msgstr ""
+msgstr "您想要配置实验功能吗？"
 
 #: efb_fb_messenger_slave/wizard.py:161
 #: build/lib/efb_fb_messenger_slave/wizard.py:160
 msgid "Saving configurations..."
-msgstr ""
+msgstr "正在保存配置..."
 
 #: efb_fb_messenger_slave/wizard.py:163
 #: build/lib/efb_fb_messenger_slave/wizard.py:162
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: efb_fb_messenger_slave/wizard.py:170
 #: build/lib/efb_fb_messenger_slave/wizard.py:169
@@ -349,12 +357,15 @@ msgid "=================================================\n"
 "EFB Facebook Messenger Slave Channel Setup Wizard\n"
 "=================================================\n\n"
 "This wizard will guide you to setup your EFB Facebook Messenger Slave channel (EFMS). This would be really quick and simple."
-msgstr ""
+msgstr "===================================\n"
+"EFB Facebook Messenger 从端设置向导\n"
+"===================================\n\n"
+"这个向导将会帮助你设置 EFB Facebook Messenger 从端 (EFMS)。这个过程会很简单快速。"
 
 #: efb_fb_messenger_slave/wizard.py:183
 #: build/lib/efb_fb_messenger_slave/wizard.py:182
 msgid "Congratulations! You have finished the setup wizard for EFB Facebook Messenger Slave channel."
-msgstr ""
+msgstr "恭喜！您已完成了 EFB Facebook Messenger 从端的设置向导。"
 
 #: efb_fb_messenger_slave/__main__.py:27
 #: build/lib/efb_fb_messenger_slave/__main__.py:27

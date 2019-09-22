@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ehforwarderbot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-03 16:04+0800\n"
-"PO-Revision-Date: 2019-09-03 08:08\n"
+"PO-Revision-Date: 2019-09-22 08:38\n"
 "Last-Translator: Eana Hufwe (blueset)\n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -176,7 +176,8 @@ msgstr "グループメンバーのニックネームを変更する。\n"
 #, python-brace-format
 msgid "Message type unsupported.\n"
 "{content}"
-msgstr ""
+msgstr "このメッセージタイプは対応されていません。\n"
+"{content}"
 
 #: efb_fb_messenger_slave/extra_functions.py:34
 #: build/lib/efb_fb_messenger_slave/extra_functions.py:34
@@ -284,13 +285,18 @@ msgid "# =======================================================\n"
 "#\n"
 "# This file can help you to adjust some experimental features provided in\n"
 "# EFMS. It is not required to have this file for EFMS to work.\n"
-msgstr ""
+msgstr "# =======================================================\n"
+"# EFB Facebook Messenger スレーブチャンネル設定ファイル\n"
+"# =======================================================\n"
+"#\n"
+"# このファイルでEFMSから提供される実験的な機能を調整できます。\n"
+"# EFMSの利用には、このファイルが必要ではありません。\n"
 
 #: efb_fb_messenger_slave/wizard.py:72
 #: build/lib/efb_fb_messenger_slave/wizard.py:71
 msgid "Log in to your Facebook (Messenger) account\n"
 "-------------------------------------------"
-msgstr ""
+msgstr "Facebook (Messenger) のアカウントをお認証ください"
 
 #: efb_fb_messenger_slave/wizard.py:78
 #: build/lib/efb_fb_messenger_slave/wizard.py:77
