@@ -124,7 +124,7 @@ class MasterMessageManager:
                                           EFBMsgStatusAttribute.Types.UPLOADING_IMAGE,
                                           EFBMsgStatusAttribute.Types.UPLOADING_FILE):
                     self.client.setTypingStatus(TypingStatus.TYPING, thread_id=thread.uid, thread_type=thread.type)
-                    threading.Thread(target=self.stop_typing, args=(status.timeout, thread.uid, thread.type)).run()
+                    threading.Timer(status.timeout / 1000, self.stop_typing, args=(thread.uid, thread.type)).start()
             elif msg.type == MsgType.Link:
                 assert (isinstance(msg.attributes, EFBMsgLinkAttribute))
                 link: EFBMsgLinkAttribute = msg.attributes

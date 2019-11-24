@@ -13,8 +13,8 @@ EFB Facebook Messenger Slave (EFMS)
 
 `README in other languages`_.
 
-.. _README in other languages: ./readme_translations
 .. TRANSLATORS: change the URL on previous line as "." (without quotations).
+.. _README in other languages: ./readme_translations
 
 **Channel ID**: ``blueset.fbmessenger``
 

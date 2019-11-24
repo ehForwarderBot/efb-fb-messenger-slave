@@ -342,7 +342,7 @@ class EFMSClient(Client):
 
     def onMessage(self, *args, **kwargs):
         """Migrate message precessing to another thread to prevent blocking."""
-        threading.Thread(target=self.on_message, args=args, kwargs=kwargs).run()
+        threading.Thread(target=self.on_message, args=args, kwargs=kwargs, name=f"EFMS slave message thread for {kwargs['mid']}").run()
 
     def on_message(self, mid: str = '', author_id: str = '', message: str = '', message_object: Message = None,
                    thread_id: str = '', thread_type: str = ThreadType.USER, ts: str = '', metadata=None, msg=None):
