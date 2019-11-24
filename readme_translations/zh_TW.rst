@@ -10,7 +10,7 @@ EFB Facebook Messenger 从端 (EFMS)
    :target: https://crowdin.com/project/ehforwarderbot/
    :alt: Translate this project
 
-.. image:: https://github.com/blueset/efb-fb-messenger-slave/blob/master/banner.png
+.. image:: https://efms.1a23.studio/raw/master/banner.png
    :alt: Banner
 
 `其他语言的 README <./readme_translations>`_.
