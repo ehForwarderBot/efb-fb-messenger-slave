@@ -65,7 +65,7 @@ def task_msgfmt():
 
 
 def task_crowdin():
-    sources = glob.glob("./{package}/**/*.po".format(package=PACKAGE), recursive=True)
+    sources = glob.glob(f"./{PACKAGE}/**/*.po", recursive=True)
     return {
         "actions": ["crowdin upload sources"],
         "file_dep": sources,
@@ -123,7 +123,7 @@ def task_bump_version():
 
 def task_mypy():
     # sources = glob.glob("./{package}/**/*.py".format(package=PACKAGE), recursive=True)
-    actions = ["mypy -p {} --ignore-missing-imports".format(PACKAGE)]
+    actions = [f"mypy -p {PACKAGE} --ignore-missing-imports"]
     return {
         "actions": actions
     }
@@ -141,7 +141,8 @@ def task_mypy():
 def task_build():
     return {
         "actions": [
-            "python setup.py sdist bdist_wheel"
+            "python setup.py sdist bdist_wheel",
+            f"rm -rf build {PACKAGE}.egg-info"
         ]
     }
 
@@ -151,7 +152,7 @@ def task_publish():
         __version__ = __import__(PACKAGE).__version__
         if 'dev' in __version__:
             raise ValueError(f"Cannot publish dev version ({__version__}).")
-        binarys = glob.glob("./dist/*{}*".format(__version__), recursive=True)
+        binarys = glob.glob(f"./dist/*{__version__}*", recursive=True)
         return " ".join(["twine", "upload"] + binarys)
 
     return {

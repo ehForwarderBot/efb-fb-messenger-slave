@@ -4,6 +4,9 @@ EFB Facebook Messenger Slave (EFMS)
 .. image:: https://img.shields.io/pypi/v/efb-fb-messenger-slave.svg
    :alt: PyPI release
    :target: https://pypi.org/project/efb-fb-messenger-slave/
+.. image:: https://pepy.tech/badge/efb-fb-messenger-slave/month
+   :alt: Downloads per month
+   :target: https://pepy.tech/project/efb-fb-messenger-slave
 .. image:: https://d322cqt584bo4o.cloudfront.net/ehforwarderbot/localized.svg
    :alt: Translate this project
    :target: https://crowdin.com/project/ehforwarderbot/
