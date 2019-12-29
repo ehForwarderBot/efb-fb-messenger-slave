@@ -143,7 +143,7 @@ class EFMSClient(Client):
                 attachment_type = 'MessageLocation'
 
         if attachment_type == "MessageAudio":
-            msg.type = MsgType.Audio
+            msg.type = MsgType.Voice
         elif attachment_type == 'MessageImage':
             msg.type = MsgType.Image
         elif attachment_type == 'MessageAnimatedImage':
@@ -222,8 +222,8 @@ class EFMSClient(Client):
         msg.filename = attachment.get('filename', None)
         msg.mime = attachment.get('mimeType', None)
         if attachment_type == "MessageAudio":
-            msg.type = MsgType.Audio
-            msg.filename = msg.filename or 'audio.mp4'
+            msg.type = MsgType.Voice
+            msg.filename = msg.filename or 'audio.mp3'
             msg.mime = msg.mime or 'audio/mpeg'
             ext = os.path.splitext(msg.filename)[1]
             msg.file = NamedTemporaryFile(suffix=ext)

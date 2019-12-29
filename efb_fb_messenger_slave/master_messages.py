@@ -27,7 +27,7 @@ class MasterMessageManager:
     def __init__(self, channel: 'FBMessengerChannel'):
         self.channel = channel
         channel.supported_message_types = {MsgType.Text, MsgType.Image, MsgType.Sticker,
-                                           MsgType.Audio, MsgType.File, MsgType.Video,
+                                           MsgType.Voice, MsgType.File, MsgType.Video,
                                            MsgType.Status, MsgType.Unsupported,
                                            MsgType.Location, MsgType.Animation}
         self.client = channel.client
@@ -99,7 +99,7 @@ class MasterMessageManager:
                     self.client.sent_messages.add(msg_uid)
                     self.logger.debug("Sent message with ID %s", msg_uid)
                 msg.uid = msg_uid
-            elif msg.type == MsgType.Audio:
+            elif msg.type == MsgType.Voice:
                 files = self.upload_file(msg, voice_clip=True)
                 msg_uid = self.client._sendFiles(files=files, message=fb_msg,
                                                  thread_id=thread.uid, thread_type=thread.type)
