@@ -8,6 +8,7 @@ import urllib.parse
 import threading
 import time
 from collections import defaultdict
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Tuple, Set, List, DefaultDict, cast
 from tempfile import NamedTemporaryFile
 
@@ -229,7 +230,7 @@ class EFMSClient(Client):
             msg.file = NamedTemporaryFile(suffix=ext)
             msg.file.write(requests.get(blob_attachment['playable_url']).content)
             msg.file.seek(0)
-            msg.path = msg.file.name
+            msg.path = Path(msg.file.name)
         elif attachment_type == 'MessageImage':
             msg.type = MsgType.Image
             msg.filename = msg.filename or 'image.png'
@@ -245,7 +246,7 @@ class EFMSClient(Client):
             url = self.fetchImageUrl(attachment['id'])
             msg.file.write(requests.get(url).content)
             msg.file.seek(0)
-            msg.path = msg.file.name
+            msg.path = Path(msg.file.name)
         elif attachment_type == 'MessageAnimatedImage':
             msg.type = MsgType.Animation
             msg.filename = msg.filename or 'image.gif'
@@ -254,7 +255,7 @@ class EFMSClient(Client):
             msg.file = NamedTemporaryFile(suffix=ext)
             msg.file.write(requests.get(blob_attachment['animated_image']['uri'], allow_redirects=True).content)
             msg.file.seek(0)
-            msg.path = msg.file.name
+            msg.path = Path(msg.file.name)
         elif attachment_type == 'MessageFile':
             msg.type = MsgType.File
             msg.filename = msg.filename or 'file'
@@ -263,7 +264,7 @@ class EFMSClient(Client):
             msg.file = NamedTemporaryFile(suffix=ext)
             msg.file.write(requests.get(self.process_url(blob_attachment['url'], True), allow_redirects=True).content)
             msg.file.seek(0)
-            msg.path = msg.file.name
+            msg.path = Path(msg.file.name)
         elif attachment_type == 'MessageVideo':
             msg.type = MsgType.Image
             msg.filename = msg.filename or 'video.mp4'
@@ -272,7 +273,7 @@ class EFMSClient(Client):
             msg.file = NamedTemporaryFile(suffix=ext)
             msg.file.write(requests.get(blob_attachment['playable_url'], allow_redirects=True).content)
             msg.file.seek(0)
-            msg.path = msg.file.name
+            msg.path = Path(msg.file.name)
         elif attachment_type == '__Sticker':
             if get_value(attachment, ('mercury', 'sticker_attachment', 'pack', 'id')) == "227877430692340":
                 self.logger.debug("[%s] Sticker received is a \"Like\" sticker. Converting message to text.", msg.uid)
@@ -294,7 +295,7 @@ class EFMSClient(Client):
             msg.file = NamedTemporaryFile(suffix=ext)
             msg.file.write(response.content)
             msg.file.seek(0)
-            msg.path = msg.file.name
+            msg.path = Path(msg.file.name)
         elif attachment_type == '__Link':
             msg.type = MsgType.Link
             link_information = get_value(attachment, ('mercury', 'extensible_attachment', 'story_attachment'), {})
