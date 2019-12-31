@@ -144,8 +144,8 @@ License
 
 EFMS is licensed under `GNU Affero General Public License 3.0`_ or later versions::
 
-    EFB Facebook Messenger Slave Channel: An slave channel for EH Forwarder Bot.
-    Copyright (C) 2016 - 2019 Eana Hufwe, and the EFB Facebook Messenger Slave Channel contributors
+    EFB Facebook Messenger Slave Channel: A slave channel for EH Forwarder Bot.
+    Copyright (C) 2016 - 2020 Eana Hufwe, and the EFB Facebook Messenger Slave Channel contributors
     All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
