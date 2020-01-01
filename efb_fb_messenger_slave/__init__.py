@@ -14,7 +14,8 @@ from pkg_resources import resource_filename
 
 from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType
 from ehforwarderbot import utils as efb_utils
-from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported, EFBMessageReactionNotPossible
+from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported, EFBMessageReactionNotPossible, \
+    EFBChatNotFound
 from ehforwarderbot.status import EFBMessageRemoval, EFBReactToMessage
 from ehforwarderbot.types import ChatID, MessageID, ModuleID, InstanceID
 from ehforwarderbot.utils import extra
@@ -61,8 +62,8 @@ class FBMessengerChannel(EFBChannel):
         try:
             data = pickle.load(session_path.open('rb'))
             self.client = EFMSClient(self, None, None, session_cookies=data)
-            EFMSChat.cache[EFBChat.SELF_ID] = EFMSChat(self,
-                                                       self.client.fetchThreadInfo(self.client.uid)[self.client.uid])
+            EFMSChat.cache[EFBChat.SELF_ID, None] = \
+                EFMSChat(self, self.client.fetchThreadInfo(self.client.uid)[self.client.uid])
         except FileNotFoundError:
             raise EFBException(self._("Session not found, please authorize your account.\n"
                                       "To do so, run: efms-auth"))
@@ -113,17 +114,16 @@ class FBMessengerChannel(EFBChannel):
 
     def get_chat(self, chat_uid: str, member_uid: Optional[str] = None) -> EFMSChat:
         thread_id = member_uid or chat_uid
-        if thread_id in EFMSChat.cache:
-            chat = EFMSChat.cache[thread_id]
+        if (chat_uid, member_uid) in EFMSChat.cache:
+            return EFMSChat.cache[chat_uid, member_uid]
+        # thread = self.client.fetchThreadInfo(thread_id)[str(thread_id)]
+        # chat = EFMSChat(self, thread=thread)
+        graph_ql = self.client.get_thread_info(thread_id)
+        chat = EFMSChat(self, graph_ql_thread=graph_ql)
+        if (chat_uid, member_uid) in EFMSChat.cache:
+            return EFMSChat.cache[chat_uid, member_uid]
         else:
-            # thread = self.client.fetchThreadInfo(thread_id)[str(thread_id)]
-            # chat = EFMSChat(self, thread=thread)
-            graph_ql = self.client.get_thread_info(thread_id)
-            chat = EFMSChat(self, graph_ql_thread=graph_ql)
-        if member_uid:
-            chat.is_chat = False
-            chat.group = self.get_chat(chat_uid)
-        return chat
+            raise EFBChatNotFound
 
     def send_message(self, msg: EFBMsg) -> EFBMsg:
         return self.master_message.send_message(msg)
@@ -149,8 +149,8 @@ class FBMessengerChannel(EFBChannel):
 
     def get_chat_picture(self, chat: EFBChat) -> IO[bytes]:
         self.logger.debug("Getting picture of chat %s", chat)
-        photo_url = EFMSChat.cache[chat.chat_uid] and \
-                    EFMSChat.cache[chat.chat_uid].vendor_specific.get('profile_picture_url')
+        photo_url = EFMSChat.cache[chat.chat_uid, None] and \
+                    EFMSChat.cache[chat.chat_uid, None].vendor_specific.get('profile_picture_url')
         self.logger.debug("[%s] has photo_url from cache: %s", chat.chat_uid, photo_url)
         if not photo_url:
             thread = self.client.get_thread_info(chat.chat_uid)

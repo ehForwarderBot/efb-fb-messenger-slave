@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import logging
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Dict, Any, Optional
 from ehforwarderbot import EFBChat, ChatType, coordinator
 from fbchat.models import Thread, User, Page, Group, Room
 
@@ -16,11 +16,11 @@ if TYPE_CHECKING:
 class EFMSChat(EFBChat):
     logger = logging.getLogger("EFMSChat")
 
-    cache: Dict[str, 'EFMSChat'] = dict()
+    cache: Dict[(str, Optional[str]), 'EFMSChat'] = dict()
 
     def __init__(self, channel: 'FBMessengerChannel', thread: Thread = None,
                  graph_ql_thread: Dict[str, Any] = None,
-                 uid: ChatID = None, lazy_load=False):
+                 uid: ChatID = None, lazy_load=False, parent: Optional['EFMSChat'] = None):
         """
         Create a chat based on fbchat Thread objects or GraphQL result dict.
 
@@ -39,6 +39,7 @@ class EFMSChat(EFBChat):
         self.client: EFMSClient = channel.client
         self.loaded = False
         self.graph_ql_thread = graph_ql_thread
+        self.parent = parent
 
         # Mark shelf
         if self.chat_uid == self.client.uid:
@@ -59,8 +60,8 @@ class EFMSChat(EFBChat):
             return self.load_graph_ql_thread()
 
         if not thread:
-            if self.chat_uid in EFMSChat.cache:
-                self.clone(EFMSChat.cache[self.chat_uid])
+            if (self.chat_uid, None) in EFMSChat.cache:
+                self.clone(EFMSChat.cache[(self.chat_uid, None)])
                 return
             thread = self.client.fetchThreadInfo(self.chat_uid)[str(self.chat_uid)]
             self.thread = thread
@@ -73,7 +74,7 @@ class EFMSChat(EFBChat):
 
         if self.chat_uid == self.client.uid:
             self.self()
-            EFMSChat.cache[self.chat_uid] = self
+            EFMSChat.cache[(self.chat_uid, self.parent)] = self
             return
 
         if isinstance(thread, User):
@@ -92,13 +93,16 @@ class EFMSChat(EFBChat):
 
             if self.is_chat:
                 for i in thread.participants:
-                    member = EFMSChat(self.channel, uid=i, lazy_load=lazy_load)
+                    members = []
+                    member = EFMSChat(self.channel, uid=i, lazy_load=lazy_load, parent=self)
                     if thread.nicknames and i in thread.nicknames:
                         member.chat_alias = thread.nicknames[str(i)]
                     if not lazy_load:
                         names.append(member.chat_alias or member.chat_name)
                     member.is_chat = False
-                    self.members.append(member)
+                    member.has_self = False
+                    members.append(member)
+                self.members = members
 
             if not lazy_load:
                 if names:
@@ -110,7 +114,7 @@ class EFMSChat(EFBChat):
                     self.chat_name = "Group %s" % self.chat_uid
         else:
             self.chat_type = ChatType.System
-        EFMSChat.cache[self.chat_uid] = self
+        EFMSChat.cache[(self.chat_uid, self.parent)] = self
 
     def load_graph_ql_thread(self, recursive=True):
         self.logger.debug('Parsing chat as GraphQL dict: %s', self.graph_ql_thread)
@@ -142,6 +146,7 @@ class EFMSChat(EFBChat):
                                                  lazy_load='name' in i['messaging_actor']))
                     self.members[-1].group = self
                     self.members[-1].is_chat = False
+                    self.members[-1].has_self = False
                 self.vendor_specific['chat_type'] = 'Marketplace'
                 if 'marketplace_thread_data' in self.graph_ql_thread:
                     self.vendor_specific['marketplace_thread_data'] = self.graph_ql_thread['marketplace_thread_data']
