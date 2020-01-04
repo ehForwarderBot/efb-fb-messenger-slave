@@ -47,15 +47,16 @@ Getting started
 
        pip3 install efb-fb-messenger-slave
 
-3. Enable the channel in the profile’s ``config.yaml``.
+3. Enable and configure EFMS using the *EFB configuration wizard*, or enable
+   it manually in the profile’s ``config.yaml``.
 
    The path to the current profile may vary depends on your
    configuration.
 
-   **(In EFB 2.0.0a1, the default profile path is**
+   **(In EFB 2, the default profile path is**
    ``~/.ehforwarderbot/profiles/default`` **)**
 
-4. Sign in
+4. Sign in (only if setting up manually)
 
    .. code:: shell
 
