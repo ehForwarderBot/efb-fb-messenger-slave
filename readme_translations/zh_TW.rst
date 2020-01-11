@@ -6,11 +6,15 @@ EFB Facebook Messenger 从端 (EFMS)
    :target: https://pypi.org/project/efb-fb-messenger-slave/
    :alt: PyPI release
 
+.. image:: https://pepy.tech/badge/efb-fb-messenger-slave/month
+   :target: https://pepy.tech/project/efb-fb-messenger-slave
+   :alt: Downloads per month
+
 .. image:: https://d322cqt584bo4o.cloudfront.net/ehforwarderbot/localized.svg
    :target: https://crowdin.com/project/ehforwarderbot/
    :alt: Translate this project
 
-.. image:: https://efms.1a23.studio/raw/master/banner.png
+.. image:: https://github.com/blueset/efb-fb-messenger-slave/raw/master/banner.png
    :alt: Banner
 
 `其他语言的 README <./readme_translations>`_.
@@ -46,14 +50,15 @@ Forwarder Bot 连接起来的信道。
     ::
        pip3 install efb-fb-messenger-slave
 
-3. 在配置档案中的 ``config.yaml`` 中启用信道。
+3. Enable and configure EFMS using the *EFB configuration wizard*, or
+    enable it manually in the profile’s ``config.yaml``.
 
     该路径可能因您的配置档案而有所不同。
 
-    **（在 EFB 2.0.0a1 中，默认的配置档案路径为**
-    ``~/.ehforwarderbot/profiles/default`` **）**
+    **(In EFB 2, the default profile path is**
+    ``~/.ehforwarderbot/profiles/default`` **)**
 
-4. 登录
+4. Sign in (only if setting up manually)
 
     ::
        $ efms-auth
@@ -136,11 +141,11 @@ EFMS 的会话提供了以下供应商特定选项：
 * ``'profile_picture_url'`` *(str)*: 会话头像链接
 
 
-License
-=======
+许可协议
+========
 
-EFMS is licensed under `GNU Affero General Public License 3.0
-<https://www.gnu.org/licenses/agpl-3.0.txt>`_ or later versions:
+EFMS 使用了 `GNU Affero General Public License 3.0
+<https://www.gnu.org/licenses/agpl-3.0.txt>`_ 或更新版本作为其开源许可:
 
 ::
 
@@ -165,13 +170,9 @@ EFMS is licensed under `GNU Affero General Public License 3.0
 翻译支持
 ========
 
-EFMS supports translated user interface prompts, by setting the locale
-environmental variable (``LANGUAGE``, ``LC_ALL``, ``LC_MESSAGES`` or
-``LANG``) to one of our \ `supported languages
-<https://crowdin.com/project/ehforwarderbot/>`_. Meanwhile, you can
-help to translate this project into your languages on `our Crowdin
-page <https://crowdin.com/project/ehforwarderbot/>`_.
+EFMS 支持了界面本地化翻译。您可以将语言环境变量（``LANGUAGE``、``LC_ALL``、``LC_MESSAGES`` 或
+``LANG``）设为一种\ `已支持的语言
+<https://crowdin.com/project/ehforwarderbot/>`_。同时，您也可以在我们的 `Crowdin
+页面 <https://crowdin.com/project/ehforwarderbot/>`_\ 里将 EFMS 翻译为您的语言。
 
-備註: If your are installing from source code, you will not get
-   translations of the user interface without manual compile of
-   message catalogs (``.mo``) prior to installation.
+備註: 如果您使用源代码安装，您需要手动编译翻译字符串文件（``.mo``）才可启用翻译后的界面。

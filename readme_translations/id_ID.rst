@@ -6,11 +6,15 @@ EFB Facebook Messenger Slave (EFMS)
    :target: https://pypi.org/project/efb-fb-messenger-slave/
    :alt: PyPI release
 
+.. image:: https://pepy.tech/badge/efb-fb-messenger-slave/month
+   :target: https://pepy.tech/project/efb-fb-messenger-slave
+   :alt: Downloads per month
+
 .. image:: https://d322cqt584bo4o.cloudfront.net/ehforwarderbot/localized.svg
    :target: https://crowdin.com/project/ehforwarderbot/
    :alt: Translate this project
 
-.. image:: https://efms.1a23.studio/raw/master/banner.png
+.. image:: https://github.com/blueset/efb-fb-messenger-slave/raw/master/banner.png
    :alt: Banner
 
 `README in other languages <./readme_translations>`_.
@@ -47,15 +51,16 @@ Getting started
     ::
        pip3 install efb-fb-messenger-slave
 
-3. Enable the channel in the profile’s ``config.yaml``.
+3. Enable and configure EFMS using the *EFB configuration wizard*, or
+    enable it manually in the profile’s ``config.yaml``.
 
     The path to the current profile may vary depends on your
     configuration.
 
-    **(In EFB 2.0.0a1, the default profile path is**
+    **(In EFB 2, the default profile path is**
     ``~/.ehforwarderbot/profiles/default`` **)**
 
-4. Sign in
+4. Sign in (only if setting up manually)
 
     ::
        $ efms-auth

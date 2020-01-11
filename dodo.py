@@ -117,7 +117,8 @@ def task_bump_version():
                     ("dev", "Bump a dev version (for commit only)")
                 ]
             }
-        ]
+        ],
+        "task_dep": ["test", "mypy", "commit_lang_file"]
     }
 
 

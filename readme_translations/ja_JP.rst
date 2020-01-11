@@ -6,18 +6,22 @@ EFB Facebook Messenger 従端 (EFMS)
    :target: https://pypi.org/project/efb-fb-messenger-slave/
    :alt: PyPI release
 
+.. image:: https://pepy.tech/badge/efb-fb-messenger-slave/month
+   :target: https://pepy.tech/project/efb-fb-messenger-slave
+   :alt: Downloads per month
+
 .. image:: https://d322cqt584bo4o.cloudfront.net/ehforwarderbot/localized.svg
    :target: https://crowdin.com/project/ehforwarderbot/
    :alt: Translate this project
 
-.. image:: https://efms.1a23.studio/raw/master/banner.png
+.. image:: https://github.com/blueset/efb-fb-messenger-slave/raw/master/banner.png
    :alt: Banner
 
 `他の言語でREADMEを読む <./readme_translations>`_
 
 **Channel ID**: ``blueset.fbmessenger``
 
-EFMSはFacebook Messengerと繋ぎ、EH Forwarder Botのチャンネルである。このチャンネルはFacebook
+EFMSはFacebook Messengerと繋ぎ、EH Forwarder Botのチャネルである。このチャネルはFacebook
 Messenger Webのシミュレーションと\ `fbchat
 <https://github.com/carpedm20/fbchat>`_に基いて作られたものである。
 
@@ -46,14 +50,15 @@ Messenger Webのシミュレーションと\ `fbchat
     ::
        pip3 install efb-fb-messenger-slave
 
-3. プロファイルの\ ``config.yaml``\ でチャンネルを有効にします。
+3. Enable and configure EFMS using the *EFB configuration wizard*, or
+    enable it manually in the profile’s ``config.yaml``.
 
     プロファイルまでのパスは設定より変わる場合があります。
 
-    >>**<<（EFB 2.0.0a1対するデフォルトのプロファイルパスは**
-    ``~/.ehforwarderbot/profiles/default``>>**<<）**
+    **(In EFB 2, the default profile path is**
+    ``~/.ehforwarderbot/profiles/default`` **)**
 
-4. サインイン
+4. Sign in (only if setting up manually)
 
     ::
        $ efms-auth
