@@ -2,6 +2,9 @@
 
 import logging
 from typing import TYPE_CHECKING, Dict, Any, Optional, Tuple, Union
+
+from fbchat import FBchatException
+
 from ehforwarderbot import Chat, coordinator
 from fbchat.models import Thread, User, Page, Group, Room
 
@@ -210,13 +213,18 @@ class EFMSChatManager:
                               id=ChatID(thread.uid),
                               vendor_specific=vendor_specific)
             participant_ids = thread.participants - {self.client.uid}
-            participants: Dict[ThreadID, User] = self.client.fetchThreadInfo(*participant_ids)
-            for i in participant_ids:
-                member = participants[i]
-                alias = member.own_nickname or member.nickname or None
-                if thread.nicknames and i in thread.nicknames:
-                    alias = thread.nicknames[str(i)] or None
-                group.add_member(name=member.name, alias=alias, id=ChatID(i))
+            try:
+                participants: Dict[ThreadID, User] = self.client.fetchThreadInfo(*participant_ids)
+                for i in participant_ids:
+                    member = participants[i]
+                    alias = member.own_nickname or member.nickname or None
+                    if thread.nicknames and i in thread.nicknames:
+                        alias = thread.nicknames[str(i)] or None
+                    group.add_member(name=member.name, alias=alias, id=ChatID(i))
+            except FBchatException:
+                self.logger.exception("Error occurred while building chat members.")
+                for i in participant_ids:
+                    group.add_member(name=str(i), id=ChatID(i))
 
             if thread.name is None:
                 names = sorted(i.name for i in group.members)
@@ -228,6 +236,7 @@ class EFMSChatManager:
                                           ", and {number} more",
                                           extras).format(number=extras)
                 group.name = name
+
             chat = group
         else:
             chat = SystemChat(channel=self.channel,
