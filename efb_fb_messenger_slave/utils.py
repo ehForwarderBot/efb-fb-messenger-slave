@@ -1,10 +1,14 @@
 # coding=utf-8
 import collections
+import logging
 from collections import deque
+from logging import LogRecord
 from typing import TYPE_CHECKING, Dict, Any, Hashable, Union, Sequence
 
 if TYPE_CHECKING:
     from . import FBMessengerChannel
+
+ThreadID = Union[str, int]
 
 
 class ExperimentalFlagsManager:
@@ -27,10 +31,11 @@ class ExperimentalFlagsManager:
 
 
 def get_value(source: Union[Dict, Sequence],
-              path: Sequence[Union[int, Hashable]],
+              path: Sequence[Hashable],
               default: Any = None) -> Any:
     """
     Get value from a path of keys
+
     Args:
         source: Data source
         path: Path to get value from
@@ -49,3 +54,13 @@ def get_value(source: Union[Dict, Sequence],
         except (AttributeError, KeyError, IndexError, TypeError):
             return default
     return data
+
+
+class PahoMQTTPingFilter(logging.Filter):
+
+    blacklist = {"Sending PINGREQ", "Received PINGRESP"}
+
+    def filter(self, record: LogRecord) -> int:
+        if record.msg in self.blacklist:
+            return 0
+        return 1

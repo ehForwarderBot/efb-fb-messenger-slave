@@ -2,8 +2,6 @@ from typing import TYPE_CHECKING
 
 from fbchat.models import ThreadType
 
-from .efms_chat import EFMSChat
-
 if TYPE_CHECKING:
     from . import FBMessengerChannel
 
@@ -27,6 +25,7 @@ class ExtraFunctionsManager:
         self.client = channel.client
         self._ = channel._
         self.ngettext = channel.ngettext
+        self.chat_manager = channel.chat_manager
 
     @catch_exceptions
     def threads_list(self, args: str) -> str:
@@ -35,49 +34,53 @@ class ExtraFunctionsManager:
                             "You have {0} threads in your thread list.",
                             len(chats)).format(len(chats)) + "\n"
         for i in chats:
-            msg += "\n{chat.chat_uid}: {chat.chat_name} [{type}]" \
+            msg += "\n{chat.id}: {chat.name} [{type}]" \
                 .format(chat=i,
                         type=i.vendor_specific.get('chat_type'))
         return msg
 
     @catch_exceptions
     def search_users(self, args: str) -> str:
-        users = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForUsers(args, limit=10)))
+        users = list(map(self.chat_manager.build_chat_by_thread_obj,
+                         self.client.searchForUsers(args, limit=10)))
         msg = self.ngettext("Found {} user.",
                             "Found {} users.",
                             len(users)).format(len(users)) + "\n"
         for i in users:
-            msg += "\n{chat.chat_uid}: {chat.chat_name}".format(chat=i)
+            msg += "\n{chat.id}: {chat.name}".format(chat=i)
         return msg
 
     @catch_exceptions
     def search_groups(self, args: str) -> str:
-        groups = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForGroups(args, limit=10)))
+        groups = list(map(self.chat_manager.build_chat_by_thread_obj,
+                          self.client.searchForGroups(args, limit=10)))
         msg = self.ngettext("Found {} group.",
                             "Found {} groups.",
                             len(groups)).format(len(groups)) + "\n"
         for i in groups:
-            msg += "\n{chat.chat_uid}: {chat.chat_name}".format(chat=i)
+            msg += "\n{chat.id}: {chat.name}".format(chat=i)
         return msg
 
     @catch_exceptions
     def search_pages(self, args: str) -> str:
-        pages = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForPages(args, limit=10)))
+        pages = list(map(self.chat_manager.build_chat_by_thread_obj,
+                         self.client.searchForPages(args, limit=10)))
         msg = self.ngettext("Found {} page.",
                             "Found {} pages.",
                             len(pages)).format(len(pages)) + "\n"
         for i in pages:
-            msg += "\n{chat.chat_uid}: {chat.chat_name}".format(chat=i)
+            msg += "\n{chat.id}: {chat.name}".format(chat=i)
         return msg
 
     @catch_exceptions
     def search_threads(self, args: str) -> str:
-        threads = list(map(lambda a: EFMSChat(self.channel, a), self.client.searchForThreads(args, limit=10)))
+        threads = list(map(self.chat_manager.build_chat_by_thread_obj,
+                           self.client.searchForThreads(args, limit=10)))
         msg = self.ngettext("Found {} thread.",
                             "Found {} threads.",
                             len(threads)).format(len(threads)) + "\n"
         for i in threads:
-            msg += "\n{chat.chat_uid}: {chat.chat_name} [{type}]" \
+            msg += "\n{chat.id}: {chat.name} [{type}]" \
                 .format(chat=i,
                         type=i.vendor_specific.get('chat_type'))
         return msg

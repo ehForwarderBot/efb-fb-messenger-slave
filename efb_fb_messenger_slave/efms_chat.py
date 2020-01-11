@@ -1,22 +1,23 @@
 # coding=utf-8
 
 import logging
-from typing import TYPE_CHECKING, Dict, Any, Optional
-from ehforwarderbot import EFBChat, ChatType, coordinator
+from typing import TYPE_CHECKING, Dict, Any, Optional, Tuple, Union
+from ehforwarderbot import Chat, coordinator
 from fbchat.models import Thread, User, Page, Group, Room
 
+from ehforwarderbot.chat import PrivateChat, GroupChat, SystemChat
 from ehforwarderbot.types import ChatID
-from .utils import get_value
+from .utils import get_value, ThreadID
 
 if TYPE_CHECKING:
     from . import FBMessengerChannel
     from .efms_client import EFMSClient
 
 
-class EFMSChat(EFBChat):
+class EFMSChat(Chat):
     logger = logging.getLogger("EFMSChat")
 
-    cache: Dict[(str, Optional[str]), 'EFMSChat'] = dict()
+    cache: Dict[Tuple[str, Optional[str]], 'EFMSChat'] = dict()
 
     def __init__(self, channel: 'FBMessengerChannel', thread: Thread = None,
                  graph_ql_thread: Dict[str, Any] = None,
@@ -31,7 +32,7 @@ class EFMSChat(EFBChat):
             uid: Thread ID, and retrieve necessary details from server
             lazy_load: If chat info need to be loaded later
         """
-        super().__init__(channel)
+        super().__init__()
         self.channel = channel
         self.thread = thread
         if uid is not None:
@@ -41,80 +42,8 @@ class EFMSChat(EFBChat):
         self.graph_ql_thread = graph_ql_thread
         self.parent = parent
 
-        # Mark shelf
-        if self.chat_uid == self.client.uid:
-            self.self()
-            return
         if not lazy_load:
             self.load_chat()
-
-    def load_chat(self):
-        self.loaded = True
-
-        thread: Thread = self.thread
-
-        if self.is_self:
-            return
-
-        if self.graph_ql_thread:
-            return self.load_graph_ql_thread()
-
-        if not thread:
-            if (self.chat_uid, None) in EFMSChat.cache:
-                self.clone(EFMSChat.cache[(self.chat_uid, None)])
-                return
-            thread = self.client.fetchThreadInfo(self.chat_uid)[str(self.chat_uid)]
-            self.thread = thread
-
-        self.logger.debug("Parsing fbchat thread object: %s", thread)
-
-        self.chat_uid = thread.uid
-        self.chat_name = thread.name
-        self.vendor_specific['chat_type'] = thread.type.name.capitalize()
-
-        if self.chat_uid == self.client.uid:
-            self.self()
-            EFMSChat.cache[(self.chat_uid, self.parent)] = self
-            return
-
-        if isinstance(thread, User):
-            self.chat_type = ChatType.User
-            self.chat_alias = thread.own_nickname or thread.nickname
-        elif isinstance(thread, Page):
-            self.chat_type = ChatType.User
-        elif isinstance(thread, Group) or isinstance(thread, Room):
-            self.chat_type = ChatType.Group
-
-            # Lazy load if the group has a name,
-            # otherwise members' names are needed to build group name
-
-            lazy_load = bool(self.chat_name)
-            names = []
-
-            if self.is_chat:
-                for i in thread.participants:
-                    members = []
-                    member = EFMSChat(self.channel, uid=i, lazy_load=lazy_load, parent=self)
-                    if thread.nicknames and i in thread.nicknames:
-                        member.chat_alias = thread.nicknames[str(i)]
-                    if not lazy_load:
-                        names.append(member.chat_alias or member.chat_name)
-                    member.is_chat = False
-                    member.has_self = False
-                    members.append(member)
-                self.members = members
-
-            if not lazy_load:
-                if names:
-                    names.sort()
-                    self.chat_name = ", ".join(names[:3])
-                    if len(names) > 3:
-                        self.chat_name += ", and %d more" % (len(names) - 3)
-                else:
-                    self.chat_name = "Group %s" % self.chat_uid
-        else:
-            self.chat_type = ChatType.System
-        EFMSChat.cache[(self.chat_uid, self.parent)] = self
 
     def load_graph_ql_thread(self, recursive=True):
         self.logger.debug('Parsing chat as GraphQL dict: %s', self.graph_ql_thread)
@@ -124,7 +53,7 @@ class EFMSChat(EFBChat):
             self.logger.debug('GraphQL information provided is a thread.')
             self.chat_name = self.graph_ql_thread['name']
             if self.graph_ql_thread['thread_type'] == 'ONE_TO_ONE':
-                self.chat_type = ChatType.User
+                # self.chat_type = ChatType.User
                 self.chat_uid = self.graph_ql_thread['thread_key']['other_user_id']
                 item = None
                 for i in self.graph_ql_thread['all_participants']['nodes']:
@@ -138,7 +67,7 @@ class EFMSChat(EFBChat):
                     self.vendor_specific['chat_type'] = item.get('__typename')
             elif self.graph_ql_thread['thread_type'] == 'MARKETPLACE':
                 # Data of a marketplace thread
-                self.chat_type = ChatType.Group
+                # self.chat_type = ChatType.Group
                 self.chat_uid = self.graph_ql_thread['thread_key']['thread_fbid']
                 for i in self.graph_ql_thread['all_participants']['nodes']:
                     self.members.append(EFMSChat(self.channel,
@@ -157,7 +86,7 @@ class EFMSChat(EFBChat):
                         self.vendor_specific['profile_picture_url'] = item_picture
 
             elif self.graph_ql_thread['thread_type'] == 'GROUP':
-                self.chat_type = ChatType.Group
+                # self.chat_type = ChatType.Group
                 self.chat_uid = self.graph_ql_thread['thread_key']['thread_fbid']
                 self.vendor_specific['chat_type'] = 'Group'
                 self.vendor_specific['profile_picture_url'] = \
@@ -180,7 +109,7 @@ class EFMSChat(EFBChat):
             if 'name' in self.graph_ql_thread['messaging_actor']:
                 self.logger.debug('[%s] Thread member information is complete.', self.chat_uid)
                 self.chat_name = self.graph_ql_thread['messaging_actor']['name']
-                self.chat_type = ChatType.User
+                # self.chat_type = ChatType.User
                 self.vendor_specific['chat_type'] = self.graph_ql_thread['messaging_actor'].get('__typename')
                 self.vendor_specific['profile_picture_url'] = \
                     get_value(self.graph_ql_thread, ('messaging_actor', 'big_image_src', 'uri'))
@@ -218,3 +147,93 @@ class EFMSChat(EFBChat):
             del state['channel']
 
         self.__dict__.update(state)
+
+
+class EFMSChatManager:
+    logger = logging.getLogger("EFMSChatManager")
+
+    cache: Dict[Union[ChatID, ThreadID], Chat] = dict()
+
+    def __init__(self, channel: 'FBMessengerChannel'):
+        self.channel: 'FBMessengerChannel' = channel
+        self.client = self.channel.client
+        self._ = self.channel._
+        self.ngettext = self.channel.ngettext
+        self.get_thread(self.client.uid)
+
+    def get_thread(self, thread_id: ThreadID) -> Chat:
+        if thread_id not in self.cache:
+            chat = self.build_chat_by_thread_id(thread_id)
+            self.cache[thread_id] = chat
+        return self.cache[thread_id]
+
+    def build_chat_by_thread_id(self, thread_id: ThreadID) -> Chat:
+        thread: Thread = self.client.fetchThreadInfo(thread_id)[thread_id]
+        return self.build_chat_by_thread_obj(thread)
+
+    def build_and_cache_thread(self, thread: Thread) -> Chat:
+        chat = self.build_chat_by_thread_obj(thread)
+        self.cache[chat.id] = chat
+        return chat
+
+    def build_chat_by_thread_obj(self, thread: Thread) -> Chat:
+        vendor_specific = {
+            "chat_type": thread.type.name.capitalize(),
+            "profile_picture_url": thread.photo,
+        }
+        chat: Chat
+        if thread.uid == self.client.uid:
+            chat = PrivateChat(channel=self.channel, id=thread.uid, other_is_self=True)
+            chat.name = chat.self.name  # type: ignore
+        elif isinstance(thread, User):
+            chat = PrivateChat(channel=self.channel,
+                               name=thread.name,
+                               id=ChatID(thread.uid),
+                               alias=thread.own_nickname or thread.nickname,
+                               vendor_specific=vendor_specific)
+        elif isinstance(thread, Page):
+            desc = self._("{subtitle}\n{category} in {city}\n"
+                          "Likes: {likes}\n{url}").format(
+                subtitle=thread.sub_title, category=thread.category,
+                city=thread.city, likes=thread.likes, url=thread.url
+            )
+            chat = PrivateChat(channel=self.channel,
+                               name=thread.name,
+                               id=ChatID(thread.uid),
+                               description=desc,
+                               vendor_specific=vendor_specific)
+        elif isinstance(thread, Group):
+            name = thread.name or ""
+
+            group = GroupChat(channel=self.channel,
+                              name=name,
+                              id=ChatID(thread.uid),
+                              vendor_specific=vendor_specific)
+            participant_ids = thread.participants - {self.client.uid}
+            participants: Dict[ThreadID, User] = self.client.fetchThreadInfo(*participant_ids)
+            for i in participant_ids:
+                member = participants[i]
+                alias = member.own_nickname or member.nickname or None
+                if thread.nicknames and i in thread.nicknames:
+                    alias = thread.nicknames[str(i)] or None
+                group.add_member(name=member.name, alias=alias, id=ChatID(i))
+
+            if thread.name is None:
+                names = sorted(i.name for i in group.members)
+                # TRANSLATORS: separation symbol between member names when group name is not provided.
+                name = self._(", ").join(names[:3])
+                if len(names) > 3:
+                    extras = len(names) - 3
+                    name += self.ngettext(", and {number} more",
+                                          ", and {number} more",
+                                          extras).format(number=extras)
+                group.name = name
+            chat = group
+        else:
+            chat = SystemChat(channel=self.channel,
+                              name=thread.name,
+                              id=ChatID(thread.uid),
+                              vendor_specific=vendor_specific)
+        if chat.self:
+            chat.self.id = self.client.uid
+        return chat

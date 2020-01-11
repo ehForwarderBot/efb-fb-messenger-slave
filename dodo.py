@@ -129,21 +129,27 @@ def task_mypy():
     }
 
 
-# def task_test():
-#     return {
-#         "actions": [
-#             "coverage run --source ./{} pytest".format(PACKAGE),
-#             "coverage report"
-#         ]
-#     }
+def task_test():
+    sources = glob.glob(f"./{PACKAGE}/**/*.py", recursive=True)
+    sources = [i for i in sources if "__version__.py" not in i]
+    return {
+        "actions": [
+            f"coverage run --source ./{PACKAGE} -m pytest",
+            "coverage report"
+        ],
+        "file_dep": sources
+    }
 
 
 def task_build():
     return {
         "actions": [
+            f"mv {PACKAGE}.egg-info {PACKAGE}.egg-info.bak",
             "python setup.py sdist bdist_wheel",
-            f"rm -rf build {PACKAGE}.egg-info"
-        ]
+            f"rm -rf build {PACKAGE}.egg-info",
+            f"mv {PACKAGE}.egg-info.bak {PACKAGE}.egg-info",
+        ],
+        "task_dep": ["mypy", "test", "msgfmt", "bump_version"]
     }
 
 

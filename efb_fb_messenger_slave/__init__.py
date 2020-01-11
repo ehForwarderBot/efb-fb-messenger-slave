@@ -4,7 +4,7 @@ import logging
 import pickle
 from gettext import translation
 from io import BytesIO
-from typing import Optional, List, IO, Dict, Any, Tuple
+from typing import Optional, List, Dict, Any, Tuple, BinaryIO, Callable, cast
 
 import requests
 import yaml
@@ -12,27 +12,27 @@ from fbchat import FBchatUserError, ThreadLocation, MessageReaction, FBchatExcep
 from fbchat.models import Thread
 from pkg_resources import resource_filename
 
-from ehforwarderbot import EFBChannel, EFBChat, EFBMsg, EFBStatus, ChannelType
+from ehforwarderbot import Chat, Message, Status
 from ehforwarderbot import utils as efb_utils
+from ehforwarderbot.channel import SlaveChannel
 from ehforwarderbot.exceptions import EFBException, EFBOperationNotSupported, EFBMessageReactionNotPossible, \
     EFBChatNotFound
-from ehforwarderbot.status import EFBMessageRemoval, EFBReactToMessage
-from ehforwarderbot.types import ChatID, MessageID, ModuleID, InstanceID
+from ehforwarderbot.status import MessageRemoval, ReactToMessage
+from ehforwarderbot.types import MessageID, ModuleID, InstanceID
 from ehforwarderbot.utils import extra
 from . import utils as efms_utils
 from .__version__ import __version__
-from .efms_chat import EFMSChat
+from .efms_chat import EFMSChatManager
 from .efms_client import EFMSClient
 from .extra_functions import ExtraFunctionsManager
 from .master_messages import MasterMessageManager
 from .utils import ExperimentalFlagsManager
 
 
-class FBMessengerChannel(EFBChannel):
+class FBMessengerChannel(SlaveChannel):
     channel_name: str = "Facebook Messenger Slave"
     channel_emoji: str = "⚡️"
     channel_id: ModuleID = ModuleID("blueset.fbmessenger")
-    channel_type: ChannelType = ChannelType.Slave
     __version__: str = __version__
 
     client: EFMSClient
@@ -47,14 +47,15 @@ class FBMessengerChannel(EFBChannel):
                            MessageReaction.ANGRY.value,
                            MessageReaction.YES.value,
                            MessageReaction.NO.value]
+    supported_message_types = MasterMessageManager.supported_message_types
 
     # Translator
     translator = translation("efb_fb_messenger_slave",
                              resource_filename("efb_fb_messenger_slave", 'locale'),
                              fallback=True)
 
-    _ = translator.gettext  # type: ignore
-    ngettext = translator.ngettext  # type: ignore
+    _: Callable = translator.gettext
+    ngettext: Callable = translator.ngettext
 
     def __init__(self, instance_id: InstanceID = None):
         super().__init__(instance_id)
@@ -62,8 +63,6 @@ class FBMessengerChannel(EFBChannel):
         try:
             data = pickle.load(session_path.open('rb'))
             self.client = EFMSClient(self, None, None, session_cookies=data)
-            EFMSChat.cache[EFBChat.SELF_ID, None] = \
-                EFMSChat(self, self.client.fetchThreadInfo(self.client.uid)[self.client.uid])
         except FileNotFoundError:
             raise EFBException(self._("Session not found, please authorize your account.\n"
                                       "To do so, run: efms-auth"))
@@ -74,6 +73,7 @@ class FBMessengerChannel(EFBChannel):
             raise EFBException(message)
 
         self.load_config()
+        self.chat_manager: EFMSChatManager = EFMSChatManager(self)
         self.flag: ExperimentalFlagsManager = ExperimentalFlagsManager(self)
         self.master_message: MasterMessageManager = MasterMessageManager(self)
         self.extra_functions: ExtraFunctionsManager = ExtraFunctionsManager(self)
@@ -97,41 +97,38 @@ class FBMessengerChannel(EFBChannel):
         with config_path.open() as f:
             self.config: Dict[str, Any] = yaml.load(f) or dict()
 
-    def get_chats(self) -> List[EFBChat]:
+    def get_chats(self) -> List[Chat]:
         locations: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)
         if self.flag('show_pending_threads'):
             locations += (ThreadLocation.PENDING, ThreadLocation.OTHER)
         if self.flag('show_archived_threads'):
             locations += (ThreadLocation.ARCHIVED,)
-        chats: List[EFBChat] = list(map(lambda graphql: EFMSChat(self, graph_ql_thread=graphql),
-                                        self.client.get_thread_list(location_obj=locations)))
-        loaded_chats = set(i.chat_uid for i in chats)
+        chats: List[Chat] = []
+        for i in self.client.fetchThreadList(thread_location=locations):
+            chats.append(self.chat_manager.build_and_cache_thread(i))
+        loaded_chats = set(i.id for i in chats)
         for i in self.client.fetchAllUsers():
             if i.uid not in loaded_chats:
-                chats.append(EFMSChat(self, thread=i))
-
+                chats.append(self.chat_manager.build_and_cache_thread(i))
         return chats
 
-    def get_chat(self, chat_uid: str, member_uid: Optional[str] = None) -> EFMSChat:
-        thread_id = member_uid or chat_uid
-        if (chat_uid, member_uid) in EFMSChat.cache:
-            return EFMSChat.cache[chat_uid, member_uid]
-        # thread = self.client.fetchThreadInfo(thread_id)[str(thread_id)]
-        # chat = EFMSChat(self, thread=thread)
-        graph_ql = self.client.get_thread_info(thread_id)
-        chat = EFMSChat(self, graph_ql_thread=graph_ql)
-        if (chat_uid, member_uid) in EFMSChat.cache:
-            return EFMSChat.cache[chat_uid, member_uid]
-        else:
+    def get_chat(self, chat_uid: str) -> Chat:
+        try:
+            return self.chat_manager.get_thread(thread_id=chat_uid)
+        except FBchatException:
             raise EFBChatNotFound
 
-    def send_message(self, msg: EFBMsg) -> EFBMsg:
+    def send_message(self, msg: Message) -> Message:
         return self.master_message.send_message(msg)
 
-    def send_status(self, status: EFBStatus):
-        if isinstance(status, EFBMessageRemoval):
-            return self.client.unsend(status.message.uid)
-        elif isinstance(status, EFBReactToMessage):
+    def send_status(self, status: Status):
+        if isinstance(status, MessageRemoval):
+            uid: str = cast(str, status.message.uid)
+            rfind = uid.rfind('.')
+            if rfind > 0 and uid[rfind+1:].isdecimal():
+                uid = uid[:rfind]
+            return self.client.unsend(uid)
+        elif isinstance(status, ReactToMessage):
             try:
                 self.client.reactToMessage(status.msg_id, status.reaction and MessageReaction(status.reaction))
             except (FBchatException, ValueError) as e:
@@ -147,37 +144,36 @@ class FBMessengerChannel(EFBChannel):
     def stop_polling(self):
         self.client.listening = False
 
-    def get_chat_picture(self, chat: EFBChat) -> IO[bytes]:
+    def get_chat_picture(self, chat: Chat) -> BinaryIO:
         self.logger.debug("Getting picture of chat %s", chat)
-        photo_url = EFMSChat.cache[chat.chat_uid, None] and \
-                    EFMSChat.cache[chat.chat_uid, None].vendor_specific.get('profile_picture_url')
-        self.logger.debug("[%s] has photo_url from cache: %s", chat.chat_uid, photo_url)
+        photo_url = chat.vendor_specific.get('profile_picture_url')
+        self.logger.debug("[%s] has photo_url from cache: %s", chat.id, photo_url)
         if not photo_url:
-            thread = self.client.get_thread_info(chat.chat_uid)
+            thread = self.client.get_thread_info(chat.id)
             photo_url = efms_utils.get_value(thread, ('messaging_actor', 'big_image_src', 'uri'))
-        self.logger.debug("[%s] has photo_url from GraphQL: %s", chat.chat_uid, photo_url)
+        self.logger.debug("[%s] has photo_url from GraphQL: %s", chat.id, photo_url)
         if not photo_url:
-            thread = self.client.fetchThreadInfo(chat.chat_uid)[chat.chat_uid]
+            thread = self.client.fetchThreadInfo(chat.id)[chat.id]
             photo_url = getattr(thread, 'photo', None)
-        self.logger.debug("[%s] has photo_url from legacy API: %s", chat.chat_uid, photo_url)
+        self.logger.debug("[%s] has photo_url from legacy API: %s", chat.id, photo_url)
         if not photo_url:
             raise EFBOperationNotSupported('This chat has no picture.')
         photo = BytesIO(requests.get(photo_url).content)
         photo.seek(0)
         return photo
 
-    def get_message_by_id(self, chat: EFBChat, msg_id: MessageID) -> Optional['EFBMsg']:
+    def get_message_by_id(self, chat: Chat, msg_id: MessageID) -> Optional['Message']:
         index = None
         if msg_id.split('.')[-1].isdecimal():
             # is sub-message
             index = int(msg_id.split('.')[-1])
             msg_id = MessageID('.'.join(msg_id.split('.')[:-1]))
 
-        thread_id, thread_type = self.client._getThread(chat.chat_uid, None)
+        thread_id, thread_type = self.client._getThread(chat.id, None)
         message_info = self.client._forcedFetch(thread_id, msg_id).get("message")
         message = Message._from_graphql(message_info)
 
-        efb_msg = self.client.build_efb_msg(msg_id, chat.chat_uid, message.author,
+        efb_msg = self.client.build_efb_msg(msg_id, chat.id, message.author,
                                             message)
 
         attachments = message_info.get('delta', {}).get('attachments', [])

@@ -9,21 +9,22 @@ import threading
 import time
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Tuple, Set, List, DefaultDict, cast
+from typing import TYPE_CHECKING, Any, Dict, Tuple, Set, List, DefaultDict, cast, Collection
 from tempfile import NamedTemporaryFile
 
 import requests
 from fbchat import Client, _graphql
-from fbchat._exception import FBchatException
-from fbchat._thread import ThreadType, ThreadLocation
-from fbchat.models import Message, EmojiSize
-from ehforwarderbot import EFBMsg, MsgType, coordinator
-from ehforwarderbot.message import EFBMsgLinkAttribute, EFBMsgLocationAttribute
-from ehforwarderbot.status import EFBMessageRemoval, EFBMessageReactionsUpdate
+from fbchat._exception import FBchatException, FBchatUserError
+from fbchat._thread import ThreadType, ThreadLocation, Thread
+from fbchat.models import Message, EmojiSize, Group, User
+from ehforwarderbot import MsgType, coordinator
+from ehforwarderbot.chat import ChatMember
+from ehforwarderbot.message import Message as EFBMessage, Substitutions
+from ehforwarderbot.message import LinkAttribute, LocationAttribute
+from ehforwarderbot.status import MessageRemoval, MessageReactionsUpdate, ChatUpdates
 from ehforwarderbot.types import MessageID, ReactionName, ChatID
 
-from .efms_chat import EFMSChat
-from .utils import get_value
+from .utils import get_value, PahoMQTTPingFilter
 
 if TYPE_CHECKING:
     from . import FBMessengerChannel
@@ -40,11 +41,25 @@ class EFMSClient(Client):
     # Overrides for patches
 
     def __init__(self, channel: 'FBMessengerChannel', *args, **kwargs):
-        kwargs['logging_level'] = 100
+        kwargs['logging_level'] = logging.CRITICAL
         # Disable all logging inside the module
         self.channel = channel
+        self._ = self.channel._
+        self.ngettext = self.channel.ngettext
+
+        # Mapping of message ID to number of EFB Messages sent.
+        # Used when messages recalls from FB server
+        self.message_mappings: Dict[str, int] = dict()
+
+        # Suppress ping logs from paho.mqtt.client
+        logging.getLogger("paho.mqtt.client").addFilter(PahoMQTTPingFilter())
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger(__name__)
+
+    @property
+    def chat_manager(self):
+        # Using property to avoid cyclic reference.
+        return self.channel.chat_manager
 
     def send_image_file(self, filename, file, mimetype, message=None, thread_id=None, thread_type=ThreadType.USER):
         """
@@ -73,7 +88,7 @@ class EFMSClient(Client):
         """Mark message as delivered"""
         super().markAsDelivered(thread_id, message_id)
 
-    # EFMS methods
+    # region [EFMS methods]
 
     def get_thread_list(self, limit: int = 50, before: int = None,
                         location_obj: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)):
@@ -123,7 +138,7 @@ class EFMSClient(Client):
         else:
             return url
 
-    def attach_msg_type(self, msg: EFBMsg, attachment: Dict[str, Any]):
+    def attach_msg_type(self, msg: Message, attachment: Dict[str, Any]):
         """
         Attach message_type to a message.
 
@@ -168,10 +183,10 @@ class EFMSClient(Client):
                 get_value(link_information, ('media', 'is_playable'), False) else None
             preview = preview or get_value(link_information, ('media', 'image', 'uri'), None)
             url = link_information['media'].get('url', preview)
-            msg.attributes = EFBMsgLinkAttribute(title=title,
-                                                 description=description,
-                                                 image=self.process_url(preview),
-                                                 url=self.process_url(url))
+            msg.attributes = LinkAttribute(title=title,
+                                           description=description,
+                                           image=self.process_url(preview),
+                                           url=self.process_url(url))
         elif attachment_type == 'MessageLocation':
             msg.type = MsgType.Location
             link_information = get_value(attachment, ('mercury', 'extensible_attachment', 'story_attachment'), {})
@@ -186,14 +201,14 @@ class EFMSClient(Client):
                 msg.type = MsgType.Unsupported
                 msg.text = self._("Message type unsupported.\n{content}").format(msg.text)
                 return
-            msg.attributes = EFBMsgLocationAttribute(
+            msg.attributes = LocationAttribute(
                 latitude=latitude, longitude=longitude
             )
         else:
             msg.type = MsgType.Unsupported
             msg.text = self._("Message type unsupported.\n{content}").format(msg.text)
 
-    def attach_media(self, msg: EFBMsg, attachment: Dict[str, Any]):
+    def attach_media(self, msg: Message, attachment: Dict[str, Any]):
         """
         Attach an attachment to a message.
 
@@ -212,7 +227,7 @@ class EFMSClient(Client):
         if 'extensible_attachment' in attachment.get('mercury', {}):
             attachment_type = '__Link'
             extensible_type = get_value(attachment, ('mercury', 'extensible_attachment',
-                                   'story_attachment', 'target', '__typename'))
+                                                     'story_attachment', 'target', '__typename'))
             if extensible_type == 'MessageLocation':
                 attachment_type = 'MessageLocation'
             elif extensible_type == 'MessageLiveLocation':
@@ -308,10 +323,10 @@ class EFMSClient(Client):
                 get_value(link_information, ('media', 'is_playable'), False) else None
             preview = preview or get_value(link_information, ('media', 'image', 'uri'), None)
             url = link_information.get('url', preview)
-            msg.attributes = EFBMsgLinkAttribute(title=title,
-                                                 description=description,
-                                                 image=self.process_url(preview),
-                                                 url=self.process_url(url))
+            msg.attributes = LinkAttribute(title=title,
+                                           description=description,
+                                           image=self.process_url(preview),
+                                           url=self.process_url(url))
         elif attachment_type == 'MessageLocation':
             msg.type = MsgType.Location
             link_information = get_value(attachment, ('mercury', 'extensible_attachment', 'story_attachment'), {})
@@ -326,7 +341,7 @@ class EFMSClient(Client):
                 msg.type = MsgType.Unsupported
                 msg.text = self._("Message type unsupported.\n{content}").format(msg.text)
                 return
-            msg.attributes = EFBMsgLocationAttribute(
+            msg.attributes = LocationAttribute(
                 latitude=latitude, longitude=longitude
             )
         else:
@@ -343,7 +358,8 @@ class EFMSClient(Client):
 
     def onMessage(self, *args, **kwargs):
         """Migrate message precessing to another thread to prevent blocking."""
-        threading.Thread(target=self.on_message, args=args, kwargs=kwargs, name=f"EFMS slave message thread for {kwargs['mid']}").run()
+        threading.Thread(target=self.on_message, args=args, kwargs=kwargs,
+                         name=f"EFMS slave message thread for {kwargs['mid']}").run()
 
     def on_message(self, mid: str = '', author_id: str = '', message: str = '', message_object: Message = None,
                    thread_id: str = '', thread_type: str = ThreadType.USER, ts: str = '', metadata=None, msg=None):
@@ -373,11 +389,12 @@ class EFMSClient(Client):
 
         efb_msg = self.build_efb_msg(mid, thread_id, author_id, message_object)
 
-        attachments = msg.get('delta', {}).get('attachments', [])
+        attachments = msg.get('attachments', [])
 
         if len(attachments) > 1:
             self.logger.debug("[%s] Multiple attachments detected. Splitting into %s messages.",
                               mid, len(attachments))
+            self.message_mappings[mid] = len(attachments)
             for idx, i in enumerate(attachments):
                 sub_msg = copy.copy(efb_msg)
                 sub_msg.uid = MessageID(f"{efb_msg.uid}.{idx}")
@@ -393,16 +410,17 @@ class EFMSClient(Client):
         self.markAsDelivered(mid, thread_id)
 
     def build_efb_msg(self, mid: str, thread_id: str, author_id: str, message_object: Message,
-                      nested: bool = False) -> EFBMsg:
-        efb_msg = EFBMsg()
-        efb_msg.uid = MessageID(mid)
-        efb_msg.text = message_object.text
-        efb_msg.type = MsgType.Text
-        efb_msg.deliver_to = coordinator.master
+                      nested: bool = False) -> EFBMessage:
+        efb_msg = EFBMessage(
+            uid=MessageID(mid),
+            text=message_object.text,
+            type=MsgType.Text,
+            deliver_to=coordinator.master,
+        )
 
         # Authors
-        efb_msg.author = EFMSChat(self.channel, uid=ChatID(author_id))
-        efb_msg.chat = EFMSChat(self.channel, uid=ChatID(thread_id))
+        efb_msg.chat = self.chat_manager.get_thread(thread_id)
+        efb_msg.author = efb_msg.chat.get_member(ChatID(author_id))
 
         if not nested and message_object.replied_to:
             efb_msg.target = self.build_efb_msg(message_object.reply_to_id,
@@ -412,28 +430,86 @@ class EFMSClient(Client):
                                                 nested=True)
 
         if message_object.mentions:
-            mentions = dict()
+            mentions: Dict[Tuple[int, int], ChatMember] = dict()
             for i in message_object.mentions:
-                mentions[(i.offset, i.offset + i.length)] = EFMSChat(self.channel, uid=i.thread_id)
+                mentions[(i.offset, i.offset + i.length)] = efb_msg.chat.get_member(i.thread_id)
+            efb_msg.substitutions = Substitutions(mentions)
 
         if message_object.emoji_size:
             efb_msg.text += " (%s)" % message_object.emoji_size.name[0]
             # " (S)", " (M)", " (L)"
 
         if message_object.reactions:
-            reactions: DefaultDict[ReactionName, List[EFMSChat]] = defaultdict(list)
+            reactions: DefaultDict[ReactionName, List[ChatMember]] = defaultdict(list)
             for user_id, reaction in message_object.reactions.items():
                 reactions[ReactionName(reaction.value)].append(
-                    EFMSChat(self.channel, uid=user_id))
+                    efb_msg.chat.get_member(user_id))
             efb_msg.reactions = reactions
         return efb_msg
+
+    # endregion
 
     def onChatTimestamp(self, buddylist=None, msg=None):
         # No action needed on receiving timestamp update
         # Suppress timestamp log
         pass
 
-    # Incoming message reactions
+    def fetchThreadList(
+            self, offset=None, limit: int = 20,
+            thread_location: Collection[ThreadLocation] = (ThreadLocation.INBOX,),
+            before: int = None
+    ) -> List[Thread]:
+        """Fetch the client's thread list.
+
+        Args:
+            offset: Deprecated. Do not use!
+            limit (int): Max. number of threads to retrieve. Capped at 20
+            thread_location (ThreadLocation): INBOX, PENDING, ARCHIVED or OTHER
+            before (int): A timestamp (in milliseconds), indicating from which point to retrieve threads
+
+        Returns:
+            list: :class:`Thread` objects
+
+        Raises:
+            FBchatException: If request failed
+
+        Notes:
+            Modified based on fbchat 1.9.3
+        """
+        if offset is not None:
+            self.logger.warning(
+                "Using `offset` in `fetchThreadList` is no longer supported, "
+                "since Facebook migrated to the use of GraphQL in this request. "
+                "Use `before` instead."
+            )
+
+        if limit > 20 or limit < 1:
+            raise FBchatUserError("`limit` should be between 1 and 20")
+
+        params = {
+            "limit": limit,
+            "tags": [i.value for i in thread_location],
+            "before": before,
+            "includeDeliveryReceipts": True,
+            "includeSeqID": False,
+        }
+        (j,) = self.graphql_requests(_graphql.from_doc_id("1349387578499440", params))
+
+        rtn = []
+        for node in j["viewer"]["message_threads"]["nodes"]:
+            _type = node.get("thread_type")
+            if _type == "GROUP":
+                rtn.append(Group._from_graphql(node))
+            elif _type == "ONE_TO_ONE":
+                rtn.append(User._from_thread_fetch(node))
+            elif _type == "MARKETPLACE":  # MOD: Added branch
+                self.logger.warning("Marketplace chat is yet to be supported: %s", node)
+                # TODO: support marketplace chat
+            else:  # MOD: Modified branch
+                self.logger.error("Unknown thread type: %s, %s", _type, node)
+        return rtn
+
+    # region [Callbacks]
 
     def onReactionAdded(self, mid=None, reaction=None, author_id=None, thread_id=None, thread_type=None, ts=None,
                         msg=None):
@@ -447,28 +523,46 @@ class EFMSClient(Client):
         msg_data = self._forcedFetch(thread_id, message_id).get("message")
         msg: Message = Message._from_graphql(msg_data)
 
+        chat = self.chat_manager.get_thread(thread_id)
+
         reactions = {}
         if msg.reactions:
             reactions = defaultdict(list)
             for user_id, reaction in msg.reactions.items():
-                reactions[reaction.value].append(EFMSChat(self.channel, uid=user_id))
+                reactions[reaction.value].append(chat.get_member(user_id))
 
-        chat = EFMSChat(self.channel, uid=thread_id)
-
-        update = EFBMessageReactionsUpdate(chat=chat, msg_id=message_id, reactions=reactions)
+        update = MessageReactionsUpdate(chat=chat, msg_id=message_id, reactions=reactions)
 
         coordinator.send_status(update)
 
     def onMessageUnsent(self, mid=None, author_id=None, thread_id=None, thread_type=None, ts=None, msg=None):
-        efb_msg = EFBMsg()
-        efb_msg.chat = EFMSChat(self.channel, uid=thread_id)
-        efb_msg.author = EFMSChat(self.channel, uid=author_id)
-        efb_msg.uid = mid
-        coordinator.send_status(
-            EFBMessageRemoval(source_channel=self.channel,
-                              destination_channel=coordinator.master,
-                              message=efb_msg)
-        )
+        chat = self.chat_manager.get_thread(thread_id)
+        author = chat.get_member(author_id)
+        if mid in self.message_mappings:
+            for i in range(self.message_mappings[mid]):
+                coordinator.send_status(
+                    MessageRemoval(source_channel=self.channel,
+                                   destination_channel=coordinator.master,
+                                   message=EFBMessage(chat=chat, author=author, uid=f"{mid}.{i}"))
+                )
+        else:
+            coordinator.send_status(
+                MessageRemoval(source_channel=self.channel,
+                               destination_channel=coordinator.master,
+                               message=EFBMessage(chat=chat, author=author, uid=mid))
+            )
 
     def onMessageError(self, exception=None, msg=None):
         self.logger.exception("Error %s occurred while parsing %s", exception, msg, exc_info=exception)
+
+    def onUnknownMesssageType(self, msg=None):
+        if msg.get("class") == 'ForcedFetch':
+            # New chat appears.
+            # {'forceInsert': False, 'irisSeqId': '538', 'isLazy': False, 'threadKey': {'threadFbId': '1234567890'}, 'class': 'ForcedFetch'}
+            coordinator.send_status(ChatUpdates(
+                channel=self.channel,
+                new_chats=[msg['threadKey']['threadFbId']]
+            ))
+        super().onUnknownMesssageType(msg)
+
+    # endregion [Callbacks]
