@@ -95,7 +95,7 @@ class FBMessengerChannel(SlaveChannel):
             self.config: Dict[str, Any] = dict()
             return
         with config_path.open() as f:
-            self.config: Dict[str, Any] = yaml.load(f) or dict()
+            self.config: Dict[str, Any] = yaml.full_load(f) or dict()
 
     def get_chats(self) -> List[Chat]:
         locations: Tuple[ThreadLocation, ...] = (ThreadLocation.INBOX,)
@@ -106,7 +106,7 @@ class FBMessengerChannel(SlaveChannel):
         chats: List[Chat] = []
         for i in self.client.fetchThreadList(thread_location=locations):
             chats.append(self.chat_manager.build_and_cache_thread(i))
-        loaded_chats = set(i.id for i in chats)
+        loaded_chats = set(i.uid for i in chats)
         for i in self.client.fetchAllUsers():
             if i.uid not in loaded_chats:
                 chats.append(self.chat_manager.build_and_cache_thread(i))
@@ -147,15 +147,15 @@ class FBMessengerChannel(SlaveChannel):
     def get_chat_picture(self, chat: Chat) -> BinaryIO:
         self.logger.debug("Getting picture of chat %s", chat)
         photo_url = chat.vendor_specific.get('profile_picture_url')
-        self.logger.debug("[%s] has photo_url from cache: %s", chat.id, photo_url)
+        self.logger.debug("[%s] has photo_url from cache: %s", chat.uid, photo_url)
         if not photo_url:
-            thread = self.client.get_thread_info(chat.id)
+            thread = self.client.get_thread_info(chat.uid)
             photo_url = efms_utils.get_value(thread, ('messaging_actor', 'big_image_src', 'uri'))
-        self.logger.debug("[%s] has photo_url from GraphQL: %s", chat.id, photo_url)
+        self.logger.debug("[%s] has photo_url from GraphQL: %s", chat.uid, photo_url)
         if not photo_url:
-            thread = self.client.fetchThreadInfo(chat.id)[chat.id]
+            thread = self.client.fetchThreadInfo(chat.uid)[chat.uid]
             photo_url = getattr(thread, 'photo', None)
-        self.logger.debug("[%s] has photo_url from legacy API: %s", chat.id, photo_url)
+        self.logger.debug("[%s] has photo_url from legacy API: %s", chat.uid, photo_url)
         if not photo_url:
             raise EFBOperationNotSupported('This chat has no picture.')
         photo = BytesIO(requests.get(photo_url).content)
@@ -169,11 +169,11 @@ class FBMessengerChannel(SlaveChannel):
             index = int(msg_id.split('.')[-1])
             msg_id = MessageID('.'.join(msg_id.split('.')[:-1]))
 
-        thread_id, thread_type = self.client._getThread(chat.id, None)
+        thread_id, thread_type = self.client._getThread(chat.uid, None)
         message_info = self.client._forcedFetch(thread_id, msg_id).get("message")
         message = Message._from_graphql(message_info)
 
-        efb_msg = self.client.build_efb_msg(msg_id, chat.id, message.author,
+        efb_msg = self.client.build_efb_msg(msg_id, chat.uid, message.author,
                                             message)
 
         attachments = message_info.get('delta', {}).get('attachments', [])

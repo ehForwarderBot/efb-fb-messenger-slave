@@ -63,7 +63,7 @@ class MasterMessageManager:
                 self.logger.debug("[%s] Translated to mentions: %s", msg.uid, mentions)
 
             fb_msg = Message(text=prefix + msg.text, mentions=mentions)
-            thread: Thread = self.client.fetchThreadInfo(msg.chat.id)[str(msg.chat.id)]
+            thread: Thread = self.client.fetchThreadInfo(msg.chat.uid)[str(msg.chat.uid)]
 
             if msg.target and msg.target.uid:
                 fb_msg.reply_to_id = msg.target.uid
@@ -156,7 +156,7 @@ class MasterMessageManager:
             if msg.file and not msg.file.closed:
                 msg.file.close()
             self.client.markAsSeen()
-            self.client.markAsRead(msg.chat.id)
+            self.client.markAsRead(msg.chat.uid)
 
     def stop_typing(self, timeout: int, thread_uid: str, thread_type: ThreadType):
         """Wait for a number of milliseconds, and stop typing."""

@@ -176,7 +176,7 @@ class EFMSChatManager:
 
     def build_and_cache_thread(self, thread: Thread) -> Chat:
         chat = self.build_chat_by_thread_obj(thread)
-        self.cache[chat.id] = chat
+        self.cache[chat.uid] = chat
         return chat
 
     def build_chat_by_thread_obj(self, thread: Thread) -> Chat:
@@ -186,12 +186,12 @@ class EFMSChatManager:
         }
         chat: Chat
         if thread.uid == self.client.uid:
-            chat = PrivateChat(channel=self.channel, id=thread.uid, other_is_self=True)
+            chat = PrivateChat(channel=self.channel, uid=thread.uid, other_is_self=True)
             chat.name = chat.self.name  # type: ignore
         elif isinstance(thread, User):
             chat = PrivateChat(channel=self.channel,
                                name=thread.name,
-                               id=ChatID(thread.uid),
+                               uid=ChatID(thread.uid),
                                alias=thread.own_nickname or thread.nickname,
                                vendor_specific=vendor_specific)
         elif isinstance(thread, Page):
@@ -202,7 +202,7 @@ class EFMSChatManager:
             )
             chat = PrivateChat(channel=self.channel,
                                name=thread.name,
-                               id=ChatID(thread.uid),
+                               uid=ChatID(thread.uid),
                                description=desc,
                                vendor_specific=vendor_specific)
         elif isinstance(thread, Group):
@@ -210,7 +210,7 @@ class EFMSChatManager:
 
             group = GroupChat(channel=self.channel,
                               name=name,
-                              id=ChatID(thread.uid),
+                              uid=ChatID(thread.uid),
                               vendor_specific=vendor_specific)
             participant_ids = thread.participants - {self.client.uid}
             try:
@@ -220,11 +220,11 @@ class EFMSChatManager:
                     alias = member.own_nickname or member.nickname or None
                     if thread.nicknames and i in thread.nicknames:
                         alias = thread.nicknames[str(i)] or None
-                    group.add_member(name=member.name, alias=alias, id=ChatID(i))
+                    group.add_member(name=member.name, alias=alias, uid=ChatID(i))
             except FBchatException:
                 self.logger.exception("Error occurred while building chat members.")
                 for i in participant_ids:
-                    group.add_member(name=str(i), id=ChatID(i))
+                    group.add_member(name=str(i), uid=ChatID(i))
 
             if thread.name is None:
                 names = sorted(i.name for i in group.members)
@@ -241,8 +241,8 @@ class EFMSChatManager:
         else:
             chat = SystemChat(channel=self.channel,
                               name=thread.name,
-                              id=ChatID(thread.uid),
+                              uid=ChatID(thread.uid),
                               vendor_specific=vendor_specific)
         if chat.self:
-            chat.self.id = self.client.uid
+            chat.self.uid = self.client.uid
         return chat
