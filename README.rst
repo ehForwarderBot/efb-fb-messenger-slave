@@ -25,12 +25,6 @@ EFMS is a channel that connects to Facebook Messenger for EH Forwarder
 Bot, based on simulation of Facebook Messenger Web, and
 `fbchat <https://github.com/carpedm20/fbchat>`_.
 
-Beta version
--------------
-
-This is an unstable beta version, and its functionality may change at any
-time.
-
 Requirements
 ------------
 
