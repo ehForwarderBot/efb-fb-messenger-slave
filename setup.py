@@ -35,7 +35,7 @@ setup(
         "Topic :: Utilities"
     ],
     install_requires=[
-        "ehforwarderbot>=2.0.0b28",
+        "ehforwarderbot>=2.0.0",
         "fbchat~=1.9",
         "PyYaml>=5.3",
         'requests',
