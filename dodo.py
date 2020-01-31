@@ -102,7 +102,7 @@ def task_bump_version():
         "actions": [CmdAction(gen_bump_version)],
         "params": [
             {
-                "name": "Version bump mode",
+                "name": "mode",
                 "short": "b",
                 "long": "bump",
                 "default": DEFAULT_BUMP_MODE,
