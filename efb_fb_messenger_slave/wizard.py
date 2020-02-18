@@ -84,7 +84,7 @@ def setup_account(data):
                               prompt_prefix="[yN] ")
         if not widget.launch(default="n"):
             return
-    run(data.profile, data.instance_id)
+    run(data.instance_id, data.profile)
 
 
 flags_settings = {
