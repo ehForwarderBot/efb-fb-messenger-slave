@@ -147,7 +147,7 @@ def setup_experimental_flags(data):
             print()
             print(key)
             print_wrapped(desc)
-            ans = Numbers(prompt=f"{key} [{default}]? ") \
+            ans = Numbers(prompt=f"{key} [{default}]? ", type=int) \
                 .launch(default=default)
             data.data['flags'][key] = ans
         elif cat == 'choices':
