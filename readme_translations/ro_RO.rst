@@ -14,7 +14,7 @@ EFB Facebook Messenger Slave (EFMS)
    :target: https://crowdin.com/project/ehforwarderbot/
    :alt: Translate this project
 
-.. image:: https://github.com/blueset/efb-fb-messenger-slave/raw/master/banner.png
+.. image:: https://github.com/ehForwarderBot/efb-fb-messenger-slave/raw/master/banner.png
    :alt: Banner
 
 `README in other languages <./readme_translations>`_.
